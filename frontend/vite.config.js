@@ -4,21 +4,24 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   server: {
-    port: 5173, // Change from 3000 to 5173 (Vite default)
+    port: 5173,
     open: true,
-    proxy: {
-      '/api': {
-        target: 'https://market-backend-getv.onrender.com', // Use your deployed backend
-        changeOrigin: true,
-        secure: true
-      },
-      '/socket.io': {
-        target: 'https://market-backend-getv.onrender.com',
-        changeOrigin: true,
-        secure: true,
-        ws: true
+    // Only use proxy for development
+    ...(process.env.NODE_ENV === 'development' && {
+      proxy: {
+        '/api': {
+          target: 'https://market-backend-getv.onrender.com',
+          changeOrigin: true,
+          secure: true
+        },
+        '/socket.io': {
+          target: 'https://market-backend-getv.onrender.com',
+          changeOrigin: true,
+          secure: true,
+          ws: true
+        }
       }
-    }
+    })
   },
   build: {
     outDir: 'dist',

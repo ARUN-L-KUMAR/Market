@@ -7,7 +7,7 @@
 // API Configuration
 export const API_CONFIG = {
   // Base URL for API requests
-  baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
+  baseUrl: import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com',
   
   // API Endpoints
   endpoints: {

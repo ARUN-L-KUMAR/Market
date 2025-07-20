@@ -20,7 +20,7 @@ const TrendingProducts = () => {
   const fetchProducts = async () => {
     try {
       setLoading(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
       
       // Fetch all products
       const response = await axios.get(`${apiUrl}/api/products?limit=50`);

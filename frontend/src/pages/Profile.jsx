@@ -94,7 +94,7 @@ const Profile = () => {
 
   const fetchUserData = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
       
       // Fetch orders
       const ordersResponse = await axios.get(`${apiUrl}/api/orders`, {
@@ -120,7 +120,7 @@ const Profile = () => {
 
   const fetchUserStats = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
       const response = await axios.get(`${apiUrl}/api/users/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -142,7 +142,7 @@ const Profile = () => {
     const fetchOrders = async () => {
       try {
         setLoadingOrders(true);
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+        const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
         const response = await axios.get(`${apiUrl}/api/orders/my`, {
           headers: { Authorization: `Bearer ${token}` }
         });
