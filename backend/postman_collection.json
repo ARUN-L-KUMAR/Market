@@ -1,0 +1,149 @@
+{
+  "info": {
+    "name": "Market E-commerce API",
+    "description": "API collection for managing products in the market e-commerce application",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Admin Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"admin@market.com\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Products",
+      "item": [
+        {
+          "name": "Get All Products",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add iPhone 15 Pro",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"iPhone 15 Pro\",\n  \"description\": \"The latest iPhone with A17 Pro chip, titanium design, and pro camera system. Features include 5G connectivity, Face ID, and iOS 17.\",\n  \"shortDescription\": \"Latest iPhone with A17 Pro chip and titanium design\",\n  \"price\": 999,\n  \"comparePrice\": 1199,\n  \"stock\": 50,\n  \"sku\": \"IPHONE-15-PRO-001\",\n  \"brand\": \"Apple\",\n  \"tags\": [\"smartphone\", \"apple\", \"iphone\", \"5g\", \"premium\"],\n  \"isFeatured\": true,\n  \"isActive\": true,\n  \"images\": [\n    {\n      \"url\": \"https://images.unsplash.com/photo-1592750475338-74b7b21085ab?w=500\",\n      \"alt\": \"iPhone 15 Pro\",\n      \"isPrimary\": true\n    }\n  ],\n  \"colors\": [\n    { \"name\": \"Natural Titanium\", \"hexCode\": \"#8E8E93\", \"stock\": 20 },\n    { \"name\": \"Blue Titanium\", \"hexCode\": \"#4A90E2\", \"stock\": 15 },\n    { \"name\": \"White Titanium\", \"hexCode\": \"#F5F5DC\", \"stock\": 15 }\n  ],\n  \"sizes\": [\n    { \"name\": \"128GB\", \"stock\": 20 },\n    { \"name\": \"256GB\", \"stock\": 20 },\n    { \"name\": \"512GB\", \"stock\": 10 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add MacBook Air M2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"MacBook Air M2\",\n  \"description\": \"Supercharged by the M2 chip, featuring 8-core CPU, 10-core GPU, and up to 24GB of unified memory.\",\n  \"shortDescription\": \"Lightweight laptop with M2 chip\",\n  \"price\": 1199,\n  \"comparePrice\": 1399,\n  \"stock\": 25,\n  \"sku\": \"MACBOOK-AIR-M2-001\",\n  \"brand\": \"Apple\",\n  \"tags\": [\"laptop\", \"apple\", \"macbook\", \"m2\", \"ultrabook\"],\n  \"isFeatured\": true,\n  \"isActive\": true,\n  \"images\": [\n    {\n      \"url\": \"https://images.unsplash.com/photo-1541807084-5c52b6b3adef?w=500\",\n      \"alt\": \"MacBook Air M2\",\n      \"isPrimary\": true\n    }\n  ],\n  \"colors\": [\n    { \"name\": \"Space Gray\", \"hexCode\": \"#5D5D5D\", \"stock\": 10 },\n    { \"name\": \"Silver\", \"hexCode\": \"#C0C0C0\", \"stock\": 10 },\n    { \"name\": \"Gold\", \"hexCode\": \"#FFD700\", \"stock\": 5 }\n  ],\n  \"sizes\": [\n    { \"name\": \"256GB SSD\", \"stock\": 15 },\n    { \"name\": \"512GB SSD\", \"stock\": 10 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Add Sony Headphones",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              },
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Sony WH-1000XM5\",\n  \"description\": \"Industry-leading noise canceling headphones with crystal clear hands-free calling and Alexa voice control.\",\n  \"shortDescription\": \"Premium noise-canceling headphones\",\n  \"price\": 399,\n  \"comparePrice\": 449,\n  \"stock\": 40,\n  \"sku\": \"SONY-WH1000XM5-001\",\n  \"brand\": \"Sony\",\n  \"tags\": [\"headphones\", \"sony\", \"wireless\", \"noise-canceling\", \"audio\"],\n  \"isFeatured\": false,\n  \"isActive\": true,\n  \"images\": [\n    {\n      \"url\": \"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=500\",\n      \"alt\": \"Sony WH-1000XM5\",\n      \"isPrimary\": true\n    }\n  ],\n  \"colors\": [\n    { \"name\": \"Black\", \"hexCode\": \"#000000\", \"stock\": 20 },\n    { \"name\": \"Silver\", \"hexCode\": \"#C0C0C0\", \"stock\": 20 }\n  ]\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/products",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "products"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
