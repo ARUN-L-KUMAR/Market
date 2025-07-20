@@ -20,7 +20,8 @@ origin: [
     'http://localhost:3000', 
     'http://127.0.0.1:3000',
     'http://localhost:5173', // Vite dev server
-    'https://market-frontend-o49f78bwn-arun-kumars-projects-0de1d555.vercel.app', // Your actual Vercel URL
+    'https://akmarket.vercel.app',
+    'https://market-5tcb6b794-arun-kumars-projects-0de1d555.vercel.app', // Your actual Vercel URL
     process.env.FRONTEND_URL // Add this environment variable in Render
 ],
 // ...existing code...
