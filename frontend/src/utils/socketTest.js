@@ -2,7 +2,7 @@
 import { io } from 'socket.io-client';
 
 // Connect directly to the backend server with all possible options
-const socket = io(import.meta.env.VITE_API_URL || 'http://localhost:3001', {
+const socket = io(import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com', {
   // Try all transports
   transports: ['websocket', 'polling'],
   // Automatically reconnect
@@ -44,7 +44,7 @@ socket.on('reconnect_error', (error) => {
 });
 
 // Try to connect
-console.log('[TEST] Attempting connection to http://localhost:3001...');
+console.log('[TEST] Attempting connection to', import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com');
 socket.connect();
 
 export default socket;

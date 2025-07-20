@@ -17,7 +17,8 @@ export const fetchProducts = createAsyncThunk(
       if (params.sortBy) queryParams.append('sortBy', params.sortBy);
       if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
       
-      const response = await axios.get(`http://localhost:3001/api/products?${queryParams.toString()}`);
+      const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
+      const response = await axios.get(`${apiUrl}/api/products?${queryParams.toString()}`);
       return response.data;
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch products');
