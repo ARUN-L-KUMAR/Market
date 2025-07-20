@@ -1,0 +1,1748 @@
+[
+  {
+    "_id": {
+      "$oid": "685a5d53b986b1543a16d4d3"
+    },
+    "title": "Samsung Galaxy S22",
+    "slug": "samsung-galaxy-s22",
+    "description": "The latest flagship smartphone from Samsung with 5G capability and advanced camera features.",
+    "shortDescription": "Latest Samsung flagship with 5G and advanced camera",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/mobile/samsung/s23-demo.jpeg",
+        "alt": "Samsung Galaxy S22 - Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "64e70001a1b2c3d4e5f60001"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/mobile/samsung/s23-front-back.jpeg",
+        "alt": "Samsung Galaxy S22 - Front View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70001a1b2c3d4e5f60002"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/mobile/samsung/s23-back-siler.jpeg",
+        "alt": "Samsung Galaxy S22 - Back View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70001a1b2c3d4e5f60003"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/mobile/samsung/s23-demo1.jpeg",
+        "alt": "Samsung Galaxy S22 - Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70001a1b2c3d4e5f60004"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bcf"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd5"
+    },
+    "brand": "Samsung",
+    "sku": "SAMS22-2025",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Phantom Black",
+        "hexCode": "#000000",
+        "stock": 25,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4d5"
+        }
+      },
+      {
+        "name": "Phantom White",
+        "hexCode": "#FFFFFF",
+        "stock": 15,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4d6"
+        }
+      },
+      {
+        "name": "Green",
+        "hexCode": "#1B5E20",
+        "stock": 20,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4d7"
+        }
+      }
+    ],
+    "price": 6058917,
+    "comparePrice": 6307917,
+    "costPrice": 6436650,
+    "stock": 60,
+    "lowStockThreshold": 10,
+    "weight": 0.4,
+    "dimensions": {
+      "length": 15,
+      "width": 7.5,
+      "height": 0.8
+    },
+    "tags": [
+      "smartphone",
+      "android",
+      "samsung",
+      "5g"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 4,
+      "count": 1
+    },
+    "reviews": [
+      {
+        "$oid": "686149d15fc15aa86f3222fe"
+      }
+    ],
+    "seoKeywords": [],
+    "createdAt": {
+      "$date": "2025-06-24T08:09:55.923Z"
+    },
+    "updatedAt": {
+      "$date": "2025-06-29T14:12:33.913Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "685a5d53b986b1543a16d4d8"
+    },
+    "title": "MacBook Pro M2",
+    "slug": "macbook-pro-m2",
+    "description": "Apple MacBook Pro with M2 chip, 16GB RAM, and 512GB SSD.",
+    "shortDescription": "Apple laptop with M2 chip, 16GB RAM, 512GB SSD",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/laptop/mac/mac-demo.jpeg",
+        "alt": "MacBook Pro M2 - Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "64e70101a1b2c3d4e5f60011"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/laptop/mac/mac-box.jpeg",
+        "alt": "MacBook Pro M2 - Box View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70101a1b2c3d4e5f60012"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/laptop/mac/mac-side.jpeg",
+        "alt": "MacBook Pro M2 - Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70101a1b2c3d4e5f60013"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bcf"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd6"
+    },
+    "brand": "Apple",
+    "sku": "APL-MBP-M2",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Space Gray",
+        "hexCode": "#666666",
+        "stock": 18,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4da"
+        }
+      },
+      {
+        "name": "Silver",
+        "hexCode": "#CCCCCC",
+        "stock": 12,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4db"
+        }
+      }
+    ],
+    "price": 124499,
+    "comparePrice": 132799,
+    "costPrice": 91300,
+    "stock": 30,
+    "lowStockThreshold": 5,
+    "weight": 1.6,
+    "dimensions": {
+      "length": 35,
+      "width": 25,
+      "height": 1.5
+    },
+    "tags": [
+      "laptop",
+      "apple",
+      "macbook",
+      "m2"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 2,
+      "count": 1
+    },
+    "reviews": [
+      {
+        "$oid": "686149d25fc15aa86f32230e"
+      }
+    ],
+    "seoKeywords": [],
+    "createdAt": {
+      "$date": "2025-06-24T08:09:55.923Z"
+    },
+    "updatedAt": {
+      "$date": "2025-06-29T14:12:34.788Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "685a5d53b986b1543a16d4dc"
+    },
+    "title": "Premium Cotton T-Shirt",
+    "slug": "premium-cotton-t-shirt",
+    "description": "Soft and comfortable premium cotton t-shirt, perfect for everyday wear.",
+    "shortDescription": "Soft premium cotton t-shirt for everyday wear",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/fashion-lifestyle/men/t-shirt/black/back.jpeg",
+        "alt": "Premium Cotton T-Shirt - Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "64e70101a1b2c3d4e5f60021"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/fashion-lifestyle/men/t-shirt/black/black-front.jpeg",
+        "alt": "Premium Cotton T-Shirt - Front View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70101a1b2c3d4e5f60022"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/fashion-lifestyle/men/t-shirt/black/black-back.jpeg",
+        "alt": "Premium Cotton T-Shirt - Back View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70101a1b2c3d4e5f60023"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/fashion-lifestyle/men/t-shirt/black/black-demo.jpeg",
+        "alt": "Premium Cotton T-Shirt - Detail",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e70101a1b2c3d4e5f60024"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd0"
+    },
+    "brand": "Essentials",
+    "sku": "CLO-TSHIRT-01",
+    "sizes": [
+      {
+        "name": "S",
+        "stock": 25,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4de"
+        }
+      },
+      {
+        "name": "M",
+        "stock": 30,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4df"
+        }
+      },
+      {
+        "name": "L",
+        "stock": 20,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4e0"
+        }
+      },
+      {
+        "name": "XL",
+        "stock": 15,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4e1"
+        }
+      }
+    ],
+    "colors": [
+      {
+        "name": "Black",
+        "hexCode": "#000000",
+        "stock": 30,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4e2"
+        }
+      },
+      {
+        "name": "White",
+        "hexCode": "#FFFFFF",
+        "stock": 30,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4e3"
+        }
+      },
+      {
+        "name": "Navy Blue",
+        "hexCode": "#000080",
+        "stock": 30,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4e4"
+        }
+      }
+    ],
+    "price": 1659,
+    "comparePrice": 2074,
+    "costPrice": 664,
+    "stock": 90,
+    "lowStockThreshold": 15,
+    "weight": 0.2,
+    "tags": [
+      "clothing",
+      "t-shirt",
+      "cotton",
+      "essentials"
+    ],
+    "isActive": true,
+    "isFeatured": false,
+    "rating": {
+      "average": 2,
+      "count": 1
+    },
+    "reviews": [
+      {
+        "$oid": "686149d35fc15aa86f32231c"
+      }
+    ],
+    "seoKeywords": [],
+    "createdAt": {
+      "$date": "2025-06-24T08:09:55.923Z"
+    },
+    "updatedAt": {
+      "$date": "2025-06-29T14:12:35.504Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "685a5d53b986b1543a16d4e5"
+    },
+    "title": "Smart Coffee Maker",
+    "slug": "smart-coffee-maker",
+    "description": "Programmable coffee maker with smartphone connectivity and auto brew feature.",
+    "shortDescription": "Smart coffee maker with mobile app control",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/coffee-maker/coffee.jpeg",
+        "alt": "Smart Coffee Maker",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "64e6f1a2b3c4d5e6f7a8b9c0"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/coffee-maker/coffee-demo.jpeg",
+        "alt": "Smart Coffee Maker - Front View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e6f1a2b3c4d5e6f7a8b9c1"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/coffee-maker/coffee-side.jpeg",
+        "alt": "Smart Coffee Maker - Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e6f1a2b3c4d5e6f7a8b9c2"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/coffee-maker/cofee-demo2.jpeg",
+        "alt": "Smart Coffee Maker - Zoom Detail",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "64e6f1a2b3c4d5e6f7a8b9c3"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd1"
+    },
+    "brand": "HomeBot",
+    "sku": "HK-COFFEE-01",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Black",
+        "hexCode": "#000000",
+        "stock": 20,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4e7"
+        }
+      },
+      {
+        "name": "Silver",
+        "hexCode": "#C0C0C0",
+        "stock": 15,
+        "_id": {
+          "$oid": "685a5d53b986b1543a16d4e8"
+        }
+      }
+    ],
+    "price": 10789,
+    "comparePrice": 12449,
+    "costPrice": 6225,
+    "stock": 35,
+    "lowStockThreshold": 8,
+    "weight": 3.5,
+    "dimensions": {
+      "length": 25,
+      "width": 20,
+      "height": 35
+    },
+    "tags": [
+      "home",
+      "kitchen",
+      "coffee",
+      "smart",
+      "appliance"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 5,
+      "count": 1
+    },
+    "reviews": [
+      {
+        "$oid": "686149d35fc15aa86f322332"
+      }
+    ],
+    "seoKeywords": [],
+    "createdAt": {
+      "$date": "2025-06-24T08:09:55.923Z"
+    },
+    "updatedAt": {
+      "$date": "2025-06-29T14:12:36.622Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fa73308401741e5f6601"
+    },
+    "title": "Samsung Galaxy Tab S9 FE+",
+    "slug": "samsung-galaxy-tab-s9-fe",
+    "description": "Samsung Galaxy Tab S9 FE+ with 12 GB RAM, 256 GB ROM, 12.4-inch display, Wi-Fi + 5G support in Mint color. Powerful and immersive tablet experience for work and entertainment.",
+    "shortDescription": "12GB RAM | 256GB ROM | Wi-Fi + 5G | 12.4-inch | Mint",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/tab/main.jpg",
+        "alt": "Samsung Galaxy Tab S9 FE+ - Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fa73308401741e5f6602"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/tab/back.jpg",
+        "alt": "Samsung Galaxy Tab S9 FE+ - Demo View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fa73308401741e5f6603"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/tab/measure.jpg",
+        "alt": "Samsung Galaxy Tab S9 FE+ - Front View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fa73308401741e5f6604"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/tab/front-back.jpg",
+        "alt": "Samsung Galaxy Tab S9 FE+ - Back & Front View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fa73308401741e5f6605"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/computers-accessories/tab/demo.jpg",
+        "alt": "Samsung Galaxy Tab S9 FE+ - Size Demo",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fa73308401741e5f6606"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bcf"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd5"
+    },
+    "brand": "Samsung",
+    "sku": "SAMS-TABS9FE-256GB",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Mint Green",
+        "hexCode": "#AAF0D1",
+        "stock": 15,
+        "_id": {
+          "$oid": "6879fa73308401741e5f6607"
+        }
+      },
+      {
+        "name": "Gray",
+        "hexCode": "#A9A9A9",
+        "stock": 10,
+        "_id": {
+          "$oid": "6879fa73308401741e5f6608"
+        }
+      }
+    ],
+    "price": 74699,
+    "comparePrice": 82999,
+    "costPrice": 58100,
+    "stock": 25,
+    "lowStockThreshold": 5,
+    "weight": 0.7,
+    "dimensions": {
+      "length": 28.5,
+      "width": 18.5,
+      "height": 0.6
+    },
+    "tags": [
+      "tablet",
+      "android",
+      "samsung",
+      "5g",
+      "wifi",
+      "mint"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [],
+    "createdAt": {
+      "$date": "2025-07-18T07:40:35.027Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:40:35.027Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fb2f308401741e5f6850"
+    },
+    "title": "Nikon Z8 Mirrorless Camera",
+    "slug": "nikon-z8-mirrorless-camera",
+    "description": "Nikon Z8 full-frame mirrorless camera with 45.7 MP sensor and 8K video.",
+    "shortDescription": "45.7 MP • 8K • Full-Frame",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Nikon%20Z8%20Mirrorless%20Camera/nikon-frontleft.png",
+        "alt": "Z8 Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fb2f308401741e5f6851"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Nikon%20Z8%20Mirrorless%20Camera/nikon-Back.png+",
+        "alt": "Back View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb2f308401741e5f6852"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Nikon%20Z8%20Mirrorless%20Camera/nikon-SideLeft.png",
+        "alt": "Back View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb2f308401741e5f6852"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Nikon%20Z8%20Mirrorless%20Camera/nikon-SideRight.png+",
+        "alt": "Back View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb2f308401741e5f6852"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Nikon%20Z8%20Mirrorless%20Camera/nikonlarge.png+",
+        "alt": "Back View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb2f308401741e5f6852"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Nikon%20Z8%20Mirrorless%20Camera/nikon-Top.png+",
+        "alt": "Back View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb2f308401741e5f6852"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd9"
+    },
+    "brand": "Nikon",
+    "sku": "NIKON-Z8",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Black",
+        "hexCode": "#000000",
+        "stock": 10,
+        "_id": {
+          "$oid": "6879fb2f308401741e5f6853"
+        }
+      }
+    ],
+    "price": 290499,
+    "comparePrice": 307099,
+    "costPrice": 207500,
+    "stock": 10,
+    "lowStockThreshold": 2,
+    "weight": 0.82,
+    "dimensions": {
+      "length": 14.3,
+      "width": 10.5,
+      "height": 8.2
+    },
+    "tags": [
+      "camera",
+      "mirrorless",
+      "nikon",
+      "8k"
+    ],
+    "isActive": true,
+    "isFeatured": false,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "nikon z8",
+      "mirrorless camera"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:43:43.948Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:43:43.948Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fb4e308401741e5f68cd"
+    },
+    "title": "Amazon Echo Show 10 (3rd Gen)",
+    "slug": "amazon-echo-show-10-3rd-gen",
+    "description": "Amazon Echo Show 10 with rotating display, 13 MP camera, and Alexa voice assistant.",
+    "shortDescription": "Rotating 10.1″ display • Alexa",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Amazon%20Echo%20Show%2010%203rd%20Gen/demo.jpg",
+        "alt": "Echo Show 10 Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fb4e308401741e5f68ce"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Amazon%20Echo%20Show%2010%203rd%20Gen/51S35-8vhcL._AC_SL1000_.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb4e308401741e5f68cf"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Amazon%20Echo%20Show%2010%203rd%20Gen/front.jpg",
+        "alt": "Rotated View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb4e308401741e5f68d0"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Amazon%20Echo%20Show%2010%203rd%20Gen/610rNMfq1bL._AC_SL1000_.jpg",
+        "alt": "Rotated View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb4e308401741e5f68d0"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd1"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "brand": "Amazon",
+    "sku": "AMZN-ECHOSHOW10-3RD",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Charcoal",
+        "hexCode": "#3E3E3E",
+        "stock": 25,
+        "_id": {
+          "$oid": "6879fb4e308401741e5f68d1"
+        }
+      }
+    ],
+    "price": 20749,
+    "comparePrice": 23239,
+    "costPrice": 13280,
+    "stock": 25,
+    "lowStockThreshold": 5,
+    "weight": 1.2,
+    "dimensions": {
+      "length": 25.8,
+      "width": 17.6,
+      "height": 10.2
+    },
+    "tags": [
+      "smart display",
+      "alexa",
+      "amazon"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "echo show 10",
+      "alexa display"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:44:14.332Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:44:14.332Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fb91308401741e5f69bb"
+    },
+    "title": "Sony A7 IV Full-Frame Camera",
+    "slug": "sony-a7-iv-full-frame-camera",
+    "description": "Sony A7 IV mirrorless camera with 33 MP sensor and 4K 60fps video.",
+    "shortDescription": "33 MP • 4K 60fps • Full-Frame",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20A7%20IV%20Full-Frame%20Camera/front1.webp",
+        "alt": "A7 IV Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fb91308401741e5f69bc"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20A7%20IV%20Full-Frame%20Camera/front.webp",
+        "alt": "Angle View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb91308401741e5f69bd"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20A7%20IV%20Full-Frame%20Camera/overall.webp",
+        "alt": "Rear View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb91308401741e5f69be"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20A7%20IV%20Full-Frame%20Camera/side.webp",
+        "alt": "Rear View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb91308401741e5f69be"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20A7%20IV%20Full-Frame%20Camera/roll.webp",
+        "alt": "Rear View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb91308401741e5f69be"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20A7%20IV%20Full-Frame%20Camera/roll1.webp",
+        "alt": "Rear View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fb91308401741e5f69be"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd9"
+    },
+    "brand": "Sony",
+    "sku": "SONY-A7IV",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Black",
+        "hexCode": "#000000",
+        "stock": 8,
+        "_id": {
+          "$oid": "6879fb91308401741e5f69bf"
+        }
+      }
+    ],
+    "price": 199199,
+    "comparePrice": 215799,
+    "costPrice": 141100,
+    "stock": 8,
+    "lowStockThreshold": 2,
+    "weight": 0.68,
+    "dimensions": {
+      "length": 13.4,
+      "width": 10.1,
+      "height": 7.8
+    },
+    "tags": [
+      "camera",
+      "mirrorless",
+      "sony",
+      "photography"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "sony a7 iv",
+      "mirrorless camera"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:45:21.919Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:45:21.919Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fcdd308401741e5f69c6"
+    },
+    "title": "Sony WH-1000XM5 Headphones",
+    "slug": "sony-wh-1000xm5-headphones",
+    "description": "Industry-leading noise-canceling headphones with premium sound and comfort.",
+    "shortDescription": "Wireless Over-Ear • Noise Canceling",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20WH-1000XM5%20Headphones/demo.jpg",
+        "alt": "Sony Headphones Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fcdd308401741e5f69c7"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20WH-1000XM5%20Headphones/side.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fcdd308401741e5f69c8"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20WH-1000XM5%20Headphones/side2.jpg",
+        "alt": "Folded View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fcdd308401741e5f69c9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20WH-1000XM5%20Headphones/solo.jpg",
+        "alt": "Folded View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fcdd308401741e5f69c9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20WH-1000XM5%20Headphones/demo1.jpg",
+        "alt": "Folded View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fcdd308401741e5f69c9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Sony%20WH-1000XM5%20Headphones/spec1.jpg",
+        "alt": "Folded View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fcdd308401741e5f69c9"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bcf"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd7"
+    },
+    "brand": "Sony",
+    "sku": "SONY-XM5-BLK",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Black",
+        "hexCode": "#000000",
+        "stock": 30,
+        "_id": {
+          "$oid": "6879fcdd308401741e5f69ca"
+        }
+      }
+    ],
+    "price": 29049,
+    "comparePrice": 33199,
+    "costPrice": 22410,
+    "stock": 30,
+    "lowStockThreshold": 8,
+    "weight": 0.25,
+    "dimensions": {
+      "length": 20,
+      "width": 18,
+      "height": 8
+    },
+    "tags": [
+      "headphones",
+      "sony",
+      "noise cancelling"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "sony xm5",
+      "noise cancelling headphones"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:50:53.589Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:50:53.589Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fd05308401741e5f69ce"
+    },
+    "title": "Dyson V15 Detect Cordless Vacuum",
+    "slug": "dyson-v15-detect-cordless-vacuum",
+    "description": "Dyson's most powerful, most intelligent cordless vacuum. Laser reveals microscopic dust.",
+    "shortDescription": "Laser Smart Vacuum • Cordless • Powerful Suction",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dyson%20V15%20Detect%20Cordless%20Vacuum/front.jpg",
+        "alt": "Dyson V15 Vacuum Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fd05308401741e5f69cf"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dyson%20V15%20Detect%20Cordless%20Vacuum/demo.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd05308401741e5f69d0"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dyson%20V15%20Detect%20Cordless%20Vacuum/overall.jpg",
+        "alt": "Handle View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd05308401741e5f69d1"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd1"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "brand": "Dyson",
+    "sku": "DYSON-V15-DETECT",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Iron/Yellow",
+        "hexCode": "#D4AF37",
+        "stock": 18,
+        "_id": {
+          "$oid": "6879fd05308401741e5f69d2"
+        }
+      }
+    ],
+    "price": 62249,
+    "comparePrice": 66399,
+    "costPrice": 48140,
+    "stock": 18,
+    "lowStockThreshold": 4,
+    "weight": 2.5,
+    "dimensions": {
+      "length": 120,
+      "width": 25,
+      "height": 23
+    },
+    "tags": [
+      "vacuum",
+      "cordless",
+      "home-cleaning"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "dyson vacuum",
+      "cordless vacuum cleaner"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:51:33.320Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:51:33.320Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fd10308401741e5f69d6"
+    },
+    "title": "LG 260 L 3 Star Smart Inverter Refrigerator",
+    "slug": "lg-260-l-3-star-smart-inverter-refrigerator",
+    "description": "Smart inverter compressor fridge with auto-defrost technology and spacious compartments.",
+    "shortDescription": "260L • Smart Inverter • 3-Star Energy Rated",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/LG%20260%20L%203%20Star%20Smart%20Inverter%20Refrigerator/Front.jpg",
+        "alt": "LG Fridge Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fd10308401741e5f69d7"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/LG%20260%20L%203%20Star%20Smart%20Inverter%20Refrigerator/detail.jpg",
+        "alt": "Open Fridge View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd10308401741e5f69d8"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/LG%20260%20L%203%20Star%20Smart%20Inverter%20Refrigerator/top.jpg",
+        "alt": "Side Profile",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd10308401741e5f69d9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/LG%20260%20L%203%20Star%20Smart%20Inverter%20Refrigerator/back.jpg",
+        "alt": "Side Profile",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd10308401741e5f69d9"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd1"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "brand": "LG",
+    "sku": "LG-FRIDGE-260L-3STAR",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Shiny Steel",
+        "hexCode": "#B0B0B0",
+        "stock": 10,
+        "_id": {
+          "$oid": "6879fd10308401741e5f69da"
+        }
+      }
+    ],
+    "price": 29049,
+    "comparePrice": 31539,
+    "costPrice": 21580,
+    "stock": 10,
+    "lowStockThreshold": 3,
+    "weight": 45,
+    "dimensions": {
+      "length": 55,
+      "width": 60,
+      "height": 150
+    },
+    "tags": [
+      "fridge",
+      "lg",
+      "home appliances"
+    ],
+    "isActive": true,
+    "isFeatured": false,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "refrigerator",
+      "inverter fridge",
+      "energy saving"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:51:44.273Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:51:44.273Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fd1a308401741e5f69de"
+    },
+    "title": "Instant Pot Duo 7-in-1 Electric Cooker",
+    "slug": "instant-pot-duo-7-in-1-electric-cooker",
+    "description": "7-in-1 multi-use programmable pressure cooker, slow cooker, rice cooker, steamer, sauté pan & warmer.",
+    "shortDescription": "7 Appliances in 1 • Easy Control Panel",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Instant%20Pot%20Duo%207-in-1%20Electric%20Cooker/front.jpg",
+        "alt": "Instant Pot Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fd1a308401741e5f69df"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Instant%20Pot%20Duo%207-in-1%20Electric%20Cooker/demo.jpg",
+        "alt": "Open Lid View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd1a308401741e5f69e0"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Instant%20Pot%20Duo%207-in-1%20Electric%20Cooker/spec.jpg",
+        "alt": "Cooker Side",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd1a308401741e5f69e1"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Instant%20Pot%20Duo%207-in-1%20Electric%20Cooker/spec1.jpg",
+        "alt": "Cooker Side",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd1a308401741e5f69e1"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd1"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "brand": "Instant",
+    "sku": "INSTANT-DUO-7IN1",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Black Stainless",
+        "hexCode": "#2B2B2B",
+        "stock": 20,
+        "_id": {
+          "$oid": "6879fd1a308401741e5f69e2"
+        }
+      }
+    ],
+    "price": 8299,
+    "comparePrice": 9959,
+    "costPrice": 5810,
+    "stock": 20,
+    "lowStockThreshold": 4,
+    "weight": 5.5,
+    "dimensions": {
+      "length": 32,
+      "width": 32,
+      "height": 32
+    },
+    "tags": [
+      "instant pot",
+      "multi-cooker",
+      "electric appliance"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "instant pot",
+      "electric cooker",
+      "7 in 1 cooker"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:51:54.815Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:51:54.815Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fd25308401741e5f69e6"
+    },
+    "title": "Mi Smart Air Fryer 3.5L",
+    "slug": "mi-smart-air-fryer-3-5l",
+    "description": "Mi Smart Air Fryer with OLED display, smart app control, and healthy cooking options.",
+    "shortDescription": "3.5L Capacity • Smart App Control",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Mi%20Smart%20Air%20Fryer%20/main.jpg",
+        "alt": "Mi Air Fryer Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fd25308401741e5f69e7"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Mi%20Smart%20Air%20Fryer%20/back.jpg",
+        "alt": "Top View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd25308401741e5f69e8"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Mi%20Smart%20Air%20Fryer%20/inner1.jpg",
+        "alt": "Cooking View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd25308401741e5f69e9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Mi%20Smart%20Air%20Fryer%20/measure.jpg",
+        "alt": "Cooking View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd25308401741e5f69e9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Mi%20Smart%20Air%20Fryer%20/inner.jpg",
+        "alt": "Cooking View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd25308401741e5f69e9"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd1"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "brand": "Mi",
+    "sku": "MI-AIRFRYER-3.5L",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "White",
+        "hexCode": "#FFFFFF",
+        "stock": 15,
+        "_id": {
+          "$oid": "6879fd25308401741e5f69ea"
+        }
+      }
+    ],
+    "price": 5809,
+    "comparePrice": 7469,
+    "costPrice": 3984,
+    "stock": 15,
+    "lowStockThreshold": 3,
+    "weight": 3.7,
+    "dimensions": {
+      "length": 28,
+      "width": 30,
+      "height": 32
+    },
+    "tags": [
+      "air fryer",
+      "kitchen",
+      "mi"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "air fryer",
+      "mi fryer",
+      "smart fryer"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:52:05.303Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:52:05.303Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fd2d308401741e5f69ee"
+    },
+    "title": "Philips Hue White Ambiance Smart Bulb",
+    "slug": "philips-hue-white-ambiance-smart-bulb",
+    "description": "Smart LED bulb with adjustable warm-to-cool white light, Bluetooth + Zigbee compatible.",
+    "shortDescription": "Voice Control • Adjustable Brightness",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Philips%20Hue%20White%20Ambiance%20Smart%20Bulb/main.jpg",
+        "alt": "Hue Bulb Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fd2d308401741e5f69ef"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Philips%20Hue%20White%20Ambiance%20Smart%20Bulb/main2.jpg",
+        "alt": "Light Glow",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd2d308401741e5f69f0"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Philips%20Hue%20White%20Ambiance%20Smart%20Bulb/demo.jpg",
+        "alt": "Ambient Setup",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd2d308401741e5f69f1"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Philips%20Hue%20White%20Ambiance%20Smart%20Bulb/demo1.jpg",
+        "alt": "Ambient Setup",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd2d308401741e5f69f1"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bd1"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd4"
+    },
+    "brand": "Philips",
+    "sku": "PHILIPS-HUE-WHT",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "White",
+        "hexCode": "#FFFFFF",
+        "stock": 40,
+        "_id": {
+          "$oid": "6879fd2d308401741e5f69f2"
+        }
+      }
+    ],
+    "price": 1659,
+    "comparePrice": 2074,
+    "costPrice": 996,
+    "stock": 40,
+    "lowStockThreshold": 10,
+    "weight": 0.2,
+    "dimensions": {
+      "length": 6,
+      "width": 6,
+      "height": 11
+    },
+    "tags": [
+      "smart bulb",
+      "philips",
+      "hue",
+      "lighting"
+    ],
+    "isActive": true,
+    "isFeatured": false,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "hue bulb",
+      "smart light",
+      "philips led"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:52:13.984Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:52:13.984Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fd3c308401741e5f69f6"
+    },
+    "title": "Samsung Galaxy Watch 6",
+    "slug": "samsung-galaxy-watch-6",
+    "description": "Samsung Galaxy Watch 6 with fitness tracking and AMOLED display.",
+    "shortDescription": "Smartwatch with fitness and health tracking",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/main.jpg",
+        "alt": "Samsung Watch Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f7"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/overall.jpg",
+        "alt": "Front View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f8"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/back.jpg",
+        "alt": "Wrist View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/side2.jpg",
+        "alt": "Wrist View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/overall1.jpg",
+        "alt": "Wrist View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/spec1.jpg",
+        "alt": "Wrist View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/spec2.jpg",
+        "alt": "Wrist View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f9"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Samsung%20Galaxy%20Watch%206/spec3.jpg",
+        "alt": "Wrist View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69f9"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bcf"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd8"
+    },
+    "brand": "Samsung",
+    "sku": "SAMS-WATCH6-BLK",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Graphite",
+        "hexCode": "#383838",
+        "stock": 22,
+        "_id": {
+          "$oid": "6879fd3c308401741e5f69fa"
+        }
+      }
+    ],
+    "price": 27389,
+    "comparePrice": 29879,
+    "costPrice": 20750,
+    "stock": 22,
+    "lowStockThreshold": 6,
+    "weight": 0.1,
+    "dimensions": {
+      "length": 4.5,
+      "width": 4.5,
+      "height": 1.1
+    },
+    "tags": [
+      "watch",
+      "samsung",
+      "fitness"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "galaxy watch",
+      "samsung watch 6"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:52:28.929Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:52:28.929Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  },
+  {
+    "_id": {
+      "$oid": "6879fd4b308401741e5f69fe"
+    },
+    "title": "Dell XPS 13 Laptop",
+    "slug": "dell-xps-13-laptop",
+    "description": "Dell XPS 13-inch laptop with Intel i7, 16GB RAM, 512GB SSD.",
+    "shortDescription": "13.3-inch FHD • i7 12th Gen • SSD",
+    "images": [
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dell%20XPS%2013%20Laptop/main.jpg",
+        "alt": "Dell XPS 13 Main",
+        "isPrimary": true,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f69ff"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dell%20XPS%2013%20Laptop/demo.jpg",
+        "alt": "Top View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f6a00"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dell%20XPS%2013%20Laptop/camera.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f6a01"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dell%20XPS%2013%20Laptop/spec1.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f6a01"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dell%20XPS%2013%20Laptop/spec2.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f6a01"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dell%20XPS%2013%20Laptop/speaker.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f6a01"
+        }
+      },
+      {
+        "url": "https://yongxcdipsfjprtdvscx.supabase.co/storage/v1/object/public/product-images/electronics-appliances-accessories/home-appliances/Dell%20XPS%2013%20Laptop/spec3.jpg",
+        "alt": "Side View",
+        "isPrimary": false,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f6a01"
+        }
+      }
+    ],
+    "category": {
+      "$oid": "685a59a27cf16e3b1d614bcf"
+    },
+    "subcategory": {
+      "$oid": "685a59a27cf16e3b1d614bd6"
+    },
+    "brand": "Dell",
+    "sku": "DELL-XPS13-INTEL",
+    "sizes": [],
+    "colors": [
+      {
+        "name": "Silver",
+        "hexCode": "#C0C0C0",
+        "stock": 18,
+        "_id": {
+          "$oid": "6879fd4b308401741e5f6a02"
+        }
+      }
+    ],
+    "price": 91299,
+    "comparePrice": 99599,
+    "costPrice": 70550,
+    "stock": 20,
+    "lowStockThreshold": 5,
+    "weight": 1.2,
+    "dimensions": {
+      "length": 30,
+      "width": 20,
+      "height": 1.2
+    },
+    "tags": [
+      "laptop",
+      "dell",
+      "xps13"
+    ],
+    "isActive": true,
+    "isFeatured": false,
+    "rating": {
+      "average": 0,
+      "count": 0
+    },
+    "reviews": [],
+    "seoKeywords": [
+      "dell laptop",
+      "xps 13"
+    ],
+    "createdAt": {
+      "$date": "2025-07-18T07:52:43.814Z"
+    },
+    "updatedAt": {
+      "$date": "2025-07-18T07:52:43.814Z"
+    },
+    "__v": 0,
+    "currency": "INR"
+  }
+]
