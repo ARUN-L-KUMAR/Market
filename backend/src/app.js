@@ -13,14 +13,47 @@ const paymentRoutes = require('./routes/payment.routes');
 
 const app = express();
 
-// Enhance CORS configuration
+// Enhanced CORS configuration for deployment
 app.use(cors({
-  origin: ['http://localhost:3000', 'http://127.0.0.1:3000'],
+ // ...existing code...
+origin: [
+    'http://localhost:3000', 
+    'http://127.0.0.1:3000',
+    'http://localhost:5173', // Vite dev server
+    'https://market-frontend-o49f78bwn-arun-kumars-projects-0de1d555.vercel.app', // Your actual Vercel URL
+    process.env.FRONTEND_URL // Add this environment variable in Render
+],
+// ...existing code...
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
+
 app.use(express.json());
 app.use(express.static('public'));
+
+// Add root route for testing
+app.get('/', (req, res) => {
+  res.json({ 
+    message: 'Market Backend API is running!',
+    status: 'success',
+    endpoints: {
+      products: '/api/products',
+      auth: '/api/auth',
+      orders: '/api/orders',
+      users: '/api/users',
+      categories: '/api/categories',
+      reviews: '/api/reviews',
+      admin: '/api/admin',
+      wishlist: '/api/wishlist',
+      payment: '/api/payment'
+    }
+  });
+});
+
+// Health check route
+app.get('/api/health', (req, res) => {
+  res.json({ status: 'OK', message: 'Server is healthy' });
+});
 
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authRoutes);
