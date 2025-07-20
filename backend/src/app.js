@@ -21,7 +21,7 @@ origin: [
     'http://127.0.0.1:3000',
     'http://localhost:5173', // Vite dev server
     'https://akmarket.vercel.app',
-    'https://market-526jg7k2b-arun-kumars-projects-0de1d555.vercel.app', 
+    'https://market-nz1afvikx-arun-kumars-projects-0de1d555.vercel.app', 
     'https://market-git-master-arun-kumars-projects-0de1d555.vercel.app', // Your actual Vercel URL
     process.env.FRONTEND_URL // Add this environment variable in Render
 ],
