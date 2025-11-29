@@ -94,16 +94,20 @@ exports.updateProduct = async (req, res, next) => {
     console.log('📝 Updating product:', req.params.id);
     console.log('📦 Update data:', JSON.stringify(req.body, null, 2));
     
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { 
-      new: true,
-      runValidators: false // Disable validation to allow partial updates
-    });
+    // Use MongoDB collection directly to completely bypass Mongoose validation
+    const mongoose = require('mongoose');
+    const result = await mongoose.connection.collection('products').updateOne(
+      { _id: new mongoose.Types.ObjectId(req.params.id) },
+      { $set: req.body }
+    );
     
-    if (!product) {
+    if (result.matchedCount === 0) {
       console.log('❌ Product not found:', req.params.id);
       return res.status(404).json({ message: 'Product not found' });
     }
     
+    // Fetch the updated product using findOne to avoid validation
+    const product = await Product.findById(req.params.id).lean();
     console.log('✅ Product updated successfully:', product.title);
     
     // Emit to all clients (if socket is available)
