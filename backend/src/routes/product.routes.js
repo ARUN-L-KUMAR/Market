@@ -6,6 +6,7 @@ const authMiddleware = require('../middleware/auth.middleware');
 
 // Public routes
 router.get('/', productController.getProducts);
+router.get('/version', (req, res) => res.json({ version: '2.0-direct-update', timestamp: new Date() }));
 router.get('/:id', productController.getProductById);
 
 // Admin routes
