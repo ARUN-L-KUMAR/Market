@@ -91,15 +91,19 @@ exports.createProduct = async (req, res, next) => {
 // Update product (admin)
 exports.updateProduct = async (req, res, next) => {
   try {
-    console.log('📝 Updating product:', req.params.id);
+    console.log('📝 [VERSION 2] Updating product:', req.params.id);
     console.log('📦 Update data:', JSON.stringify(req.body, null, 2));
     
     // Use MongoDB collection directly to completely bypass Mongoose validation
     const mongoose = require('mongoose');
+    console.log('🔧 Using direct MongoDB collection update...');
+    
     const result = await mongoose.connection.collection('products').updateOne(
       { _id: new mongoose.Types.ObjectId(req.params.id) },
       { $set: req.body }
     );
+    
+    console.log('📊 MongoDB update result:', result);
     
     if (result.matchedCount === 0) {
       console.log('❌ Product not found:', req.params.id);
