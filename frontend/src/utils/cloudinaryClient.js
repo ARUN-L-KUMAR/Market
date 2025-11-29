@@ -14,6 +14,13 @@ export const uploadImage = async (file) => {
   formData.append('file', file);
   formData.append('upload_preset', cloudinaryConfig.uploadPreset);
 
+  console.log('📤 Uploading to Cloudinary:', {
+    cloudName: cloudinaryConfig.cloudName,
+    uploadPreset: cloudinaryConfig.uploadPreset,
+    fileName: file.name,
+    fileSize: file.size
+  });
+
   try {
     const response = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/image/upload`,
@@ -24,7 +31,9 @@ export const uploadImage = async (file) => {
     );
 
     if (!response.ok) {
-      throw new Error('Upload failed');
+      const errorData = await response.json().catch(() => ({}));
+      console.error('Cloudinary error response:', errorData);
+      throw new Error(`Upload failed: ${errorData.error?.message || response.statusText}`);
     }
 
     const data = await response.json();
