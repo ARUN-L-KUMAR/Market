@@ -6,7 +6,7 @@ import axios from 'axios';
 import Button from '../components/ui/Button';
 import { toast } from 'react-toastify';
 import Modal from '../components/Modal';
-import SupabaseMultiImageUploader from '../components/admin/SupabaseMultiImageUploader';
+import CloudinaryMultiImageUploader from '../components/admin/CloudinaryMultiImageUploader';
 import CurrencyPrice from '../components/CurrencyPrice';
 
 const Admin = () => {
@@ -51,7 +51,7 @@ const Admin = () => {
     });
     
     try {
-      const res = await axios.get(`${apiUrl}/api/admin/products`, {
+      const res = await axios.get(`${apiUrl}/api/admin/products?limit=100`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       console.log('✅ Products response:', res.data);
@@ -653,7 +653,7 @@ const Admin = () => {
                     <div>
                       <label className="block text-sm font-semibold text-gray-700 mb-3">Product Images</label>
                       <div className="border-2 border-dashed border-gray-300 rounded-xl p-4 bg-gray-50/50">
-                        <SupabaseMultiImageUploader
+                        <CloudinaryMultiImageUploader
                           productId={editingProduct || 'new'}
                           images={productForm.images}
                           onChange={imgs => setProductForm({ ...productForm, images: imgs })}

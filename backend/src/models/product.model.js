@@ -22,7 +22,8 @@ const productSchema = new mongoose.Schema({
   images: [{
     url: { type: String, required: true },
     alt: String,
-    isPrimary: { type: Boolean, default: false }
+    isPrimary: { type: Boolean, default: false },
+    publicId: String  // For Cloudinary image deletion
   }],
   category: {
     type: mongoose.Schema.Types.ObjectId,

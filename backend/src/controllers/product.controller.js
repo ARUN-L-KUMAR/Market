@@ -91,8 +91,20 @@ exports.createProduct = async (req, res, next) => {
 // Update product (admin)
 exports.updateProduct = async (req, res, next) => {
   try {
-    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
-    if (!product) return res.status(404).json({ message: 'Product not found' });
+    console.log('📝 Updating product:', req.params.id);
+    console.log('📦 Update data:', JSON.stringify(req.body, null, 2));
+    
+    const product = await Product.findByIdAndUpdate(req.params.id, req.body, { 
+      new: true,
+      runValidators: true // Run model validators
+    });
+    
+    if (!product) {
+      console.log('❌ Product not found:', req.params.id);
+      return res.status(404).json({ message: 'Product not found' });
+    }
+    
+    console.log('✅ Product updated successfully:', product.title);
     
     // Emit to all clients (if socket is available)
     if (io) {
@@ -120,6 +132,12 @@ exports.updateProduct = async (req, res, next) => {
     
     res.json(product);
   } catch (err) {
+    console.error('❌ Error updating product:', err);
+    console.error('❌ Error details:', {
+      name: err.name,
+      message: err.message,
+      stack: err.stack
+    });
     next(err);
   }
 };
