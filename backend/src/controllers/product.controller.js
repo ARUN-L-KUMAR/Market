@@ -1,38 +1,62 @@
 const Product = require('../models/product.model');
-const Review = require('../models/review.model'); // Import Review model to ensure it's registered
+const Review = require('../models/review.model'); // Ensure Review model is registered
 const { io } = require('../utils/socket');
+const { uploadImage, deleteImages } = require('../utils/cloudinary');
+
+
+// Whitelist of fields allowed for product updates
+const ALLOWED_UPDATE_FIELDS = [
+  'title', 'description', 'shortDescription', 'images', 'category', 'subcategory',
+  'brand', 'sku', 'sizes', 'colors', 'price', 'comparePrice', 'costPrice',
+  'stock', 'lowStockThreshold', 'weight', 'dimensions', 'tags',
+  'isActive', 'isFeatured', 'seoTitle', 'seoDescription', 'seoKeywords'
+];
+
+// Sanitize update body to only include allowed fields
+function sanitizeUpdateBody(body) {
+  const sanitized = {};
+  for (const key of ALLOWED_UPDATE_FIELDS) {
+    if (body[key] !== undefined) {
+      sanitized[key] = body[key];
+    }
+  }
+  return sanitized;
+}
 
 // Get products with filters, pagination
 exports.getProducts = async (req, res, next) => {
   try {
     const { category, size, color, minPrice, maxPrice, page = 1, limit = 20, search } = req.query;
     const filter = {};
-    
+
     if (category && category !== 'all') {
       try {
-        // Find category by name instead of using the ID directly
         const Category = require('../models/category.model');
-        const categoryObj = await Category.findOne({ 
+        const categoryObj = await Category.findOne({
           $or: [
-            { name: category }, 
+            { name: category },
             { slug: category.toLowerCase() }
-          ] 
+          ]
         });
-        
+
         if (categoryObj) {
           filter.category = categoryObj._id;
         }
       } catch (err) {
-        console.error('Error finding category:', err);
+        console.error('Error finding category:', err.message);
       }
     }
-    
+
     if (size) filter.sizes = size;
     if (color) filter.colors = color;
     if (minPrice || maxPrice) filter.price = {};
     if (minPrice) filter.price.$gte = Number(minPrice);
     if (maxPrice) filter.price.$lte = Number(maxPrice);
-    if (search) filter.title = { $regex: search, $options: 'i' };
+    if (search) {
+      // Escape special regex characters to prevent ReDoS
+      const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      filter.title = { $regex: escapedSearch, $options: 'i' };
+    }
 
     const products = await Product.find(filter)
       .populate('category')
@@ -65,14 +89,13 @@ exports.getProductById = async (req, res, next) => {
 // Create product (admin)
 exports.createProduct = async (req, res, next) => {
   try {
-    const product = new Product(req.body);
+    const sanitizedBody = sanitizeUpdateBody(req.body);
+    const product = new Product(sanitizedBody);
     await product.save();
-    
-    // Emit to all clients (if socket is available)
+
+    // Emit to all clients
     if (io) {
       io.emit('productCreated', { product });
-      
-      // Emit to admin room for dashboard updates
       io.to('adminRoom').emit('productActivity', {
         type: 'PRODUCT_CREATED',
         productId: product._id,
@@ -81,55 +104,42 @@ exports.createProduct = async (req, res, next) => {
         timestamp: new Date()
       });
     }
-    
+
     res.status(201).json(product);
   } catch (err) {
     next(err);
   }
 };
 
-// Update product (admin)
+// Update product (admin) — uses Mongoose validation
 exports.updateProduct = async (req, res, next) => {
   try {
-    console.log('📝 [VERSION 2] Updating product:', req.params.id);
-    console.log('📦 Update data:', JSON.stringify(req.body, null, 2));
-    
-    // Use MongoDB collection directly to completely bypass Mongoose validation
-    const mongoose = require('mongoose');
-    console.log('🔧 Using direct MongoDB collection update...');
-    
-    const result = await mongoose.connection.collection('products').updateOne(
-      { _id: new mongoose.Types.ObjectId(req.params.id) },
-      { $set: req.body }
+    const sanitizedBody = sanitizeUpdateBody(req.body);
+
+    const product = await Product.findByIdAndUpdate(
+      req.params.id,
+      sanitizedBody,
+      { new: true, runValidators: true }
     );
-    
-    console.log('📊 MongoDB update result:', result);
-    
-    if (result.matchedCount === 0) {
-      console.log('❌ Product not found:', req.params.id);
+
+    if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
-    
-    // Fetch the updated product using findOne to avoid validation
-    const product = await Product.findById(req.params.id).lean();
-    console.log('✅ Product updated successfully:', product.title);
-    
-    // Emit to all clients (if socket is available)
+
+    // Emit to all clients
     if (io) {
       io.emit('productUpdated', { product });
-      
-      // Emit to admin room for dashboard updates
       io.to('adminRoom').emit('productActivity', {
         type: 'PRODUCT_UPDATED',
         productId: product._id,
         productName: product.title,
         action: 'updated',
         timestamp: new Date(),
-        changes: req.body
+        changes: Object.keys(sanitizedBody)
       });
-      
+
       // If stock was updated, emit a specific stock update event
-      if (req.body.stock !== undefined) {
+      if (sanitizedBody.stock !== undefined) {
         io.to(`product-${product._id}`).emit('stockUpdate', {
           productId: product._id,
           stock: product.stock,
@@ -137,30 +147,28 @@ exports.updateProduct = async (req, res, next) => {
         });
       }
     }
-    
+
     res.json(product);
   } catch (err) {
-    console.error('❌ Error updating product:', err);
-    console.error('❌ Error details:', {
-      name: err.name,
-      message: err.message,
-      stack: err.stack
-    });
     next(err);
   }
 };
 
-// Delete product (admin)
+// Delete product (admin) — with smart Cloudinary image cleanup
 exports.deleteProduct = async (req, res, next) => {
   try {
     const product = await Product.findByIdAndDelete(req.params.id);
     if (!product) return res.status(404).json({ message: 'Product not found' });
-    
-    // Emit to all clients (if socket is available)
+
+    // Clean up Cloudinary images using the smart utility (extracts publicId from URL if needed)
+    if (product.images && product.images.length > 0) {
+      deleteImages(product.images).catch(err => {
+        console.error(`Background cleanup failed for product ${product._id}:`, err.message);
+      });
+    }
+    // Emit to all clients
     if (io) {
       io.emit('productDeleted', { id: req.params.id });
-      
-      // Emit to admin room for dashboard updates
       io.to('adminRoom').emit('productActivity', {
         type: 'PRODUCT_DELETED',
         productId: product._id,
@@ -169,25 +177,61 @@ exports.deleteProduct = async (req, res, next) => {
         timestamp: new Date()
       });
     }
-    
+
     res.json({ message: 'Product deleted' });
   } catch (err) {
     next(err);
   }
 };
 
-// Get all products (admin)
+// Get all products (admin) — with pagination
 exports.getAllProducts = async (req, res, next) => {
   try {
-    const products = await Product.find()
-      .populate('category')
-      .populate({
-        path: 'reviews',
-        select: 'rating comment user createdAt',
-        options: { limit: 2 }
-      });
-    res.json({ products });
+    const { page = 1, limit = 50 } = req.query;
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [products, total] = await Promise.all([
+      Product.find()
+        .populate('category')
+        .populate({
+          path: 'reviews',
+          select: 'rating comment user createdAt',
+          options: { limit: 2 }
+        })
+        .skip(skip)
+        .limit(Number(limit)),
+      Product.countDocuments()
+    ]);
+
+    res.json({ products, total, page: Number(page), limit: Number(limit) });
   } catch (err) {
     next(err);
+  }
+};
+
+// Upload image to Cloudinary (admin)
+exports.uploadImage = async (req, res, next) => {
+  try {
+    // Expecting base64 string or image URL in req.body.image
+    const { image, folder = 'products' } = req.body;
+
+    if (!image) {
+      return res.status(400).json({ message: 'No image data provided' });
+    }
+
+    const result = await uploadImage(image, { folder });
+
+    res.status(200).json({
+      success: true,
+      image: {
+        url: result.url,
+        publicId: result.publicId,
+        width: result.width,
+        height: result.height
+      }
+    });
+  } catch (err) {
+    console.error('Cloudinary upload error:', err.message);
+    res.status(500).json({ message: 'Failed to upload image to Cloudinary' });
   }
 };

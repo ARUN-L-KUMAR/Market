@@ -7,18 +7,18 @@ exports.protect = async (req, res, next) => {
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
     return res.status(401).json({ message: 'Please log in to access this resource' });
   }
-  
+
   const token = authHeader.split(' ')[1];
-  
+
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    
+
     // Check if user still exists
     const user = await User.findById(decoded.id).select('-password');
     if (!user) {
       return res.status(401).json({ message: 'The user associated with this token no longer exists' });
     }
-    
+
     // Add user to request object
     req.user = user;
     next();
@@ -39,11 +39,28 @@ exports.restrictTo = (...roles) => {
     if (!req.user) {
       return res.status(401).json({ message: 'Please log in to access this resource' });
     }
-    
+
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ message: 'You do not have permission to perform this action' });
     }
-    
+
     next();
   };
+};
+
+// Check if email is verified
+exports.verifiedOnly = (req, res, next) => {
+  if (!req.user) {
+    return res.status(401).json({ message: 'Please log in to access this resource' });
+  }
+
+  if (!req.user.isEmailVerified) {
+    return res.status(403).json({
+      message: 'Please verify your email to access this resource',
+      isEmailVerified: false,
+      email: req.user.email
+    });
+  }
+
+  next();
 };

@@ -8,19 +8,23 @@
     "dev": "nodemon src/server.js",
     "build": "npm install"
   },
-   "engines": {
+  "engines": {
     "node": ">=16.0.0"
   },
   "dependencies": {
     "axios": "^1.10.0",
     "bcryptjs": "^2.4.3",
     "chalk": "^5.4.1",
+    "cloudinary": "^2.9.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.18.2",
+    "express-rate-limit": "^7.1.5",
+    "express-validator": "^7.0.1",
+    "helmet": "^7.1.0",
     "jsonwebtoken": "^9.0.2",
-    "lucide-react": "^0.525.0",
     "mongoose": "^7.6.3",
+    "nodemailer": "^8.0.1",
     "socket.io": "^4.7.5"
   },
   "devDependencies": {

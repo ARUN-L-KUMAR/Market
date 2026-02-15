@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ShoppingBag, 
-  Heart, 
-  User, 
-  Menu, 
-  X, 
+import {
+  ShoppingBag,
+  Heart,
+  User,
+  Menu,
+  X,
   Search,
   ShoppingCart,
   Settings,
@@ -27,7 +27,7 @@ const Navbar = ({ isConnected = true }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isWishlistOpen, setIsWishlistOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
-  const { user } = useSelector(state => state.user);
+  const { user, token } = useSelector(state => state.user);
   const { items: cartItems } = useSelector(state => state.cart);
   const { items: wishlistItems } = useSelector(state => state.wishlist);
   const dispatch = useDispatch();
@@ -44,7 +44,7 @@ const Navbar = ({ isConnected = true }) => {
 
   return (
     <>
-      <motion.nav 
+      <motion.nav
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         className="bg-white/95 backdrop-blur-md shadow-lg border-b border-gray-200 sticky top-0 z-50"
@@ -52,7 +52,7 @@ const Navbar = ({ isConnected = true }) => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <motion.div 
+            <motion.div
               className="flex items-center"
               whileHover={{ scale: 1.05 }}
             >
@@ -96,7 +96,7 @@ const Navbar = ({ isConnected = true }) => {
                 <span className="w-4 h-4 mr-2">❓</span>
                 FAQ
               </Link> */}
-              {user?.isAdmin && (
+              {(user?.isAdmin || user?.role === 'admin') && (
                 <Link to="/admin" className="flex items-center px-3 py-2 rounded-xl text-sm font-medium bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 hover:from-indigo-100 hover:to-purple-100 border border-indigo-200 hover:border-indigo-300 transition-all duration-200 shadow-sm hover:shadow-md">
                   <Settings className="w-4 h-4 mr-2" />
                   Admin Panel
@@ -119,9 +119,9 @@ const Navbar = ({ isConnected = true }) => {
               </motion.button>
 
               {/* Connection Status */}
-              <StatusIndicator 
-                status={isConnected ? 'online' : 'offline'} 
-                label={isConnected ? 'Connected' : 'Disconnected'} 
+              <StatusIndicator
+                status={isConnected ? 'online' : 'offline'}
+                label={isConnected ? 'Connected' : 'Disconnected'}
                 animated={!isConnected}
               />
 
@@ -135,9 +135,9 @@ const Navbar = ({ isConnected = true }) => {
                 >
                   <Heart className="w-5 h-5" />
                   {wishlistCount > 0 && (
-                    <Badge 
-                      variant="danger" 
-                      size="xs" 
+                    <Badge
+                      variant="danger"
+                      size="xs"
                       className="absolute -top-1 -right-1 min-w-[18px] h-[18px] flex items-center justify-center"
                     >
                       {wishlistCount}
@@ -170,7 +170,7 @@ const Navbar = ({ isConnected = true }) => {
                     </div>
                     <div className="hidden sm:flex flex-col">
                       <span className="font-medium text-sm leading-tight">{user.name}</span>
-                      {user?.isAdmin && (
+                      {(user?.isAdmin || user?.role === 'admin') && (
                         <span className="text-xs text-indigo-600 font-medium">Admin</span>
                       )}
                     </div>
@@ -194,33 +194,33 @@ const Navbar = ({ isConnected = true }) => {
                         exit={{ opacity: 0, y: 10, scale: 0.95 }}
                         className="absolute right-0 top-full mt-2 w-48 bg-white rounded-2xl shadow-xl border border-gray-200 py-2 z-50"
                       >
-                        <Link 
-                          to="/profile" 
+                        <Link
+                          to="/profile"
                           className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 group"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <User className="w-4 h-4 mr-3 group-hover:text-blue-600 transition-colors duration-200" />
                           Profile
                         </Link>
-                        <Link 
-                          to="/orders" 
+                        <Link
+                          to="/orders"
                           className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 group"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Package className="w-4 h-4 mr-3 group-hover:text-blue-600 transition-colors duration-200" />
                           Orders
                         </Link>
-                        <Link 
-                          to="/addresses" 
+                        <Link
+                          to="/addresses"
                           className="flex items-center px-4 py-3 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-200 group"
                           onClick={() => setIsUserMenuOpen(false)}
                         >
                           <Settings className="w-4 h-4 mr-3 group-hover:text-blue-600 transition-colors duration-200" />
                           Addresses
                         </Link>
-                        {user?.isAdmin && (
-                          <Link 
-                            to="/admin" 
+                        {(user?.isAdmin || user?.role === 'admin') && (
+                          <Link
+                            to="/admin"
                             className="flex items-center px-4 py-3 text-sm text-indigo-700 bg-gradient-to-r from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100 transition-colors duration-200 group border-t border-gray-200"
                             onClick={() => setIsUserMenuOpen(false)}
                           >
@@ -229,7 +229,7 @@ const Navbar = ({ isConnected = true }) => {
                           </Link>
                         )}
                         <hr className="my-1 border-gray-200" />
-                        <button 
+                        <button
                           onClick={handleLogout}
                           className="flex items-center px-4 py-3 text-sm text-red-600 hover:bg-red-50 transition-colors duration-200 w-full text-left group"
                         >
@@ -242,15 +242,15 @@ const Navbar = ({ isConnected = true }) => {
                 </div>
               ) : (
                 <div className="flex items-center space-x-2">
-                  <Button 
-                    variant="ghost" 
+                  <Button
+                    variant="ghost"
                     size="sm"
                     onClick={() => navigate('/login')}
                   >
                     Login
                   </Button>
-                  <Button 
-                    variant="primary" 
+                  <Button
+                    variant="primary"
                     size="sm"
                     onClick={() => navigate('/signup')}
                   >
@@ -309,13 +309,13 @@ const Navbar = ({ isConnected = true }) => {
                     <span className="w-4 h-4 mr-3">❓</span>
                     FAQ
                   </Link>
-                  
+
                   {/* Currency Switcher in Mobile Menu */}
                   <div className="px-4 py-3">
                     <CurrencySwitcher />
                   </div>
-                  
-                  {user?.isAdmin && (
+
+                  {(user?.isAdmin || user?.role === 'admin') && (
                     <Link to="/admin" className="flex items-center px-4 py-3 text-base font-medium bg-gradient-to-r from-indigo-50 to-purple-50 text-indigo-700 hover:from-indigo-100 hover:to-purple-100 rounded-xl border border-indigo-200 hover:border-indigo-300 transition-all duration-200 shadow-sm" onClick={() => setIsMenuOpen(false)}>
                       <Settings className="w-4 h-4 mr-3" />
                       Admin Panel
@@ -329,15 +329,15 @@ const Navbar = ({ isConnected = true }) => {
       </motion.nav>
 
       {/* Wishlist Sidebar */}
-      <WishlistSidebar 
-        isOpen={isWishlistOpen} 
-        onClose={() => setIsWishlistOpen(false)} 
+      <WishlistSidebar
+        isOpen={isWishlistOpen}
+        onClose={() => setIsWishlistOpen(false)}
       />
 
       {/* Click outside to close user menu */}
       {isUserMenuOpen && (
-        <div 
-          className="fixed inset-0 z-40" 
+        <div
+          className="fixed inset-0 z-40"
           onClick={() => setIsUserMenuOpen(false)}
         />
       )}

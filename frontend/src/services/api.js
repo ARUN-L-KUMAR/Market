@@ -1,9 +1,6 @@
 import axios from 'axios';
 import { API_CONFIG } from '../config/appConfig';
 
-// For debugging:
-console.log('API URL being used:', API_CONFIG.baseUrl);
-
 // Create a base axios instance
 const apiClient = axios.create({
   baseURL: API_CONFIG.baseUrl,
@@ -18,12 +15,12 @@ apiClient.interceptors.request.use(
   config => {
     // Get token from localStorage or Redux store
     const token = localStorage.getItem('token') || JSON.parse(localStorage.getItem('user'))?.token;
-    
+
     // If token exists, add Authorization header
     if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     return config;
   },
   error => {
@@ -39,36 +36,41 @@ apiClient.interceptors.response.use(
   error => {
     // Handle network errors more gracefully
     if (!error.response) {
-      console.error('API Network Error:', error);
+      console.error('API Network Error:', error.message);
       return Promise.reject({
         message: 'Network error. Please check your internet connection or try again later.',
         originalError: error
       });
     }
-    
+
     // Handle specific status codes
     switch (error.response.status) {
       case 401:
-        // Unauthorized - clear user session and redirect to login
-        console.warn('Unauthorized API request:', error.response);
-        // You could dispatch a logout action here
+        // Unauthorized — clear session and redirect to login
+        console.warn('Session expired or invalid token');
+        localStorage.removeItem('user');
+        localStorage.removeItem('token');
+        // Only redirect if not already on login/register pages
+        if (!window.location.pathname.includes('/login') && !window.location.pathname.includes('/signup')) {
+          window.location.href = '/login';
+        }
         break;
       case 403:
-        // Forbidden
-        console.warn('Forbidden API request:', error.response);
+        console.warn('Forbidden API request');
         break;
       case 404:
-        // Not Found
-        console.warn('API resource not found:', error.response);
+        console.warn('API resource not found');
+        break;
+      case 429:
+        console.warn('Rate limited — too many requests');
         break;
       case 500:
-        // Server Error
-        console.error('API server error:', error.response);
+        console.error('API server error');
         break;
       default:
-        console.error(`API error (${error.response.status}):`, error.response);
+        break;
     }
-    
+
     return Promise.reject(error);
   }
 );
@@ -85,7 +87,13 @@ export const authAPI = {
     return await apiClient.post(API_CONFIG.endpoints.auth.forgotPassword, { email });
   },
   resetPassword: async (token, newPassword) => {
-    return await apiClient.post(API_CONFIG.endpoints.auth.resetPassword, { token, newPassword });
+    return await apiClient.post(API_CONFIG.endpoints.auth.resetPassword, { token, password: newPassword });
+  },
+  verifyEmail: async (token) => {
+    return await apiClient.post(API_CONFIG.endpoints.auth.verifyEmail, { token });
+  },
+  resendVerification: async (email) => {
+    return await apiClient.post(API_CONFIG.endpoints.auth.resendVerification, { email });
   }
 };
 

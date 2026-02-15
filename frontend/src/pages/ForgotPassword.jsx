@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
+import { authAPI } from '../services/api';
 import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { toast } from 'react-toastify';
@@ -8,10 +8,7 @@ import { toast } from 'react-toastify';
 const ForgotPassword = () => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
-  const [step, setStep] = useState('request'); // 'request', 'verify', 'reset'
-  const [verificationCode, setVerificationCode] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  const [submitted, setSubmitted] = useState(false);
 
   const handleEmailSubmit = async (e) => {
     e.preventDefault();
@@ -22,86 +19,27 @@ const ForgotPassword = () => {
 
     try {
       setLoading(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      await axios.post(`${apiUrl}/api/auth/forgot-password`, { email });
-      toast.success('Reset code sent to your email');
-      setStep('verify');
+      const response = await authAPI.forgotPassword(email);
+      toast.success(response.data.message || 'Reset link sent to your email');
+      setSubmitted(true);
     } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to send reset code');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleVerificationSubmit = async (e) => {
-    e.preventDefault();
-    if (!verificationCode) {
-      toast.error('Please enter the verification code');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      await axios.post(`${apiUrl}/api/auth/verify-reset-code`, { 
-        email, 
-        resetCode: verificationCode 
-      });
-      toast.success('Code verified successfully');
-      setStep('reset');
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Invalid verification code');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handlePasswordReset = async (e) => {
-    e.preventDefault();
-    
-    if (!newPassword || !confirmPassword) {
-      toast.error('Please fill in all fields');
-      return;
-    }
-
-    if (newPassword.length < 6) {
-      toast.error('Password must be at least 6 characters long');
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      toast.error('Passwords do not match');
-      return;
-    }
-
-    try {
-      setLoading(true);
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      await axios.post(`${apiUrl}/api/auth/reset-password`, { 
-        email, 
-        resetCode: verificationCode,
-        newPassword
-      });
-      toast.success('Password reset successful');
-      window.location.href = '/login';
-    } catch (error) {
-      toast.error(error.response?.data?.message || 'Failed to reset password');
+      toast.error(error.response?.data?.message || 'Failed to send reset link');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 px-6 sm:px-6 lg:px-8">
+    <div className="min-h-[80vh] bg-gray-50 flex flex-col justify-center py-12 px-6 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">
           Account Recovery
         </h2>
-        <div className="bg-white py-8 px-6 rounded-2xl shadow-card sm:px-10">
-          {step === 'request' && (
+        <div className="bg-white py-8 px-6 rounded-2xl shadow-card sm:px-10 border border-gray-100">
+          {!submitted ? (
             <>
               <p className="text-center text-gray-600 mb-6">
-                Enter your email address and we'll send you a code to reset your password
+                Enter your email address and we'll send you a link to reset your password.
               </p>
               <form className="space-y-6" onSubmit={handleEmailSubmit}>
                 <Input
@@ -111,93 +49,50 @@ const ForgotPassword = () => {
                   name="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
+                  placeholder="name@example.com"
                   required
                   autoFocus
                 />
                 <Button
                   type="submit"
-                  fullWidth
+                  className="w-full"
                   loading={loading}
                   disabled={loading || !email}
                 >
-                  Send Reset Code
+                  Send Reset Link
                 </Button>
               </form>
             </>
-          )}
-
-          {step === 'verify' && (
-            <>
-              <p className="text-center text-gray-600 mb-6">
-                We've sent a verification code to <strong>{email}</strong>. 
-                Please check your inbox and enter the code below.
+          ) : (
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                </svg>
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Check Your Email</h3>
+              <p className="text-gray-600 mb-8">
+                If an account exists for <strong>{email}</strong>, you will receive a password reset link shortly.
               </p>
-              <form className="space-y-6" onSubmit={handleVerificationSubmit}>
-                <Input
-                  label="Verification Code"
-                  type="text"
-                  id="verificationCode"
-                  name="verificationCode"
-                  value={verificationCode}
-                  onChange={(e) => setVerificationCode(e.target.value)}
-                  required
-                  autoFocus
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  loading={loading}
-                  disabled={loading || !verificationCode}
-                >
-                  Verify Code
-                </Button>
-              </form>
-            </>
+              <Button
+                variant="outline"
+                className="w-full"
+                onClick={() => setSubmitted(false)}
+              >
+                Try a different email
+              </Button>
+            </div>
           )}
 
-          {step === 'reset' && (
-            <>
-              <p className="text-center text-gray-600 mb-6">
-                Set a new password for your account
-              </p>
-              <form className="space-y-6" onSubmit={handlePasswordReset}>
-                <Input
-                  label="New Password"
-                  type="password"
-                  id="newPassword"
-                  name="newPassword"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  required
-                  autoFocus
-                />
-                <Input
-                  label="Confirm Password"
-                  type="password"
-                  id="confirmPassword"
-                  name="confirmPassword"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  required
-                />
-                <Button
-                  type="submit"
-                  fullWidth
-                  loading={loading}
-                  disabled={loading || !newPassword || !confirmPassword}
-                >
-                  Reset Password
-                </Button>
-              </form>
-            </>
-          )}
-
-          <div className="mt-6">
+          <div className="mt-6 pt-6 border-t border-gray-100">
             <div className="text-center">
               <Link
                 to="/login"
-                className="font-medium text-primary-600 hover:text-primary-500"
+                className="font-medium text-blue-600 hover:text-blue-500 flex items-center justify-center gap-2"
               >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                </svg>
                 Back to Login
               </Link>
             </div>

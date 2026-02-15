@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
 const productRoutes = require('./routes/product.routes');
 const authRoutes = require('./routes/auth.routes');
 const orderRoutes = require('./routes/order.routes');
@@ -9,34 +10,49 @@ const reviewRoutes = require('./routes/review.routes');
 const adminRoutes = require('./routes/admin.routes');
 const wishlistRoutes = require('./routes/wishlist.routes');
 const paymentRoutes = require('./routes/payment.routes');
-// const errorMiddleware = require('./middleware/error.middleware');
+const errorMiddleware = require('./middleware/error.middleware');
 
 const app = express();
 
+// Simple request logger for debugging
+app.use((req, res, next) => {
+  console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
+  next();
+});
+
+// Trust proxy — required for rate limiting and HTTPS behind Render/Vercel reverse proxy
+app.set('trust proxy', 1);
+
+// Security headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: 'cross-origin' },
+  contentSecurityPolicy: false // Disable CSP for API server
+}));
+
 // Enhanced CORS configuration for deployment
+const allowedOrigins = [
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://localhost:5173',
+  'https://akmarket.vercel.app',
+  'https://market-nz1afvikx-arun-kumars-projects-0de1d555.vercel.app',
+  'https://market-git-master-arun-kumars-projects-0de1d555.vercel.app',
+  process.env.FRONTEND_URL
+].filter(Boolean);
+
 app.use(cors({
- // ...existing code...
-origin: [
-    'http://localhost:3000', 
-    'http://127.0.0.1:3000',
-    'http://localhost:5173', // Vite dev server
-    'https://akmarket.vercel.app',
-    'https://market-nz1afvikx-arun-kumars-projects-0de1d555.vercel.app', 
-    'https://market-git-master-arun-kumars-projects-0de1d555.vercel.app', // Your actual Vercel URL
-    process.env.FRONTEND_URL // Add this environment variable in Render
-],
-// ...existing code...
+  origin: allowedOrigins,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json({ limit: '10mb' }));
 app.use(express.static('public'));
 
 // Add root route for testing
 app.get('/', (req, res) => {
-  res.json({ 
-    message: 'Market Backend API is running!',
+  res.json({
+    message: 'MARKET API is running!',
     status: 'success',
     endpoints: {
       products: '/api/products',
@@ -67,6 +83,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/payment', paymentRoutes);
 
-// app.use(errorMiddleware);
+// Global error handler (must be after routes)
+app.use(errorMiddleware);
 
 module.exports = app;

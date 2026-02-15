@@ -26,10 +26,12 @@ import ProtectedRoute from './components/ProtectedRoute'
 import ForgotPassword from './pages/ForgotPassword'
 import Wishlist from './pages/Wishlist'
 import ErrorBoundary from './components/ErrorBoundary'
+import VerifyEmail from './pages/VerifyEmail'
 import AdminRoutes from './routes/adminRoutes'
 import PayUPayment from './pages/payu-payment';
 import PaymentSuccess from './pages/payment-success';
 import PaymentFailure from './pages/payment-failure';
+import ResetPassword from './pages/ResetPassword'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -45,7 +47,9 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="checkout" element={<ProtectedRoute><Checkout /></ProtectedRoute>} />
               <Route path="login" element={<Login />} />
               <Route path="signup" element={<Signup />} />
+              <Route path="verify-email" element={<VerifyEmail />} />
               <Route path="forgot-password" element={<ForgotPassword />} />
+              <Route path="reset-password" element={<ResetPassword />} />
               <Route path="profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
               <Route path="wishlist" element={<ProtectedRoute><Wishlist /></ProtectedRoute>} />
               <Route path="order-confirmation/:id" element={<ProtectedRoute><OrderConfirmation /></ProtectedRoute>} />
@@ -66,7 +70,7 @@ ReactDOM.createRoot(document.getElementById('root')).render(
                   <div className="bg-white rounded-2xl shadow-card p-8 max-w-lg w-full">
                     <h2 className="text-2xl font-bold text-gray-800 mb-4">Page Not Found</h2>
                     <p className="text-gray-600 mb-6">The page you are looking for doesn't exist or has been moved.</p>
-                    <button 
+                    <button
                       onClick={() => window.location.href = '/'}
                       className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
                     >

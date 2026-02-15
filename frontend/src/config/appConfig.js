@@ -7,8 +7,8 @@
 // API Configuration
 export const API_CONFIG = {
   // Base URL for API requests
-  baseUrl: import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com',
-  
+  baseUrl: import.meta.env.VITE_API_URL || 'http://localhost:3001',
+
   // API Endpoints
   endpoints: {
     // Auth endpoints
@@ -17,9 +17,11 @@ export const API_CONFIG = {
       register: '/api/auth/register',
       forgotPassword: '/api/auth/forgot-password',
       resetPassword: '/api/auth/reset-password',
-      verifyToken: '/api/auth/verify-token'
+      verifyToken: '/api/auth/verify-token',
+      verifyEmail: '/api/auth/verify-email',
+      resendVerification: '/api/auth/resend-verification'
     },
-    
+
     // Product endpoints
     products: {
       getAll: '/api/products',
@@ -29,7 +31,7 @@ export const API_CONFIG = {
       featured: '/api/products/featured',
       trending: '/api/products/trending'
     },
-    
+
     // User endpoints
     user: {
       profile: '/api/auth/profile',
@@ -38,7 +40,7 @@ export const API_CONFIG = {
       wishlist: '/api/wishlist',
       cart: '/api/cart'
     },
-    
+
     // Orders endpoints
     orders: {
       create: '/api/orders',
@@ -46,7 +48,7 @@ export const API_CONFIG = {
       cancel: (id) => `/api/orders/${id}/cancel`,
       trackOrder: (id) => `/api/orders/${id}/track`
     },
-    
+
     // Wishlist endpoints
     wishlist: {
       getAll: '/api/wishlist',
@@ -54,17 +56,17 @@ export const API_CONFIG = {
       remove: (productId) => `/api/wishlist/${productId}`
     }
   },
-  
+
   // Request headers
   headers: (token = null) => {
     const headers = {
       'Content-Type': 'application/json'
     };
-    
+
     if (token) {
       headers['Authorization'] = `Bearer ${token}`;
     }
-    
+
     return headers;
   }
 };
@@ -93,7 +95,7 @@ export const UI_CONFIG = {
     pauseOnHover: true,
     draggable: true
   },
-  
+
   // Pagination defaults
   pagination: {
     defaultPageSize: 12,

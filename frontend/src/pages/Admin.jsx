@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
@@ -8,21 +8,23 @@ import { toast } from 'react-toastify';
 import Modal from '../components/Modal';
 import CloudinaryMultiImageUploader from '../components/admin/CloudinaryMultiImageUploader';
 import CurrencyPrice from '../components/CurrencyPrice';
+import { logout } from '../store/store';
 
 const Admin = () => {
   const { token, user } = useSelector(state => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('products');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Products state
   const [products, setProducts] = useState([]);
-  const [productForm, setProductForm] = useState({ 
-    title: '', 
-    price: '', 
-    description: '', 
-    category: '', 
+  const [productForm, setProductForm] = useState({
+    title: '',
+    price: '',
+    description: '',
+    category: '',
     stock: '',
     images: []
   });
@@ -39,7 +41,7 @@ const Admin = () => {
   const [users, setUsers] = useState([]);
 
   const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-  
+
   // Fetch products
   const fetchProducts = async () => {
     setLoading(true);
@@ -49,7 +51,7 @@ const Admin = () => {
       token: token ? 'Present' : 'Missing',
       endpoint: `${apiUrl}/api/admin/products`
     });
-    
+
     try {
       const res = await axios.get(`${apiUrl}/api/admin/products?limit=100`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -78,7 +80,7 @@ const Admin = () => {
       token: token ? 'Present' : 'Missing',
       endpoint: `${apiUrl}/api/admin/orders`
     });
-    
+
     try {
       const res = await axios.get(`${apiUrl}/api/admin/orders`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -102,7 +104,7 @@ const Admin = () => {
       token: token ? 'Present' : 'Missing',
       endpoint: `${apiUrl}/api/admin/users`
     });
-    
+
     try {
       const res = await axios.get(`${apiUrl}/api/admin/users`, {
         headers: { Authorization: `Bearer ${token}` }
@@ -127,10 +129,10 @@ const Admin = () => {
       activeTab,
       localStorageToken: localStorage.getItem('token') ? 'Present in localStorage' : 'Missing in localStorage'
     });
-    
+
     // Check if user has admin permissions (either isAdmin flag or role)
     const hasAdminAccess = user?.isAdmin === true || user?.role === 'admin';
-    
+
     if (!token || !hasAdminAccess) {
       console.log('❌ Authentication check failed:', {
         hasToken: !!token,
@@ -140,9 +142,9 @@ const Admin = () => {
       });
       return;
     }
-    
+
     console.log('✅ Authentication passed, fetching data for tab:', activeTab);
-    
+
     // Load all data immediately when component mounts
     if (activeTab === 'products' && products.length === 0) {
       fetchProducts();
@@ -165,13 +167,13 @@ const Admin = () => {
     e.preventDefault();
     try {
       if (editingProduct) {
-        await axios.put(`${apiUrl}/api/products/${editingProduct}`, productForm, { 
-          headers: { Authorization: `Bearer ${token}` } 
+        await axios.put(`${apiUrl}/api/products/${editingProduct}`, productForm, {
+          headers: { Authorization: `Bearer ${token}` }
         });
         toast.success('Product updated successfully');
       } else {
-        await axios.post(`${apiUrl}/api/products`, productForm, { 
-          headers: { Authorization: `Bearer ${token}` } 
+        await axios.post(`${apiUrl}/api/products`, productForm, {
+          headers: { Authorization: `Bearer ${token}` }
         });
         toast.success('Product created successfully');
       }
@@ -207,10 +209,10 @@ const Admin = () => {
 
   const handleDeleteProduct = async () => {
     if (!selectedProduct) return;
-    
+
     try {
-      await axios.delete(`${apiUrl}/api/admin/products/${selectedProduct._id}`, { 
-        headers: { Authorization: `Bearer ${token}` } 
+      await axios.delete(`${apiUrl}/api/admin/products/${selectedProduct._id}`, {
+        headers: { Authorization: `Bearer ${token}` }
       });
       toast.success('Product deleted successfully');
       fetchProducts();
@@ -262,8 +264,8 @@ const Admin = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
             </svg>
           </motion.div>
-          
-          <motion.h1 
+
+          <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 }}
@@ -271,8 +273,8 @@ const Admin = () => {
           >
             Authentication Required
           </motion.h1>
-          
-          <motion.p 
+
+          <motion.p
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.4 }}
@@ -280,13 +282,13 @@ const Admin = () => {
           >
             Please log in to access the admin dashboard
           </motion.p>
-          
+
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.5 }}
           >
-            <Button 
+            <Button
               onClick={() => navigate('/login')}
               className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white px-8 py-3 rounded-xl font-semibold shadow-lg transform hover:scale-105 transition-all duration-200"
             >
@@ -325,8 +327,8 @@ const Admin = () => {
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
               </svg>
             </motion.div>
-            
-            <motion.h1 
+
+            <motion.h1
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.3 }}
@@ -334,8 +336,8 @@ const Admin = () => {
             >
               Access Denied
             </motion.h1>
-            
-            <motion.p 
+
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
@@ -343,13 +345,13 @@ const Admin = () => {
             >
               You need administrator privileges to access this page.
             </motion.p>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.5 }}
             >
-              <Button 
+              <Button
                 onClick={() => navigate('/')}
                 className="bg-gradient-to-r from-primary-600 to-purple-600 hover:from-primary-700 hover:to-purple-700"
               >
@@ -392,51 +394,78 @@ const Admin = () => {
                 <p className="text-sm text-gray-600">Welcome back, {user?.name || 'Administrator'}</p>
               </div>
             </div>
-            
-            <div className="flex items-center space-x-4">
-              <motion.div 
-                whileHover={{ scale: 1.05 }}
-                className="px-4 py-2 bg-gradient-to-r from-green-500 to-emerald-500 text-white rounded-lg text-sm font-medium shadow-md"
-              >
-                🟢 Online
-              </motion.div>
+
+            <div className="flex items-center space-x-2">
+
+              {/* Refresh Data */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => {
-                  console.log('🔍 Debug - Current auth state:', {
-                    token: token ? `${token.substring(0, 20)}...` : 'Missing',
-                    user,
-                    localStorage: localStorage.getItem('token') ? 'Has token' : 'No token'
-                  });
-                }}
-                className="px-3 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all"
-              >
-                Debug
-              </motion.button>
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
                 onClick={() => {
                   console.log('🔄 Manual data fetch triggered');
                   if (activeTab === 'products') fetchProducts();
                   else if (activeTab === 'orders') fetchOrders();
                   else if (activeTab === 'users') fetchUsers();
                 }}
-                className="px-3 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all"
+                className="relative group w-10 h-10 bg-gradient-to-br from-orange-500 to-amber-500 text-white rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all"
               >
-                Refresh Data
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                </svg>
+                <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                  Refresh
+                </span>
               </motion.button>
-              <motion.button
+
+              {/* Separator */}
+              <div className="w-px h-8 bg-gray-300 mx-1" />
+
+              {/* User Avatar */}
+              <motion.div
                 whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/')}
-                className="px-4 py-2 bg-gradient-to-r from-gray-600 to-gray-700 text-white rounded-lg text-sm font-medium shadow-md hover:shadow-lg transition-all"
+                className="relative group flex items-center"
               >
-                <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
+                  <span className="text-white text-sm font-bold">
+                    {user?.name?.charAt(0).toUpperCase()}
+                  </span>
+                </div>
+                <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                  {user?.name}
+                </span>
+              </motion.div>
+
+              {/* Back to Store */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => navigate('/')}
+                className="relative group w-10 h-10 bg-gradient-to-br from-gray-600 to-gray-700 text-white rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                 </svg>
-                Back to Store
+                <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                  Store
+                </span>
+              </motion.button>
+
+              {/* Logout */}
+              <motion.button
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                onClick={() => {
+                  dispatch(logout());
+                  navigate('/login');
+                }}
+                className="relative group w-10 h-10 bg-gradient-to-br from-red-500 to-rose-600 text-white rounded-xl flex items-center justify-center shadow-md hover:shadow-lg transition-all"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+                </svg>
+                <span className="absolute -bottom-9 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-gray-800 text-white text-xs font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none z-10">
+                  Logout
+                </span>
               </motion.button>
             </div>
           </motion.div>
@@ -508,9 +537,9 @@ const Admin = () => {
             </div>
           </motion.div>
         </motion.div>
-        
+
         {/* Enhanced Tab Navigation */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
@@ -527,11 +556,10 @@ const Admin = () => {
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
                 onClick={() => setActiveTab(tab.key)}
-                className={`flex-1 py-4 px-6 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 ${
-                  activeTab === tab.key 
-                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg transform scale-105' 
-                    : 'text-gray-600 hover:bg-gray-50/50 hover:text-indigo-600'
-                }`}
+                className={`flex-1 py-4 px-6 font-semibold rounded-xl transition-all duration-200 flex items-center justify-center space-x-2 ${activeTab === tab.key
+                  ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg transform scale-105'
+                  : 'text-gray-600 hover:bg-gray-50/50 hover:text-indigo-600'
+                  }`}
               >
                 <span className="text-lg">{tab.icon}</span>
                 <span>{tab.label}</span>
@@ -551,8 +579,8 @@ const Admin = () => {
               transition={{ duration: 0.3 }}
             >
               {/* Enhanced Product Form */}
-              <motion.form 
-                onSubmit={handleProductSubmit} 
+              <motion.form
+                onSubmit={handleProductSubmit}
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 }}
@@ -585,54 +613,54 @@ const Admin = () => {
                       className="relative"
                     >
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Product Title</label>
-                      <input 
-                        name="title" 
-                        value={productForm.title} 
-                        onChange={handleProductChange} 
-                        placeholder="Enter product title" 
-                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium" 
-                        required 
+                      <input
+                        name="title"
+                        value={productForm.title}
+                        onChange={handleProductChange}
+                        placeholder="Enter product title"
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
+                        required
                       />
                     </motion.div>
 
                     <div className="grid grid-cols-2 gap-4">
                       <motion.div whileFocus={{ scale: 1.02 }}>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Price ($)</label>
-                        <input 
-                          name="price" 
-                          value={productForm.price} 
-                          onChange={handleProductChange} 
-                          placeholder="0.00" 
-                          type="number" 
+                        <input
+                          name="price"
+                          value={productForm.price}
+                          onChange={handleProductChange}
+                          placeholder="0.00"
+                          type="number"
                           step="0.01"
-                          className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium" 
-                          required 
+                          className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
+                          required
                         />
                       </motion.div>
 
                       <motion.div whileFocus={{ scale: 1.02 }}>
                         <label className="block text-sm font-semibold text-gray-700 mb-2">Stock Quantity</label>
-                        <input 
-                          name="stock" 
-                          value={productForm.stock} 
-                          onChange={handleProductChange} 
-                          placeholder="0" 
-                          type="number" 
-                          className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium" 
-                          required 
+                        <input
+                          name="stock"
+                          value={productForm.stock}
+                          onChange={handleProductChange}
+                          placeholder="0"
+                          type="number"
+                          className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
+                          required
                         />
                       </motion.div>
                     </div>
 
                     <motion.div whileFocus={{ scale: 1.02 }}>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Category</label>
-                      <input 
-                        name="category" 
-                        value={productForm.category} 
-                        onChange={handleProductChange} 
-                        placeholder="e.g., Electronics, Clothing, Books" 
-                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium" 
-                        required 
+                      <input
+                        name="category"
+                        value={productForm.category}
+                        onChange={handleProductChange}
+                        placeholder="e.g., Electronics, Clothing, Books"
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
+                        required
                       />
                     </motion.div>
                   </div>
@@ -640,12 +668,12 @@ const Admin = () => {
                   <div className="space-y-6">
                     <motion.div whileFocus={{ scale: 1.02 }}>
                       <label className="block text-sm font-semibold text-gray-700 mb-2">Product Description</label>
-                      <textarea 
-                        name="description" 
-                        value={productForm.description} 
-                        onChange={handleProductChange} 
-                        placeholder="Describe your product features, benefits, and specifications..." 
-                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium resize-none" 
+                      <textarea
+                        name="description"
+                        value={productForm.description}
+                        onChange={handleProductChange}
+                        placeholder="Describe your product features, benefits, and specifications..."
+                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium resize-none"
                         rows="4"
                       />
                     </motion.div>
@@ -663,7 +691,7 @@ const Admin = () => {
                   </div>
                 </div>
 
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.4 }}
@@ -684,7 +712,7 @@ const Admin = () => {
               </motion.form>
 
               {/* Enhanced Products List */}
-              <motion.div 
+              <motion.div
                 initial={{ opacity: 0, scale: 0.95 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.5 }}
@@ -701,8 +729,8 @@ const Admin = () => {
                   {loading ? (
                     <div className="space-y-4">
                       {[...Array(5)].map((_, i) => (
-                        <motion.div 
-                          key={i} 
+                        <motion.div
+                          key={i}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
                           transition={{ delay: i * 0.1 }}
@@ -711,7 +739,7 @@ const Admin = () => {
                       ))}
                     </div>
                   ) : error ? (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, scale: 0.95 }}
                       animate={{ opacity: 1, scale: 1 }}
                       className="bg-red-50/80 backdrop-blur-sm border border-red-200 text-red-700 px-6 py-4 rounded-xl flex items-center space-x-3"
@@ -722,7 +750,7 @@ const Admin = () => {
                       <span className="font-medium">{error}</span>
                     </motion.div>
                   ) : products.length === 0 ? (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       className="text-center py-12"
@@ -749,8 +777,8 @@ const Admin = () => {
                         </thead>
                         <tbody>
                           {products.map((product, index) => (
-                            <motion.tr 
-                              key={product._id} 
+                            <motion.tr
+                              key={product._id}
                               initial={{ opacity: 0, y: 20 }}
                               animate={{ opacity: 1, y: 0 }}
                               transition={{ delay: index * 0.05 }}
@@ -778,13 +806,12 @@ const Admin = () => {
                                 </span>
                               </td>
                               <td className="py-6 px-6">
-                                <span className={`px-3 py-1 rounded-lg font-bold ${
-                                  product.stock > 10 
-                                    ? 'bg-green-100 text-green-800' 
-                                    : product.stock > 0 
-                                    ? 'bg-yellow-100 text-yellow-800' 
+                                <span className={`px-3 py-1 rounded-lg font-bold ${product.stock > 10
+                                  ? 'bg-green-100 text-green-800'
+                                  : product.stock > 0
+                                    ? 'bg-yellow-100 text-yellow-800'
                                     : 'bg-red-100 text-red-800'
-                                }`}>
+                                  }`}>
                                   {product.stock}
                                 </span>
                               </td>
@@ -855,7 +882,7 @@ const Admin = () => {
                     </thead>
                     <tbody>
                       {orders.map(order => (
-                        <motion.tr 
+                        <motion.tr
                           key={order._id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -869,9 +896,9 @@ const Admin = () => {
                             <span className={`px-3 py-1 rounded-full text-xs font-medium
                               ${order.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                                 order.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
-                                order.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                                'bg-red-100 text-red-800'}`}>
+                                  order.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                                    order.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                                      'bg-red-100 text-red-800'}`}>
                               {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
                             </span>
                           </td>
@@ -924,7 +951,7 @@ const Admin = () => {
                     </thead>
                     <tbody>
                       {users.map(user => (
-                        <motion.tr 
+                        <motion.tr
                           key={user._id}
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
@@ -934,9 +961,8 @@ const Admin = () => {
                           <td className="py-3 px-4">{user.name}</td>
                           <td className="py-3 px-4">{user.email}</td>
                           <td className="py-3 px-4">
-                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${
-                              user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
-                            }`}>
+                            <span className={`px-3 py-1 rounded-full text-xs font-medium ${user.role === 'admin' ? 'bg-red-100 text-red-800' : 'bg-blue-100 text-blue-800'
+                              }`}>
                               {user.role === 'admin' ? 'Admin' : 'Customer'}
                             </span>
                           </td>
@@ -994,7 +1020,7 @@ const Admin = () => {
                 <div className="mb-4">
                   <p className="text-sm text-gray-600">Shipping Address</p>
                   <p className="font-medium">
-                    {selectedOrder.shippingAddress?.street}, {selectedOrder.shippingAddress?.city}, 
+                    {selectedOrder.shippingAddress?.street}, {selectedOrder.shippingAddress?.city},
                     {selectedOrder.shippingAddress?.state} {selectedOrder.shippingAddress?.zip}
                   </p>
                 </div>
@@ -1005,39 +1031,39 @@ const Admin = () => {
                     <span className={`px-2 py-1 rounded text-xs font-medium
                       ${selectedOrder.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
                         selectedOrder.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                        selectedOrder.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
-                        selectedOrder.status === 'delivered' ? 'bg-green-100 text-green-800' :
-                        'bg-red-100 text-red-800'}`}>
+                          selectedOrder.status === 'shipped' ? 'bg-purple-100 text-purple-800' :
+                            selectedOrder.status === 'delivered' ? 'bg-green-100 text-green-800' :
+                              'bg-red-100 text-red-800'}`}>
                       {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
                     </span>
 
                     <div className="flex gap-2">
-                      <Button 
-                        size="xs" 
+                      <Button
+                        size="xs"
                         variant={selectedOrder.status === 'pending' ? 'primary' : 'outline'}
                         disabled={selectedOrder.status === 'pending'}
                         onClick={() => updateOrderStatus(selectedOrder._id, 'pending')}
                       >
                         Pending
                       </Button>
-                      <Button 
-                        size="xs" 
+                      <Button
+                        size="xs"
                         variant={selectedOrder.status === 'processing' ? 'primary' : 'outline'}
                         disabled={selectedOrder.status === 'processing'}
                         onClick={() => updateOrderStatus(selectedOrder._id, 'processing')}
                       >
                         Processing
                       </Button>
-                      <Button 
-                        size="xs" 
+                      <Button
+                        size="xs"
                         variant={selectedOrder.status === 'shipped' ? 'primary' : 'outline'}
                         disabled={selectedOrder.status === 'shipped'}
                         onClick={() => updateOrderStatus(selectedOrder._id, 'shipped')}
                       >
                         Shipped
                       </Button>
-                      <Button 
-                        size="xs" 
+                      <Button
+                        size="xs"
                         variant={selectedOrder.status === 'delivered' ? 'primary' : 'outline'}
                         disabled={selectedOrder.status === 'delivered'}
                         onClick={() => updateOrderStatus(selectedOrder._id, 'delivered')}
