@@ -1,8 +1,11 @@
 const User = require('../models/user.model');
 const jwt = require('jsonwebtoken');
 const crypto = require('crypto');
+const { OAuth2Client } = require('google-auth-library');
 const { io } = require('../utils/socket');
 const { sendVerificationEmail, sendPasswordResetEmail } = require('../utils/email');
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const generateToken = (user) => {
   return jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, { expiresIn: '7d' });
@@ -286,6 +289,86 @@ exports.resetPassword = async (req, res, next) => {
     await user.save();
 
     res.status(200).json({ message: 'Password reset successful' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Google OAuth Login
+exports.googleLogin = async (req, res, next) => {
+  try {
+    const { idToken } = req.body;
+
+    if (!idToken) {
+      return res.status(400).json({ message: 'Google ID token is required' });
+    }
+
+    // Verify the Google ID token
+    let ticket;
+    try {
+      ticket = await googleClient.verifyIdToken({
+        idToken,
+        audience: process.env.GOOGLE_CLIENT_ID
+      });
+    } catch (err) {
+      console.error('Google token verification failed:', err.message);
+      return res.status(401).json({ message: 'Invalid Google token' });
+    }
+
+    const payload = ticket.getPayload();
+    const { sub: googleId, email, name, picture } = payload;
+
+    // Find user by googleId or email
+    let user = await User.findOne({ $or: [{ googleId }, { email }] });
+
+    if (user) {
+      // Existing user — link Google account if not already linked
+      if (!user.googleId) {
+        user.googleId = googleId;
+      }
+      if (picture && !user.avatar) {
+        user.avatar = picture;
+      }
+      user.isEmailVerified = true;
+      user.lastLogin = new Date();
+      await user.save({ validateBeforeSave: false });
+    } else {
+      // New user — create account (no password needed)
+      user = await User.create({
+        name,
+        email,
+        googleId,
+        avatar: picture,
+        authProvider: 'google',
+        isEmailVerified: true,
+        lastLogin: new Date()
+      });
+    }
+
+    const token = generateToken(user);
+
+    // Emit to admin room
+    if (io) {
+      io.to('adminRoom').emit('userActivity', {
+        type: 'USER_LOGIN',
+        userId: user._id,
+        userName: user.name,
+        action: 'logged in via Google',
+        timestamp: new Date()
+      });
+    }
+
+    res.json({
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        avatar: user.avatar,
+        isEmailVerified: user.isEmailVerified
+      },
+      token
+    });
   } catch (err) {
     next(err);
   }

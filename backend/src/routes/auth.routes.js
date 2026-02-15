@@ -38,4 +38,7 @@ router.post('/reset-password', resetLimiter, validateResetPassword, authControll
 router.post('/verify-email', validateVerifyEmail, authController.verifyEmail);
 router.post('/resend-verification', resetLimiter, validateResendVerification, authController.resendVerification);
 
+// Google OAuth
+router.post('/google', authLimiter, authController.googleLogin);
+
 module.exports = router;

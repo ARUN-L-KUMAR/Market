@@ -19,7 +19,8 @@ export const API_CONFIG = {
       resetPassword: '/api/auth/reset-password',
       verifyToken: '/api/auth/verify-token',
       verifyEmail: '/api/auth/verify-email',
-      resendVerification: '/api/auth/resend-verification'
+      resendVerification: '/api/auth/resend-verification',
+      google: '/api/auth/google'
     },
 
     // Product endpoints

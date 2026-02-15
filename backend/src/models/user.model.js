@@ -32,8 +32,16 @@ const userSchema = new mongoose.Schema({
   },
   password: {
     type: String,
-    required: true,
     minlength: 6
+  },
+  googleId: {
+    type: String,
+    sparse: true
+  },
+  authProvider: {
+    type: String,
+    enum: ['local', 'google'],
+    default: 'local'
   },
   role: {
     type: String,
@@ -73,18 +81,18 @@ const userSchema = new mongoose.Schema({
   timestamps: true
 });
 
-userSchema.pre('save', async function(next) {
-  if (!this.isModified('password')) return next();
+userSchema.pre('save', async function (next) {
+  if (!this.isModified('password') || !this.password) return next();
   this.password = await bcrypt.hash(this.password, 12);
   next();
 });
 
-userSchema.methods.comparePassword = function(candidatePassword) {
+userSchema.methods.comparePassword = function (candidatePassword) {
   return bcrypt.compare(candidatePassword, this.password);
 };
 
 // Update last login
-userSchema.methods.updateLastLogin = function() {
+userSchema.methods.updateLastLogin = function () {
   this.lastLogin = new Date();
   return this.save();
 };

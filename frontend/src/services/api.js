@@ -94,6 +94,9 @@ export const authAPI = {
   },
   resendVerification: async (email) => {
     return await apiClient.post(API_CONFIG.endpoints.auth.resendVerification, { email });
+  },
+  googleLogin: async (idToken) => {
+    return await apiClient.post(API_CONFIG.endpoints.auth.google, { idToken });
   }
 };
 
