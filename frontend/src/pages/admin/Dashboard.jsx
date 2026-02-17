@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import AdminLayout from '../../components/admin/AdminLayout';
 import DashboardCard from '../../components/admin/DashboardCard';
 import SalesChart from '../../components/admin/SalesChart';
@@ -16,32 +15,30 @@ const Dashboard = () => {
   const [activities, setActivities] = useState([]);
   const { user } = useSelector(state => state.user);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    if (!user || !user.isAdmin) {
+    if (!user || (!user.isAdmin && user.role !== 'admin')) {
       navigate('/login');
       return;
     }
-    
+
     const fetchStats = async () => {
       try {
         setLoading(true);
         const response = await getStats();
-        setStats(response.data);
+        setStats(response.data.data);
       } catch (error) {
         console.error('Error fetching stats:', error);
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchStats();
-    
-    // Join admin room for real-time updates
+
     const adminSocket = socketService.joinAdminRoom(user.id);
-    
+
     if (adminSocket) {
-      // Listen for new order events
       const unsubscribeNewOrder = adminSocket.onNewOrder((order) => {
         setActivities(prev => [{
           type: 'order',
@@ -49,16 +46,13 @@ const Dashboard = () => {
           time: new Date(),
           data: order
         }, ...prev]);
-        
-        // Update stats
         setStats(prev => ({
           ...prev,
           totalOrders: prev.totalOrders + 1,
           revenue: prev.revenue + order.total
         }));
       });
-      
-      // Listen for cart activity events
+
       const unsubscribeCartActivity = adminSocket.onCartActivity((data) => {
         setActivities(prev => [{
           type: 'cart',
@@ -67,8 +61,7 @@ const Dashboard = () => {
           data
         }, ...prev]);
       });
-      
-      // Listen for user activity events
+
       const unsubscribeUserActivity = adminSocket.onUserActivity((data) => {
         setActivities(prev => [{
           type: 'user',
@@ -77,8 +70,7 @@ const Dashboard = () => {
           data
         }, ...prev]);
       });
-      
-      // Listen for product activity events
+
       const unsubscribeProductActivity = adminSocket.onProductActivity((data) => {
         setActivities(prev => [{
           type: 'product',
@@ -87,8 +79,7 @@ const Dashboard = () => {
           data
         }, ...prev]);
       });
-      
-      // Listen for wishlist activity events
+
       const unsubscribeWishlistActivity = adminSocket.onWishlistActivity((data) => {
         setActivities(prev => [{
           type: 'wishlist',
@@ -97,8 +88,7 @@ const Dashboard = () => {
           data
         }, ...prev]);
       });
-      
-      // Cleanup function
+
       return () => {
         unsubscribeNewOrder();
         unsubscribeCartActivity();
@@ -109,106 +99,60 @@ const Dashboard = () => {
       };
     }
   }, [user, navigate]);
-  
+
   if (loading) {
     return (
       <AdminLayout>
         <div className="flex justify-center items-center h-64">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ repeat: Infinity, duration: 1, ease: "linear" }}
-            className="h-12 w-12 border-4 border-primary-600 border-t-transparent rounded-full"
-          />
-          <motion.span 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.2 }}
-            className="ml-3 text-gray-600 font-medium"
-          >
-            Loading dashboard data...
-          </motion.span>
+          <svg className="animate-spin h-8 w-8 text-indigo-600 mr-3" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+          </svg>
+          <span className="text-slate-500 text-sm">Loading dashboard data...</span>
         </div>
       </AdminLayout>
     );
   }
-  
+
   return (
     <AdminLayout>
       <div className="p-6">
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
-        >
-          <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-700 bg-clip-text text-transparent mb-2">
-            Dashboard
-          </h1>
-          <p className="text-gray-600">Welcome back! Here's what's happening with your store today.</p>
-        </motion.div>
-        
-        <motion.div 
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.1 }}
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
-        >
-          <DashboardCard 
-            title="Total Revenue"
-            value={`$${stats?.revenue?.toFixed(2) || '0.00'}`}
-            icon="💰"
-            change={stats?.revenueChange}
-          />
-          <DashboardCard 
-            title="Orders"
-            value={stats?.totalOrders || 0}
-            icon="📦"
-            change={stats?.ordersChange}
-          />
-          <DashboardCard 
-            title="Users"
-            value={stats?.totalUsers || 0}
-            icon="👥"
-            change={stats?.usersChange}
-          />
-          <DashboardCard 
-            title="Products"
-            value={stats?.totalProducts || 0}
-            icon="🛍️"
-            change={stats?.productsChange}
-          />
-        </motion.div>
-        
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <motion.div 
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
-            className="lg:col-span-2 bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-gray-100"
-          >
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Sales Overview</h2>
-            <SalesChart data={stats?.salesData} />
-          </motion.div>
-          
-          <motion.div 
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.3 }}
-            className="bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-gray-100"
-          >
-            <h2 className="text-xl font-semibold mb-4 text-gray-800">Activity Feed</h2>
-            <ActivityFeed activities={activities} />
-          </motion.div>
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold text-slate-900">Dashboard</h1>
+          <p className="text-sm text-slate-500 mt-1">Welcome back! Here's what's happening with your store today.</p>
         </div>
-        
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mt-8 bg-white/80 backdrop-blur-lg p-6 rounded-2xl shadow-lg border border-gray-100"
-        >
-          <h2 className="text-xl font-semibold mb-4 text-gray-800">Recent Orders</h2>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <DashboardCard title="Total Revenue" value={`$${stats?.revenue?.toFixed(2) || '0.00'}`} icon="💰" change={stats?.revenueChange} />
+          <DashboardCard title="Orders" value={stats?.totalOrders || 0} icon="📦" change={stats?.ordersChange} />
+          <DashboardCard title="Users" value={stats?.totalUsers || 0} icon="👥" change={stats?.usersChange} />
+          <DashboardCard title="Products" value={stats?.totalProducts || 0} icon="🛍️" change={stats?.productsChange} />
+        </div>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2 bg-white border border-slate-200 rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-medium text-slate-900 mb-4">Sales Overview</h2>
+            <SalesChart data={stats?.salesData} />
+          </div>
+
+          <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6">
+            <h2 className="text-lg font-medium text-slate-900 mb-4">Activity Feed</h2>
+            <ActivityFeed activities={activities} />
+          </div>
+        </div>
+
+        <div className="mt-8 bg-white border border-slate-200 rounded-xl shadow-sm p-6 overflow-hidden">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-bold text-slate-900 tracking-tight">Recent Orders</h2>
+            <button
+              onClick={() => navigate('/admin/orders')}
+              className="text-xs font-bold text-indigo-600 hover:text-indigo-700 uppercase tracking-widest transition-colors"
+            >
+              View All Orders →
+            </button>
+          </div>
           <RecentOrders orders={stats?.recentOrders} />
-        </motion.div>
+        </div>
       </div>
     </AdminLayout>
   );

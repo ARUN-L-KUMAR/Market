@@ -30,7 +30,8 @@ router.put('/products/:id', productController.updateProduct);
 router.delete('/products/:id', productController.deleteProduct);
 
 // Users management
-router.get('/users', adminController.getAllUsers);
+router.get('/users', adminController.getUsers);
+router.get('/users/roles-stats', adminController.getRolesStats);
 router.get('/users/admins', adminController.getAdminUsers);
 router.post('/create-admin', adminController.createAdminUser);
 router.get('/users/:id', adminController.getUserById);

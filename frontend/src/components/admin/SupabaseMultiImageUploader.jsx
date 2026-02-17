@@ -58,7 +58,7 @@ const SupabaseMultiImageUploader = ({ productId, images = [], onChange, bucket =
   return (
     <div>
       <div
-        className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition hover:border-primary-500 ${uploading ? 'opacity-60' : ''}`}
+        className={`border-2 border-dashed rounded-lg p-4 text-center cursor-pointer transition hover:border-indigo-500 ${uploading ? 'opacity-60' : ''}`}
         onClick={() => fileInputRef.current.click()}
         onDrop={handleDrop}
         onDragOver={e => e.preventDefault()}
@@ -73,7 +73,7 @@ const SupabaseMultiImageUploader = ({ productId, images = [], onChange, bucket =
           onChange={handleFileChange}
           disabled={uploading}
         />
-        <div className="text-gray-500">
+        <div className="text-slate-500">
           {uploading ? 'Uploading...' : 'Drag & drop images here, or click to select'}
         </div>
       </div>

@@ -6,6 +6,7 @@ const ADMIN_ENDPOINTS = {
   stats: '/api/admin/stats',
   orders: '/api/admin/orders',
   products: '/api/admin/products',
+  uploadImage: '/api/admin/products/upload-image',
   users: '/api/admin/users',
   settings: '/api/admin/settings',
 };
@@ -33,6 +34,16 @@ export const updateOrderStatus = async (id, status) => {
 // Get all products with pagination and filtering
 export const getProducts = async (params = {}) => {
   return await apiClient.get(ADMIN_ENDPOINTS.products, { params });
+};
+
+// Get product by ID
+export const getProductById = async (id) => {
+  return await apiClient.get(`${ADMIN_ENDPOINTS.products}/${id}`);
+};
+
+// Upload product image
+export const uploadProductImage = async (imageData) => {
+  return await apiClient.post(ADMIN_ENDPOINTS.uploadImage, { image: imageData });
 };
 
 // Create new product
@@ -68,6 +79,11 @@ export const updateUser = async (id, userData) => {
 // Delete user
 export const deleteUser = async (id) => {
   return await apiClient.delete(`${ADMIN_ENDPOINTS.users}/${id}`);
+};
+
+// Get user roles statistics
+export const getRolesStats = async () => {
+  return await apiClient.get(`${ADMIN_ENDPOINTS.users}/roles-stats`);
 };
 
 // Get store settings

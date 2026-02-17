@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Search, 
-  ChevronDown, 
-  ChevronUp, 
-  HelpCircle, 
+import {
+  Search,
+  ChevronDown,
+  ChevronUp,
+  HelpCircle,
   MessageCircle,
   Phone,
   Mail,
@@ -155,12 +155,12 @@ const FAQ = () => {
   const filteredFAQs = faqData.filter(faq => {
     const matchesCategory = activeCategory === 'all' || faq.category === activeCategory;
     const matchesSearch = faq.question.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
+      faq.answer.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -174,18 +174,18 @@ const FAQ = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-green-100 to-blue-100 rounded-full text-green-700 font-medium mb-6"
+              className="inline-flex items-center px-6 py-3 bg-slate-100 rounded-full text-slate-700 font-medium mb-6"
             >
               <HelpCircle className="w-5 h-5 mr-2" />
               Frequently Asked Questions
             </motion.div>
 
-            <h1 className="text-5xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-green-600 via-blue-600 to-purple-600 bg-clip-text text-transparent mb-8">
+            <h1 className="text-5xl lg:text-7xl font-black leading-tight text-slate-900 mb-8">
               How Can We Help?
             </h1>
 
-            <p className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto mb-12">
-              Find answers to common questions about shopping, orders, payments, and more. 
+            <p className="text-xl text-slate-600 leading-relaxed max-w-4xl mx-auto mb-12">
+              Find answers to common questions about shopping, orders, payments, and more.
               If you can't find what you're looking for, our support team is here to help.
             </p>
 
@@ -197,13 +197,13 @@ const FAQ = () => {
               className="max-w-2xl mx-auto relative"
             >
               <div className="relative">
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-6 h-6" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-6 h-6" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   placeholder="Search for answers..."
-                  className="w-full pl-14 pr-6 py-4 text-lg border-2 border-gray-200 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/80 backdrop-blur-sm shadow-lg"
+                  className="w-full pl-14 pr-6 py-4 text-lg border-2 border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent bg-white shadow-sm"
                 />
               </div>
             </motion.div>
@@ -215,18 +215,18 @@ const FAQ = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-r from-green-200/30 to-blue-200/30 rounded-full blur-3xl"
+            className="absolute -top-32 -right-32 w-96 h-96 bg-slate-200/30 rounded-full blur-3xl"
           />
           <motion.div
             animate={{ rotate: -360 }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-32 -left-32 w-96 h-96 bg-gradient-to-r from-purple-200/30 to-pink-200/30 rounded-full blur-3xl"
+            className="absolute -bottom-32 -left-32 w-96 h-96 bg-slate-200/30 rounded-full blur-3xl"
           />
         </div>
       </section>
 
       {/* Popular Questions */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm">
+      <section className="py-16 bg-white ">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -235,10 +235,10 @@ const FAQ = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-green-800 to-blue-800 bg-clip-text text-transparent mb-4">
+            <h2 className="text-4xl font-semibold text-slate-900 mb-4">
               Popular Questions
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Quick answers to the most commonly asked questions
             </p>
           </motion.div>
@@ -254,18 +254,18 @@ const FAQ = () => {
                   viewport={{ once: true }}
                   transition={{ duration: 0.6, delay: index * 0.1 }}
                   whileHover={{ y: -5 }}
-                  className="bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20 cursor-pointer"
+                  className="bg-white rounded-lg p-6 shadow-sm border border-slate-200 cursor-pointer"
                   onClick={() => {
                     setActiveCategory(item.category);
                     setExpandedItems(new Set([item.id]));
                     document.getElementById('faq-section').scrollIntoView({ behavior: 'smooth' });
                   }}
                 >
-                  <h3 className="font-semibold text-gray-800 mb-3">{item.question}</h3>
-                  <p className="text-gray-600 text-sm line-clamp-3">
+                  <h3 className="font-semibold text-slate-800 mb-3">{item.question}</h3>
+                  <p className="text-slate-600 text-sm line-clamp-3">
                     {faq?.answer.substring(0, 100)}...
                   </p>
-                  <div className="mt-4 flex items-center text-blue-600 text-sm font-medium">
+                  <div className="mt-4 flex items-center text-indigo-600 text-sm font-medium">
                     Learn more <ArrowRight className="w-4 h-4 ml-1" />
                   </div>
                 </motion.div>
@@ -287,8 +287,8 @@ const FAQ = () => {
               transition={{ duration: 0.6 }}
               className="lg:col-span-1"
             >
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl border border-white/20 sticky top-8">
-                <h3 className="text-xl font-bold text-gray-800 mb-6">Categories</h3>
+              <div className="bg-white rounded-lg p-6 shadow-sm border border-slate-200 sticky top-8">
+                <h3 className="text-xl font-semibold text-slate-800 mb-6">Categories</h3>
                 <div className="space-y-2">
                   {categories.map((category) => (
                     <motion.button
@@ -296,11 +296,10 @@ const FAQ = () => {
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       onClick={() => setActiveCategory(category.id)}
-                      className={`w-full flex items-center px-4 py-3 rounded-xl text-left transition-all duration-200 ${
-                        activeCategory === category.id
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white shadow-lg'
-                          : 'text-gray-600 hover:bg-gray-50 hover:text-blue-600'
-                      }`}
+                      className={`w-full flex items-center px-4 py-3 rounded-lg text-left transition-all duration-200 ${activeCategory === category.id
+                          ? 'bg-slate-800 text-white shadow-sm'
+                          : 'text-slate-600 hover:bg-slate-50 hover:text-indigo-600'
+                        }`}
                     >
                       <span className="mr-3">{category.icon}</span>
                       <span className="font-medium">{category.name}</span>
@@ -323,11 +322,11 @@ const FAQ = () => {
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
-                    className="text-center py-12 bg-white/80 backdrop-blur-sm rounded-3xl shadow-lg border border-white/20"
+                    className="text-center py-12 bg-white rounded-lg shadow-sm border border-slate-200"
                   >
-                    <HelpCircle className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-xl font-semibold text-gray-700 mb-2">No results found</h3>
-                    <p className="text-gray-500 mb-6">Try adjusting your search or browse different categories</p>
+                    <HelpCircle className="w-16 h-16 text-slate-400 mx-auto mb-4" />
+                    <h3 className="text-xl font-semibold text-slate-700 mb-2">No results found</h3>
+                    <p className="text-slate-500 mb-6">Try adjusting your search or browse different categories</p>
                     <Button onClick={() => navigate('/contact')} variant="primary">
                       Contact Support
                     </Button>
@@ -339,14 +338,14 @@ const FAQ = () => {
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.05 }}
-                      className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-lg border border-white/20 overflow-hidden"
+                      className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
                     >
                       <motion.button
                         onClick={() => toggleExpanded(faq.id)}
-                        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-gray-50/50 transition-colors duration-200"
+                        className="w-full px-6 py-4 text-left flex items-center justify-between hover:bg-slate-50/50 transition-colors duration-200"
                         whileHover={{ x: 5 }}
                       >
-                        <h3 className="text-lg font-semibold text-gray-800 pr-4">
+                        <h3 className="text-lg font-semibold text-slate-800 pr-4">
                           {faq.question}
                         </h3>
                         <motion.div
@@ -354,10 +353,10 @@ const FAQ = () => {
                           transition={{ duration: 0.2 }}
                           className="flex-shrink-0"
                         >
-                          <ChevronDown className="w-6 h-6 text-gray-400" />
+                          <ChevronDown className="w-6 h-6 text-slate-400" />
                         </motion.div>
                       </motion.button>
-                      
+
                       <AnimatePresence>
                         {expandedItems.has(faq.id) && (
                           <motion.div
@@ -367,8 +366,8 @@ const FAQ = () => {
                             transition={{ duration: 0.3 }}
                             className="overflow-hidden"
                           >
-                            <div className="px-6 pb-6 pt-2 border-t border-gray-100">
-                              <p className="text-gray-600 leading-relaxed">{faq.answer}</p>
+                            <div className="px-6 pb-6 pt-2 border-t border-slate-200">
+                              <p className="text-slate-600 leading-relaxed">{faq.answer}</p>
                             </div>
                           </motion.div>
                         )}
@@ -383,7 +382,7 @@ const FAQ = () => {
       </section>
 
       {/* Contact Support CTA */}
-      <section className="py-20 bg-gradient-to-r from-green-600 to-blue-600 text-white relative overflow-hidden">
+      <section className="py-20 bg-slate-800 text-white relative overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -392,13 +391,13 @@ const FAQ = () => {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h2 className="text-4xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl lg:text-6xl font-semibold mb-6">
               Still Need Help?
             </h2>
             <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
               Can't find the answer you're looking for? Our support team is here to assist you 24/7
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -406,28 +405,28 @@ const FAQ = () => {
               >
                 <Button
                   onClick={() => navigate('/contact')}
-                  className="bg-white text-green-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl"
+                  className="bg-white text-emerald-600 hover:bg-slate-100 px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
                 >
                   Contact Support
                   <MessageCircle className="w-5 h-5 ml-2" />
                 </Button>
               </motion.div>
-              
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = 'tel:+15551234567'}
-                className="border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200"
+                className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200"
               >
                 <Phone className="w-5 h-5 mr-2 inline" />
                 Call Now
               </motion.button>
-              
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => window.location.href = 'mailto:support@market.com'}
-                className="border-2 border-white text-white hover:bg-white hover:text-green-600 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200"
+                className="border-2 border-white text-white hover:bg-white hover:text-emerald-600 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200"
               >
                 <Mail className="w-5 h-5 mr-2 inline" />
                 Email Us

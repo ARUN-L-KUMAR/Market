@@ -53,7 +53,7 @@ const BulkProductUpload = ({ onProductsAdded }) => {
   const downloadTemplate = () => {
     const csvContent = `title,description,shortDescription,price,comparePrice,stock,sku,brand,tags,isFeatured,isActive,imageUrl,colors,sizes
 "Sample Product","This is a sample product description","Short description",99.99,129.99,50,"SAMPLE-001","Sample Brand","electronics,sample",true,true,"https://via.placeholder.com/400","[{""name"":""Black"",""hexCode"":""#000000"",""stock"":25},{""name"":""White"",""hexCode"":""#FFFFFF"",""stock"":25}]","[{""name"":""Small"",""stock"":20},{""name"":""Medium"",""stock"":20},{""name"":""Large"",""stock"":10}]"`;
-    
+
     const blob = new Blob([csvContent], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -68,22 +68,22 @@ const BulkProductUpload = ({ onProductsAdded }) => {
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.6 }}
-      className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 mb-8"
+      className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 mb-8"
     >
       <div className="flex items-center mb-6">
-        <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-3 rounded-full mr-4">
+        <div className="bg-indigo-600 text-white p-3 rounded-full mr-4">
           <Upload className="w-6 h-6" />
         </div>
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Bulk Product Upload</h2>
-          <p className="text-gray-600">Upload multiple products at once using a CSV file</p>
+          <h2 className="text-2xl font-semibold text-slate-800">Bulk Product Upload</h2>
+          <p className="text-slate-600">Upload multiple products at once using a CSV file</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Upload Section */}
         <div className="space-y-4">
-          <div className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-blue-500 transition-colors">
+          <div className="border-2 border-dashed border-slate-300 rounded-lg p-6 text-center hover:border-indigo-500 transition-colors">
             <input
               type="file"
               accept=".csv"
@@ -92,11 +92,11 @@ const BulkProductUpload = ({ onProductsAdded }) => {
               id="csv-upload"
             />
             <label htmlFor="csv-upload" className="cursor-pointer">
-              <FileText className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-              <p className="text-gray-600 mb-2">
+              <FileText className="w-12 h-12 text-slate-400 mx-auto mb-4" />
+              <p className="text-slate-600 mb-2">
                 {file ? file.name : 'Click to select CSV file'}
               </p>
-              <p className="text-sm text-gray-500">
+              <p className="text-sm text-slate-500">
                 Supported format: CSV files only
               </p>
             </label>
@@ -112,7 +112,7 @@ const BulkProductUpload = ({ onProductsAdded }) => {
               <Upload className="w-4 h-4 mr-2" />
               {uploading ? 'Uploading...' : 'Upload Products'}
             </Button>
-            
+
             <Button
               variant="outline"
               onClick={downloadTemplate}
@@ -130,24 +130,24 @@ const BulkProductUpload = ({ onProductsAdded }) => {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="bg-gray-50 rounded-xl p-4"
+              className="bg-slate-50 rounded-lg p-4"
             >
-              <h3 className="font-semibold text-gray-800 mb-3">Upload Results</h3>
-              
+              <h3 className="font-semibold text-slate-800 mb-3">Upload Results</h3>
+
               <div className="space-y-2">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-gray-600">Total processed:</span>
+                  <span className="text-sm text-slate-600">Total processed:</span>
                   <span className="font-medium">{uploadResults.total}</span>
                 </div>
-                
+
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-green-600 flex items-center">
+                  <span className="text-sm text-emerald-600 flex items-center">
                     <Check className="w-4 h-4 mr-1" />
                     Successful:
                   </span>
-                  <span className="font-medium text-green-600">{uploadResults.successful}</span>
+                  <span className="font-medium text-emerald-600">{uploadResults.successful}</span>
                 </div>
-                
+
                 {uploadResults.failed > 0 && (
                   <div className="flex items-center justify-between">
                     <span className="text-sm text-red-600 flex items-center">
@@ -176,9 +176,9 @@ const BulkProductUpload = ({ onProductsAdded }) => {
           )}
 
           {/* Instructions */}
-          <div className="bg-blue-50 rounded-xl p-4">
-            <h3 className="font-semibold text-blue-800 mb-2">CSV Format Requirements:</h3>
-            <ul className="text-sm text-blue-700 space-y-1">
+          <div className="bg-indigo-50 rounded-lg p-4">
+            <h3 className="font-semibold text-indigo-700 mb-2">CSV Format Requirements:</h3>
+            <ul className="text-sm text-indigo-700 space-y-1">
               <li>• Required: title, price, stock, sku</li>
               <li>• Optional: description, brand, tags, images</li>
               <li>• Colors/sizes should be JSON format</li>

@@ -87,45 +87,45 @@ const WishlistAnalytics = () => {
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
       {/* Total Items */}
       <Card className="text-center">
-        <div className="text-3xl font-bold text-primary-600 mb-2">
+        <div className="text-3xl font-semibold text-indigo-600 mb-2">
           {analytics.totalItems}
         </div>
-        <div className="text-sm text-gray-600">Total Items</div>
+        <div className="text-sm text-slate-600">Total Items</div>
       </Card>
 
       {/* Total Value */}
       <Card className="text-center">
-        <div className="text-3xl font-bold text-green-600 mb-2">
+        <div className="text-3xl font-semibold text-emerald-600 mb-2">
           ${(analytics.totalValue && !isNaN(analytics.totalValue)) ? analytics.totalValue.toFixed(2) : '0.00'}
         </div>
-        <div className="text-sm text-gray-600">Total Value</div>
+        <div className="text-sm text-slate-600">Total Value</div>
       </Card>
 
       {/* Average Price */}
       <Card className="text-center">
-        <div className="text-3xl font-bold text-blue-600 mb-2">
+        <div className="text-3xl font-semibold text-indigo-600 mb-2">
           ${(analytics.avgPrice && !isNaN(analytics.avgPrice)) ? analytics.avgPrice.toFixed(2) : '0.00'}
         </div>
-        <div className="text-sm text-gray-600">Average Price</div>
+        <div className="text-sm text-slate-600">Average Price</div>
       </Card>
 
       {/* Stock Status */}
       <Card className="text-center">
         <div className="flex justify-center gap-4 mb-2">
           <div className="text-center">
-            <div className="text-xl font-bold text-green-600">
+            <div className="text-xl font-semibold text-emerald-600">
               {analytics.inStockItems}
             </div>
-            <div className="text-xs text-gray-600">In Stock</div>
+            <div className="text-xs text-slate-600">In Stock</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-red-600">
+            <div className="text-xl font-semibold text-red-600">
               {analytics.outOfStockItems}
             </div>
-            <div className="text-xs text-gray-600">Out of Stock</div>
+            <div className="text-xs text-slate-600">Out of Stock</div>
           </div>
         </div>
-        <div className="text-sm text-gray-600">Stock Status</div>
+        <div className="text-sm text-slate-600">Stock Status</div>
       </Card>
 
       {/* Category Breakdown */}
@@ -139,16 +139,16 @@ const WishlistAnalytics = () => {
                   <Badge color="primary" size="sm">
                     {typeof category === 'object' ? category?.name || 'Unknown' : category}
                   </Badge>
-                  <span className="text-sm text-gray-600">{count} items</span>
+                  <span className="text-sm text-slate-600">{count} items</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <div className="w-20 bg-gray-200 rounded-full h-2">
+                  <div className="w-20 bg-slate-200 rounded-full h-2">
                     <div 
-                      className="bg-primary-500 h-2 rounded-full transition-all duration-300"
+                      className="bg-indigo-500 h-2 rounded-full transition-all duration-300"
                       style={{ width: `${percentage}%` }}
                     />
                   </div>
-                  <span className="text-xs text-gray-500 w-8">{percentage}%</span>
+                  <span className="text-xs text-slate-500 w-8">{percentage}%</span>
                 </div>
               </div>
             ))}
@@ -161,28 +161,28 @@ const WishlistAnalytics = () => {
         <h3 className="text-lg font-semibold mb-4">Price Distribution</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="text-center">
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-semibold text-slate-800">
               {analytics.priceRanges.under25}
             </div>
-            <div className="text-sm text-gray-600">Under $25</div>
+            <div className="text-sm text-slate-600">Under $25</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-semibold text-slate-800">
               {analytics.priceRanges['25to50']}
             </div>
-            <div className="text-sm text-gray-600">$25 - $50</div>
+            <div className="text-sm text-slate-600">$25 - $50</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-semibold text-slate-800">
               {analytics.priceRanges['50to100']}
             </div>
-            <div className="text-sm text-gray-600">$50 - $100</div>
+            <div className="text-sm text-slate-600">$50 - $100</div>
           </div>
           <div className="text-center">
-            <div className="text-xl font-bold text-gray-800">
+            <div className="text-xl font-semibold text-slate-800">
               {analytics.priceRanges.over100}
             </div>
-            <div className="text-sm text-gray-600">Over $100</div>
+            <div className="text-sm text-slate-600">Over $100</div>
           </div>
         </div>
       </Card>
@@ -191,16 +191,16 @@ const WishlistAnalytics = () => {
       <Card className="text-center">
         <div className="space-y-2">
           <div>
-            <div className="text-xl font-bold text-purple-600">
+            <div className="text-xl font-semibold text-indigo-600">
               {analytics.addedThisWeek}
             </div>
-            <div className="text-sm text-gray-600">Added This Week</div>
+            <div className="text-sm text-slate-600">Added This Week</div>
           </div>
           <div>
-            <div className="text-xl font-bold text-indigo-600">
+            <div className="text-xl font-semibold text-indigo-600">
               {analytics.addedThisMonth}
             </div>
-            <div className="text-sm text-gray-600">Added This Month</div>
+            <div className="text-sm text-slate-600">Added This Month</div>
           </div>
         </div>
       </Card>

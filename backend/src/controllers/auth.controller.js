@@ -101,6 +101,14 @@ exports.login = async (req, res, next) => {
       });
     }
 
+    // Block suspended users
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been suspended. Please contact support for more information.'
+      });
+    }
+
     // Update last login time
     user.lastLogin = new Date();
     await user.save({ validateBeforeSave: false });
@@ -342,6 +350,14 @@ exports.googleLogin = async (req, res, next) => {
         authProvider: 'google',
         isEmailVerified: true,
         lastLogin: new Date()
+      });
+    }
+
+    // Block suspended users
+    if (user.isActive === false) {
+      return res.status(403).json({
+        success: false,
+        message: 'Your account has been suspended. Please contact support for more information.'
       });
     }
 

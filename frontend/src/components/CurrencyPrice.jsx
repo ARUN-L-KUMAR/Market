@@ -25,11 +25,11 @@ const CurrencyPrice = ({
 
   return (
     <div className={`${className}`}>
-      <span className={`font-bold text-purple-600 ${sizeClasses[size]}`}>
+      <span className={`font-semibold text-indigo-600 ${sizeClasses[size]}`}>
         {formatPrice(convertedPrice, currentCurrency)}
       </span>
       {showOriginal && convertedOriginalPrice && convertedOriginalPrice > convertedPrice && (
-        <span className={`ml-2 text-gray-400 line-through ${sizeClasses[size === 'xl' ? 'lg' : 'sm']}`}>
+        <span className={`ml-2 text-slate-400 line-through ${sizeClasses[size === 'xl' ? 'lg' : 'sm']}`}>
           {formatPrice(convertedOriginalPrice, currentCurrency)}
         </span>
       )}

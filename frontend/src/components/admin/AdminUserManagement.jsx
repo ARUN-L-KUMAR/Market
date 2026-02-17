@@ -109,12 +109,12 @@ const AdminUserManagement = () => {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Shield className="h-6 w-6 text-blue-600" />
-          <h2 className="text-2xl font-bold text-gray-900">Admin User Management</h2>
+          <Shield className="h-6 w-6 text-indigo-600" />
+          <h2 className="text-2xl font-semibold text-slate-900">Admin User Management</h2>
         </div>
         <button
           onClick={() => setShowCreateForm(!showCreateForm)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
         >
           {showCreateForm ? 'Cancel' : 'Create New Admin'}
         </button>
@@ -141,7 +141,7 @@ const AdminUserManagement = () => {
                     title="Copy email"
                   >
                     {copiedField === 'default-email' ? (
-                      <Check className="h-4 w-4 text-green-600" />
+                      <Check className="h-4 w-4 text-emerald-600" />
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}
@@ -158,7 +158,7 @@ const AdminUserManagement = () => {
                     title="Copy password"
                   >
                     {copiedField === 'default-password' ? (
-                      <Check className="h-4 w-4 text-green-600" />
+                      <Check className="h-4 w-4 text-emerald-600" />
                     ) : (
                       <Copy className="h-4 w-4" />
                     )}
@@ -175,7 +175,7 @@ const AdminUserManagement = () => {
 
       {/* Create Admin Form */}
       {showCreateForm && (
-        <div className="bg-gray-50 p-6 rounded-lg border">
+        <div className="bg-slate-50 p-6 rounded-lg border">
           <h3 className="text-lg font-semibold mb-4">Create New Admin User</h3>
           <form onSubmit={handleCreateAdmin} className="space-y-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -184,7 +184,7 @@ const AdminUserManagement = () => {
                 placeholder="First Name"
                 value={newAdmin.firstName}
                 onChange={(e) => setNewAdmin({ ...newAdmin, firstName: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 required
               />
               <input
@@ -192,7 +192,7 @@ const AdminUserManagement = () => {
                 placeholder="Last Name"
                 value={newAdmin.lastName}
                 onChange={(e) => setNewAdmin({ ...newAdmin, lastName: e.target.value })}
-                className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+                className="px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 required
               />
             </div>
@@ -201,7 +201,7 @@ const AdminUserManagement = () => {
               placeholder="Email"
               value={newAdmin.email}
               onChange={(e) => setNewAdmin({ ...newAdmin, email: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               required
             />
             <input
@@ -209,7 +209,7 @@ const AdminUserManagement = () => {
               placeholder="Password"
               value={newAdmin.password}
               onChange={(e) => setNewAdmin({ ...newAdmin, password: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
+              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               required
               minLength={6}
             />
@@ -228,14 +228,14 @@ const AdminUserManagement = () => {
       <div className="bg-white rounded-lg border shadow-sm">
         <div className="px-6 py-4 border-b">
           <div className="flex items-center gap-2">
-            <Users className="h-5 w-5 text-gray-600" />
+            <Users className="h-5 w-5 text-slate-600" />
             <h3 className="text-lg font-semibold">Admin Users ({adminUsers.length})</h3>
           </div>
         </div>
         
         {adminUsers.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            <Shield className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+          <div className="p-8 text-center text-slate-500">
+            <Shield className="h-12 w-12 mx-auto mb-4 text-slate-300" />
             <p>No admin users found in the system.</p>
             <p className="text-sm mt-2">Use the default credentials or create a new admin user.</p>
           </div>
@@ -246,28 +246,28 @@ const AdminUserManagement = () => {
                 <div className="flex items-start justify-between">
                   <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <Shield className="h-5 w-5 text-blue-600" />
-                      <span className="font-medium text-gray-900">
+                      <Shield className="h-5 w-5 text-indigo-600" />
+                      <span className="font-medium text-slate-900">
                         {user.firstName} {user.lastName}
                       </span>
-                      <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs rounded-full">
+                      <span className="px-2 py-1 bg-indigo-100 text-indigo-700 text-xs rounded-full">
                         Admin
                       </span>
                     </div>
                     
-                    <div className="space-y-2 text-sm text-gray-600">
+                    <div className="space-y-2 text-sm text-slate-600">
                       <div className="flex items-center gap-2">
                         <span className="font-medium">Email:</span>
-                        <code className="bg-gray-100 px-2 py-1 rounded text-xs">
+                        <code className="bg-slate-100 px-2 py-1 rounded text-xs">
                           {user.email}
                         </code>
                         <button
                           onClick={() => copyToClipboard(user.email, `email-${user._id}`)}
-                          className="p-1 hover:bg-gray-200 rounded"
+                          className="p-1 hover:bg-slate-200 rounded"
                           title="Copy email"
                         >
                           {copiedField === `email-${user._id}` ? (
-                            <Check className="h-4 w-4 text-green-600" />
+                            <Check className="h-4 w-4 text-emerald-600" />
                           ) : (
                             <Copy className="h-4 w-4" />
                           )}

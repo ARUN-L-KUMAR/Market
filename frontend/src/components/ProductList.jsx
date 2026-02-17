@@ -14,16 +14,16 @@ import CurrencyPrice from './CurrencyPrice';
 
 const ProductSkeleton = () => (
   <div className="animate-pulse">
-    <div className="h-48 bg-gray-300 rounded-t-xl mb-4"></div>
+    <div className="h-48 bg-slate-200 rounded-t-xl mb-4"></div>
     <div className="px-4 pb-4">
-      <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-      <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
-      <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
-      <div className="h-3 bg-gray-300 rounded w-full mb-4"></div>
-      <div className="h-5 bg-gray-300 rounded w-1/4 mb-4"></div>
+      <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
+      <div className="h-4 bg-slate-200 rounded w-1/2 mb-4"></div>
+      <div className="h-3 bg-slate-200 rounded w-full mb-2"></div>
+      <div className="h-3 bg-slate-200 rounded w-full mb-4"></div>
+      <div className="h-5 bg-slate-200 rounded w-1/4 mb-4"></div>
       <div className="flex gap-2">
-        <div className="h-8 bg-gray-300 rounded w-full"></div>
-        <div className="h-8 bg-gray-300 rounded w-12"></div>
+        <div className="h-8 bg-slate-200 rounded w-full"></div>
+        <div className="h-8 bg-slate-200 rounded w-12"></div>
       </div>
     </div>
   </div>
@@ -188,8 +188,8 @@ const ProductList = ({
           </svg>
         </div>
         <div className="ml-3">
-          <p className="text-yellow-700">No products available</p>
-          <p className="mt-2 text-sm text-yellow-600">Try adjusting your filters or check back later.</p>
+          <p className="text-amber-700">No products available</p>
+          <p className="mt-2 text-sm text-amber-600">Try adjusting your filters or check back later.</p>
         </div>
       </div>
     </div>
@@ -225,17 +225,17 @@ const ProductList = ({
                   <Badge variant="danger" size="sm">Out of Stock</Badge>
                 )}
               </div>
-              <div className="text-sm text-gray-600 mb-2 flex-1">
+              <div className="text-sm text-slate-600 mb-2 flex-1">
                 {product.description ? (
                   <p className="line-clamp-2">{product.description}</p>
                 ) : (
-                  <p className="italic text-gray-400">No description available</p>
+                  <p className="italic text-slate-400">No description available</p>
                 )}
               </div>
               <div className="mt-2 flex items-baseline justify-between">
-                <CurrencyPrice price={product.price} className="text-lg font-bold text-blue-600" />
+                <CurrencyPrice price={product.price} className="text-lg font-semibold text-indigo-600" />
                 {product.oldPrice && (
-                  <CurrencyPrice price={product.oldPrice} className="text-sm text-gray-400 line-through" />
+                  <CurrencyPrice price={product.oldPrice} className="text-sm text-slate-400 line-through" />
                 )}
               </div>
               <div className="mt-4 flex space-x-2">

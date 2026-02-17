@@ -233,46 +233,46 @@ const Checkout = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-20">
+    <div className="min-h-screen bg-slate-50 pt-20">
       <div className="container mx-auto px-4 py-12 max-w-7xl">
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }} className="mb-8">
           <div className="flex items-center mb-4">
-            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/cart')} className="flex items-center text-gray-600 hover:text-purple-600 transition-colors mr-4">
+            <motion.button whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }} onClick={() => navigate('/cart')} className="flex items-center text-slate-600 hover:text-slate-800 transition-colors mr-4">
               <ArrowLeft className="w-5 h-5 mr-2" />
               Back to Cart
             </motion.button>
           </div>
-          <h1 className="text-4xl lg:text-5xl font-black leading-tight bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent mb-4">Checkout</h1>
-          <p className="text-xl text-gray-600 leading-relaxed">Complete your order securely</p>
+          <h1 className="text-4xl lg:text-5xl font-black leading-tight text-slate-900 mb-4">Checkout</h1>
+          <p className="text-xl text-slate-600 leading-relaxed">Complete your order securely</p>
         </motion.div>
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main content - shipping & payment */}
           <div className="lg:col-span-2 space-y-8">
             {/* Shipping address */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
               <div className="flex items-center mb-6">
-                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-3 rounded-full mr-4">
+                <div className="bg-slate-700 text-white p-3 rounded-full mr-4">
                   <MapPin className="w-6 h-6" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">Shipping Address</h2>
-                  <p className="text-gray-600">Where should we deliver your order?</p>
+                  <h2 className="text-2xl font-semibold text-slate-800">Shipping Address</h2>
+                  <p className="text-slate-600">Where should we deliver your order?</p>
                 </div>
               </div>
               {/* Saved addresses */}
               {!isAddingNewAddress && savedAddresses.length > 0 && (
                 <div className="space-y-4 mb-6">
                   {savedAddresses.map((address, index) => (
-                    <div key={index} className={`border rounded-lg p-4 cursor-pointer transition ${selectedAddress === address ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setSelectedAddress(address)}>
+                    <div key={index} className={`border rounded-lg p-4 cursor-pointer transition ${selectedAddress === address ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setSelectedAddress(address)}>
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-semibold">{address.fullName}</p>
-                          <p className="text-gray-600 text-sm">{address.address}</p>
-                          <p className="text-gray-600 text-sm">{address.city}, {address.state} {address.zipCode}</p>
-                          <p className="text-gray-600 text-sm">{address.country}</p>
-                          {address.phone && (<p className="text-gray-600 text-sm mt-1">{address.phone}</p>)}
+                          <p className="text-slate-600 text-sm">{address.address}</p>
+                          <p className="text-slate-600 text-sm">{address.city}, {address.state} {address.zipCode}</p>
+                          <p className="text-slate-600 text-sm">{address.country}</p>
+                          {address.phone && (<p className="text-slate-600 text-sm mt-1">{address.phone}</p>)}
                         </div>
-                        {address.isDefault && (<span className="bg-primary-100 text-primary-800 text-xs px-2 py-1 rounded">Default</span>)}
+                        {address.isDefault && (<span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded">Default</span>)}
                       </div>
                     </div>
                   ))}
@@ -296,8 +296,8 @@ const Checkout = () => {
                     <Input label="Country" name="country" value={addressForm.country} onChange={handleAddressChange} error={addressErrors.country} required />
                   </div>
                   <div className="flex items-center">
-                    <input type="checkbox" id="isDefault" name="isDefault" checked={addressForm.isDefault} onChange={handleAddressChange} className="h-4 w-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500" />
-                    <label htmlFor="isDefault" className="ml-2 text-sm text-gray-700">Set as default address</label>
+                    <input type="checkbox" id="isDefault" name="isDefault" checked={addressForm.isDefault} onChange={handleAddressChange} className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" />
+                    <label htmlFor="isDefault" className="ml-2 text-sm text-slate-700">Set as default address</label>
                   </div>
                   <div className="flex space-x-4 pt-4">
                     {savedAddresses.length > 0 && (<Button variant="outline" onClick={() => setIsAddingNewAddress(false)}>Cancel</Button>)}
@@ -307,28 +307,28 @@ const Checkout = () => {
               )}
             </motion.div>
             {/* Payment method */}
-            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6">
+            <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.4 }} className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
               <div className="flex items-center mb-6">
-                <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-3 rounded-full mr-4">
+                <div className="bg-slate-600 text-white p-3 rounded-full mr-4">
                   <CreditCard className="w-6 h-6" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">Payment Method</h2>
-                  <p className="text-gray-600">Choose your preferred payment option</p>
+                  <h2 className="text-2xl font-semibold text-slate-800">Payment Method</h2>
+                  <p className="text-slate-600">Choose your preferred payment option</p>
                 </div>
               </div>
               <div className="space-y-4">
                 {/* PayU (Recommended) */}
-                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'payu' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPaymentMethod('payu')}>
+                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'payu' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('payu')}>
                   <div className="flex items-center">
-                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'payu' ? 'border-primary-500' : 'border-gray-300'} flex items-center justify-center mr-3`}>
-                      {paymentMethod === 'payu' && <div className="w-3 h-3 rounded-full bg-primary-500"></div>}
+                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'payu' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
+                      {paymentMethod === 'payu' && <div className="w-3 h-3 rounded-full bg-indigo-500"></div>}
                     </div>
                     <div className="flex-grow">
                       <p className="font-medium">PayU (Credit/Debit Card, UPI, Netbanking)</p>
-                      <p className="text-gray-500 text-sm">Pay securely via PayU payment gateway</p>
+                      <p className="text-slate-500 text-sm">Pay securely via PayU payment gateway</p>
                     </div>
-                    <div className="bg-gray-100 rounded p-1">
+                    <div className="bg-slate-100 rounded p-1">
                       {/* Inline PayU SVG icon */}
                       <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <rect width="24" height="24" rx="4" fill="#F5F5F5" />
@@ -339,26 +339,26 @@ const Checkout = () => {
                   </div>
                 </div>
                 {/* Credit Card (not implemented) */}
-                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'credit_card' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPaymentMethod('credit_card')}>
+                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'credit_card' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('credit_card')}>
                   <div className="flex items-center">
-                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'credit_card' ? 'border-primary-500' : 'border-gray-300'} flex items-center justify-center mr-3`}>
-                      {paymentMethod === 'credit_card' && <div className="w-3 h-3 rounded-full bg-primary-500"></div>}
+                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'credit_card' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
+                      {paymentMethod === 'credit_card' && <div className="w-3 h-3 rounded-full bg-indigo-500"></div>}
                     </div>
                     <div className="flex-grow">
                       <p className="font-medium">Credit Card</p>
-                      <p className="text-gray-500 text-sm">Pay securely with your credit card</p>
+                      <p className="text-slate-500 text-sm">Pay securely with your credit card</p>
                     </div>
                   </div>
                 </div>
                 {/* PayPal (not implemented) */}
-                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'paypal' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPaymentMethod('paypal')}>
+                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'paypal' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('paypal')}>
                   <div className="flex items-center">
-                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'paypal' ? 'border-primary-500' : 'border-gray-300'} flex items-center justify-center mr-3`}>
-                      {paymentMethod === 'paypal' && <div className="w-3 h-3 rounded-full bg-primary-500"></div>}
+                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'paypal' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
+                      {paymentMethod === 'paypal' && <div className="w-3 h-3 rounded-full bg-indigo-500"></div>}
                     </div>
                     <div className="flex-grow">
                       <p className="font-medium">PayPal</p>
-                      <p className="text-gray-500 text-sm">Pay with your PayPal account</p>
+                      <p className="text-slate-500 text-sm">Pay with your PayPal account</p>
                     </div>
                   </div>
                 </div>
@@ -366,26 +366,26 @@ const Checkout = () => {
                 <div className="border rounded-lg p-4 cursor-pointer transition mb-2">
                   <div className="font-medium mb-2">UPI</div>
                   <div className="flex gap-4">
-                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_paytm' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPaymentMethod('upi_paytm')}>
+                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_paytm' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('upi_paytm')}>
                       <img src="..\paytm-logo.png" alt="Paytm" className="w-6 h-6 mr-2" /> Paytm
                     </div>
-                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_gpay' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPaymentMethod('upi_gpay')}>
+                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_gpay' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('upi_gpay')}>
                       <img src="..\gpay-logo.png" alt="GPay" className="w-6 h-6 mr-2" /> GPay
                     </div>
-                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_phonepe' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPaymentMethod('upi_phonepe')}>
+                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_phonepe' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('upi_phonepe')}>
                       <img src="..\phonpe-logo.jpeg" alt="PhonePe" className="w-6 h-6 mr-2" /> PhonePe
                     </div>
                   </div>
                 </div>
                 {/* Cash on Delivery (not implemented) */}
-                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'cash_on_delivery' ? 'border-primary-500 bg-primary-50' : 'border-gray-200 hover:border-gray-300'}`} onClick={() => setPaymentMethod('cash_on_delivery')}>
+                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'cash_on_delivery' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('cash_on_delivery')}>
                   <div className="flex items-center">
-                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'cash_on_delivery' ? 'border-primary-500' : 'border-gray-300'} flex items-center justify-center mr-3`}>
-                      {paymentMethod === 'cash_on_delivery' && <div className="w-3 h-3 rounded-full bg-primary-500"></div>}
+                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'cash_on_delivery' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
+                      {paymentMethod === 'cash_on_delivery' && <div className="w-3 h-3 rounded-full bg-indigo-500"></div>}
                     </div>
                     <div>
                       <p className="font-medium">Cash on Delivery</p>
-                      <p className="text-gray-500 text-sm">Pay when you receive the order</p>
+                      <p className="text-slate-500 text-sm">Pay when you receive the order</p>
                     </div>
                   </div>
                 </div>
@@ -394,57 +394,57 @@ const Checkout = () => {
           </div>
           {/* Order summary sidebar */}
           <div className="lg:col-span-1">
-            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.8 }} className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 sticky top-24">
+            <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} transition={{ duration: 0.6, delay: 0.8 }} className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-24">
               <div className="flex items-center mb-6">
-                <div className="bg-gradient-to-r from-orange-500 to-red-500 text-white p-3 rounded-full mr-4">
+                <div className="bg-slate-800 text-white p-3 rounded-full mr-4">
                   <ShoppingBag className="w-6 h-6" />
                 </div>
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-800">Order Summary</h2>
-                  <p className="text-gray-600">Review your items</p>
+                  <h2 className="text-2xl font-semibold text-slate-800">Order Summary</h2>
+                  <p className="text-slate-600">Review your items</p>
                 </div>
               </div>
               <div className="space-y-4 mb-6">
                 {items.map((item) => (
                   <div key={`${item.product._id}-${item.color}-${item.size}`} className="flex items-center">
-                    <div className="h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden bg-gray-100 border border-gray-200">
+                    <div className="h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
                       <img src={item.product.images && item.product.images.length > 0 ? item.product.images[0].url : "https://via.placeholder.com/80"} alt={item.product.title} className="h-full w-full object-cover" />
                     </div>
                     <div className="ml-4 flex-1">
-                      <h3 className="text-sm font-medium text-gray-800">{item.product.title}</h3>
-                      <p className="text-xs text-gray-500">{item.color && `Color: ${item.color}`}{item.color && item.size && ' | '}{item.size && `Size: ${item.size}`}</p>
+                      <h3 className="text-sm font-medium text-slate-800">{item.product.title}</h3>
+                      <p className="text-xs text-slate-500">{item.color && `Color: ${item.color}`}{item.color && item.size && ' | '}{item.size && `Size: ${item.size}`}</p>
                       <div className="flex justify-between mt-1">
-                        <p className="text-xs text-gray-500">Qty: {item.quantity}</p>
-                        <div className="text-sm font-medium text-gray-800"><CurrencyPrice price={item.product.price * item.quantity} /></div>
+                        <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
+                        <div className="text-sm font-medium text-slate-800"><CurrencyPrice price={item.product.price * item.quantity} /></div>
                       </div>
                     </div>
                   </div>
                 ))}
               </div>
-              <div className="border-t border-gray-200 pt-4 pb-4">
+              <div className="border-t border-slate-200 pt-4 pb-4">
                 <div className="space-y-2">
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Subtotal</span>
+                    <span className="text-slate-600">Subtotal</span>
                     <span className="font-medium"><CurrencyPrice price={subtotal} /></span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tax</span>
+                    <span className="text-slate-600">Tax</span>
                     <span className="font-medium"><CurrencyPrice price={tax} /></span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Shipping</span>
+                    <span className="text-slate-600">Shipping</span>
                     <span className="font-medium">{shipping > 0 ? <CurrencyPrice price={shipping} /> : 'Free'}</span>
                   </div>
                 </div>
               </div>
-              <div className="border-t border-gray-200 pt-4">
+              <div className="border-t border-slate-200 pt-4">
                 <div className="flex justify-between">
-                  <span className="text-lg font-semibold text-gray-800">Total</span>
-                  <span className="text-lg font-bold text-primary-700"><CurrencyPrice price={total} /></span>
+                  <span className="text-lg font-semibold text-slate-800">Total</span>
+                  <span className="text-lg font-semibold text-indigo-700"><CurrencyPrice price={total} /></span>
                 </div>
                 <div className="mt-6">
                   <Button variant="primary" size="lg" className="w-full" onClick={() => setShowConfirmModal(true)} loading={isProcessingOrder} disabled={isProcessingOrder || !paymentMethod}>Place Order</Button>
-                  <p className="mt-4 text-xs text-gray-500 text-center">By placing your order, you agree to our <a href="#" className="text-primary-600 hover:underline">Terms of Service</a> and <a href="#" className="text-primary-600 hover:underline">Privacy Policy</a>.</p>
+                  <p className="mt-4 text-xs text-slate-500 text-center">By placing your order, you agree to our <a href="#" className="text-indigo-600 hover:underline">Terms of Service</a> and <a href="#" className="text-indigo-600 hover:underline">Privacy Policy</a>.</p>
                 </div>
               </div>
             </motion.div>

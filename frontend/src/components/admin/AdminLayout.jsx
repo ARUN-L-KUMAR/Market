@@ -1,228 +1,489 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
+import {
+  LayoutDashboard,
+  Package,
+  ShoppingBag,
+  Users,
+  Star,
+  DollarSign,
+  Truck,
+  AlertTriangle,
+  Megaphone,
+  Settings,
+  ChevronDown,
+  ChevronRight,
+  Search,
+  Bell,
+  Plus,
+  Moon,
+  Sun,
+  LogOut,
+  User as UserIcon,
+  HelpCircle,
+  ExternalLink,
+  Menu,
+  X,
+  PanelLeftClose,
+  PanelLeftOpen,
+} from 'lucide-react';
+import { logout } from '../../store/store';
+
+const navItems = [
+  {
+    name: 'Dashboard',
+    icon: <LayoutDashboard className="h-5 w-5" />,
+    subItems: [
+      { name: 'Overview', path: '/admin' },
+      { name: 'Revenue Analytics', path: '/admin/revenue' },
+      { name: 'Sales Reports', path: '/admin/sales' },
+      { name: 'Traffic Insights', path: '/admin/traffic' },
+      { name: 'Low Stock Alerts', path: '/admin/low-stock' },
+      { name: 'Recent Activity', path: '/admin/activity' },
+    ]
+  },
+  {
+    name: 'Products',
+    icon: <Package className="h-5 w-5" />,
+    subItems: [
+      { name: 'All Products', path: '/admin/products' },
+      { name: 'Add Product', path: '/admin/products/add' },
+      { name: 'Categories', path: '/admin/products/categories' },
+      { name: 'Subcategories', path: '/admin/products/subcategories' },
+      { name: 'Brands', path: '/admin/products/brands' },
+      { name: 'Inventory', path: '/admin/products/inventory' },
+      { name: 'Variants', path: '/admin/products/variants' },
+      { name: 'Bulk Upload', path: '/admin/products/bulk' },
+      { name: 'Draft Products', path: '/admin/products/drafts' },
+    ]
+  },
+  {
+    name: 'Orders',
+    icon: <ShoppingBag className="h-5 w-5" />,
+    subItems: [
+      { name: 'All Orders', path: '/admin/orders' },
+      { name: 'Pending Orders', path: '/admin/orders/pending' },
+      { name: 'Processing', path: '/admin/orders/processing' },
+      { name: 'Shipped', path: '/admin/orders/shipped' },
+      { name: 'Delivered', path: '/admin/orders/delivered' },
+      { name: 'Cancelled', path: '/admin/orders/cancelled' },
+      { name: 'Returns / Refunds', path: '/admin/orders/returns' },
+      { name: 'Payments', path: '/admin/orders/payments' },
+    ]
+  },
+  {
+    name: 'Users',
+    icon: <Users className="h-5 w-5" />,
+    subItems: [
+      { name: 'All Users', path: '/admin/users' },
+      { name: 'Customers', path: '/admin/users/customers' },
+      { name: 'Admins', path: '/admin/users/admins' },
+      { name: 'Roles & Permissions', path: '/admin/users/roles' },
+      { name: 'Blocked Users', path: '/admin/users/blocked' },
+    ]
+  },
+  {
+    name: 'Reviews',
+    icon: <Star className="h-5 w-5" />,
+    subItems: [
+      { name: 'All Reviews', path: '/admin/reviews' },
+      { name: 'Pending Approval', path: '/admin/reviews/pending' },
+      { name: 'Reported', path: '/admin/reviews/reported' },
+      { name: 'Spam Filtered', path: '/admin/reviews/spam' },
+    ]
+  },
+  {
+    name: 'Finance',
+    icon: <DollarSign className="h-5 w-5" />,
+    subItems: [
+      { name: 'Transactions', path: '/admin/finance/transactions' },
+      { name: 'Revenue Reports', path: '/admin/finance/reports' },
+      { name: 'Payouts', path: '/admin/finance/payouts' },
+      { name: 'Refunds', path: '/admin/finance/refunds' },
+      { name: 'Tax Reports', path: '/admin/finance/tax' },
+      { name: 'Coupons / Discounts', path: '/admin/finance/coupons' },
+    ]
+  },
+  {
+    name: 'Shipping',
+    icon: <Truck className="h-5 w-5" />,
+    subItems: [
+      { name: 'Shipping Methods', path: '/admin/shipping/methods' },
+      { name: 'Charges', path: '/admin/shipping/charges' },
+      { name: 'Regions / Zones', path: '/admin/shipping/regions' },
+      { name: 'Delivery Partners', path: '/admin/shipping/partners' },
+    ]
+  },
+  {
+    name: 'Inventory Alerts',
+    icon: <AlertTriangle className="h-5 w-5" />,
+    subItems: [
+      { name: 'Low Stock', path: '/admin/inventory/low' },
+      { name: 'Out of Stock', path: '/admin/inventory/out' },
+      { name: 'Restock History', path: '/admin/inventory/history' },
+      { name: 'Movement Logs', path: '/admin/inventory/logs' },
+    ]
+  },
+  {
+    name: 'Marketing',
+    icon: <Megaphone className="h-5 w-5" />,
+    subItems: [
+      { name: 'Coupons', path: '/admin/marketing/coupons' },
+      { name: 'Banners', path: '/admin/marketing/banners' },
+      { name: 'Featured Products', path: '/admin/marketing/featured' },
+      { name: 'Email Campaigns', path: '/admin/marketing/emails' },
+      { name: 'Push Notifications', path: '/admin/marketing/push' },
+    ]
+  },
+  {
+    name: 'Settings',
+    icon: <Settings className="h-5 w-5" />,
+    subItems: [
+      { name: 'Store Info', path: '/admin/settings/store' },
+      { name: 'Branding', path: '/admin/settings/branding' },
+      { name: 'Payment Gateway', path: '/admin/settings/payment' },
+      { name: 'Tax Config', path: '/admin/settings/tax' },
+      { name: 'Currency', path: '/admin/settings/currency' },
+      { name: 'Shipping', path: '/admin/settings/shipping' },
+      { name: 'Email Config', path: '/admin/settings/email' },
+      { name: 'SEO', path: '/admin/settings/seo' },
+      { name: 'API Keys', path: '/admin/settings/api' },
+      { name: 'Webhooks', path: '/admin/settings/webhooks' },
+    ]
+  },
+];
 
 const AdminLayout = ({ children }) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+  const [expandedMenus, setExpandedMenus] = useState([]);
+  const [isDarkMode, setIsDarkMode] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
   const { user } = useSelector(state => state.user);
-  
-  // Check if user is admin
+
   useEffect(() => {
-    if (!user || !user.isAdmin) {
+    if (!user || (!user.isAdmin && user.role !== 'admin')) {
       navigate('/login');
     }
   }, [user, navigate]);
-  
-  // Navigation items
-  const navItems = [
-    { name: 'Dashboard', path: '/admin', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-      </svg>
-    ) },
-    { name: 'Products', path: '/admin/products', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-      </svg>
-    ) },
-    { name: 'Orders', path: '/admin/orders', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-      </svg>
-    ) },
-    { name: 'Users', path: '/admin/users', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
-      </svg>
-    ) },
-    { name: 'Admin Management', path: '/admin/user-management', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-      </svg>
-    ) },
-    { name: 'Settings', path: '/admin/settings', icon: (
-      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-      </svg>
-    ) },
-  ];
-  
-  // Check if a nav item is active
-  const isActive = (path) => {
-    if (path === '/admin' && location.pathname === '/admin') {
-      return true;
+
+  // Auto-expand the menu containing the active page
+  useEffect(() => {
+    const currentPath = location.pathname;
+    const activeMenu = navItems.find(item =>
+      item.subItems?.some(sub =>
+        (sub.path === '/admin' && currentPath === '/admin') ||
+        (sub.path !== '/admin' && currentPath.startsWith(sub.path))
+      )
+    );
+
+    if (activeMenu && !expandedMenus.includes(activeMenu.name)) {
+      setExpandedMenus(prev => [...new Set([...prev, activeMenu.name])]);
     }
-    return location.pathname.startsWith(path) && path !== '/admin';
+  }, [location.pathname]);
+
+  const toggleMenu = (name) => {
+    setExpandedMenus(prev =>
+      prev.includes(name)
+        ? prev.filter(item => item !== name)
+        : [...prev, name]
+    );
   };
-  
+
+  const handleNavItemClick = (name) => {
+    if (isSidebarCollapsed) {
+      setIsSidebarCollapsed(false);
+      if (!expandedMenus.includes(name)) {
+        setExpandedMenus(prev => [...new Set([...prev, name])]);
+      }
+    } else {
+      toggleMenu(name);
+    }
+  };
+
+  const isActive = (path) => {
+    if (path === '/admin' && location.pathname === '/admin') return true;
+    return location.pathname === path || (path !== '/admin' && location.pathname.startsWith(path));
+  };
+
+  const isMenuExpanded = (name) => expandedMenus.includes(name);
+
   return (
-    <div className="h-screen flex overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100">
-      {/* Mobile sidebar overlay */}
+    <div className="h-screen flex overflow-hidden bg-slate-50 text-slate-900">
+      {/* Mobile sidebar */}
       <AnimatePresence>
         {sidebarOpen && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="md:hidden fixed inset-0 flex z-40"
-          >
-            <motion.div 
-              className="fixed inset-0 bg-gray-900 bg-opacity-50 backdrop-blur-sm" 
+          <div className="fixed inset-0 flex z-40 md:hidden">
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-slate-900/80 backdrop-blur-sm"
               onClick={() => setSidebarOpen(false)}
             />
-            
             <motion.div
-              initial={{ x: -280 }}
+              initial={{ x: '-100%' }}
               animate={{ x: 0 }}
-              exit={{ x: -280 }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-              className="relative flex-1 flex flex-col max-w-xs w-full bg-white shadow-2xl"
+              exit={{ x: '-100%' }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="relative flex-1 flex flex-col max-w-xs w-full bg-[#0f172a]"
             >
               <div className="absolute top-0 right-0 -mr-12 pt-2">
                 <button
-                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none focus:ring-2 focus:ring-inset focus:ring-white hover:bg-white/10 transition-colors"
+                  className="ml-1 flex items-center justify-center h-10 w-10 rounded-full focus:outline-none text-white hover:bg-white/10"
                   onClick={() => setSidebarOpen(false)}
                 >
-                  <span className="sr-only">Close sidebar</span>
-                  <svg className="h-6 w-6 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                  </svg>
+                  <X className="h-6 w-6" />
                 </button>
               </div>
-              
-              <div className="flex-1 h-0 pt-5 pb-4 overflow-y-auto">
-                <div className="flex-shrink-0 flex items-center px-4">
-                  <Link to="/" className="text-xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent">
-                    Market Admin
-                  </Link>
-                </div>
-                <nav className="mt-8 px-2 space-y-2">
-                  {navItems.map((item) => (
-                    <Link
-                      key={item.name}
-                      to={item.path}
-                      className={`group flex items-center px-3 py-3 text-base font-medium rounded-xl transition-all duration-200 ${
-                        isActive(item.path) 
-                          ? 'bg-gradient-to-r from-primary-500 to-purple-500 text-white shadow-lg transform scale-105' 
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900 hover:scale-105'
-                      }`}
-                    >
-                      <div className={`mr-4 ${isActive(item.path) ? 'text-white' : 'text-gray-400 group-hover:text-primary-500'}`}>
-                        {item.icon}
-                      </div>
-                      {item.name}
-                    </Link>
-                  ))}
-                </nav>
-              </div>
-              
-              <div className="flex-shrink-0 flex border-t border-gray-200 p-4 bg-gray-50">
-                <Link to="/" className="flex-shrink-0 group block w-full">
-                  <div className="flex items-center">
-                    <div className="relative">
-                      <div className="w-10 h-10 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 flex items-center justify-center text-white font-bold">
-                        {user?.name?.charAt(0).toUpperCase() || 'A'}
-                      </div>
-                      <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-green-400 border-2 border-white rounded-full"></div>
-                    </div>
-                    <div className="ml-3">
-                      <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
-                        {user?.name || 'Admin User'}
-                      </p>
-                      <p className="text-sm font-medium text-gray-500 group-hover:text-gray-700">
-                        View store
-                      </p>
-                    </div>
-                  </div>
-                </Link>
-              </div>
+              <SidebarContent
+                isMobile={true}
+                isSidebarCollapsed={isSidebarCollapsed}
+                setIsSidebarCollapsed={setIsSidebarCollapsed}
+                expandedMenus={expandedMenus}
+                handleNavItemClick={handleNavItemClick}
+                isActive={isActive}
+                isMenuExpanded={isMenuExpanded}
+                navItems={navItems}
+                user={user}
+                dispatch={dispatch}
+                logout={logout}
+                navigate={navigate}
+              />
             </motion.div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
-      
-      {/* Desktop sidebar */}
-      <div className="hidden md:flex md:flex-shrink-0">
-        <div className="flex flex-col w-64">
-          <div className="flex-1 flex flex-col min-h-0 border-r border-gray-200 bg-white/70 backdrop-blur-xl shadow-xl">
-            <div className="flex-1 flex flex-col pt-5 pb-4 overflow-y-auto">
-              <div className="flex items-center flex-shrink-0 px-4 mb-8">
-                <Link to="/" className="text-xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 bg-clip-text text-transparent">
-                  Market Admin
-                </Link>
-              </div>
-              <nav className="mt-5 flex-1 px-2 bg-transparent space-y-2">
-                {navItems.map((item) => (
-                  <motion.div key={item.name} whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-                    <Link
-                      to={item.path}
-                      className={`group flex items-center px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
-                        isActive(item.path) 
-                          ? 'bg-gradient-to-r from-primary-500 to-purple-500 text-white shadow-lg' 
-                          : 'text-gray-600 hover:bg-gray-100 hover:text-gray-900'
-                      }`}
-                    >
-                      <div className={`mr-3 ${isActive(item.path) ? 'text-white' : 'text-gray-400 group-hover:text-primary-500'}`}>
-                        {item.icon}
-                      </div>
-                      {item.name}
-                    </Link>
-                  </motion.div>
-                ))}
-              </nav>
-            </div>
-            
-            <div className="flex-shrink-0 flex border-t border-gray-200 p-4 bg-gray-50/50">
-              <Link to="/" className="flex-shrink-0 w-full group block">
-                <div className="flex items-center">
-                  <div className="relative">
-                    <div className="w-9 h-9 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 flex items-center justify-center text-white font-bold text-sm">
-                      {user?.name?.charAt(0).toUpperCase() || 'A'}
-                    </div>
-                    <div className="absolute -bottom-1 -right-1 w-3 h-3 bg-green-400 border-2 border-white rounded-full"></div>
-                  </div>
-                  <div className="ml-3">
-                    <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                      {user?.name || 'Admin User'}
-                    </p>
-                    <p className="text-xs font-medium text-gray-500 group-hover:text-gray-700">
-                      View store
-                    </p>
-                  </div>
-                </div>
-              </Link>
-            </div>
-          </div>
+
+      {/* Static sidebar for desktop */}
+      <div className={`hidden md:flex md:flex-shrink-0 transition-all duration-300 ${isSidebarCollapsed ? 'w-20' : 'w-64'}`}>
+        <div className="flex flex-col h-full">
+          <SidebarContent
+            isMobile={false}
+            isSidebarCollapsed={isSidebarCollapsed}
+            setIsSidebarCollapsed={setIsSidebarCollapsed}
+            expandedMenus={expandedMenus}
+            handleNavItemClick={handleNavItemClick}
+            isActive={isActive}
+            isMenuExpanded={isMenuExpanded}
+            navItems={navItems}
+            user={user}
+            dispatch={dispatch}
+            logout={logout}
+            navigate={navigate}
+          />
         </div>
       </div>
-      
+
       {/* Main content */}
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
-        {/* Mobile menu button */}
-        <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white/50 backdrop-blur-lg border-b border-gray-200">
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-xl text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-primary-500 bg-white/50 hover:bg-white/80 transition-all"
+        {/* Topbar */}
+        <header className="relative z-10 flex-shrink-0 flex h-16 bg-white border-b border-slate-200">
+          <button
+            className="px-4 border-r border-slate-200 text-slate-500 focus:outline-none md:hidden"
             onClick={() => setSidebarOpen(true)}
           >
-            <span className="sr-only">Open sidebar</span>
-            <svg className="h-6 w-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-            </svg>
-          </motion.button>
-        </div>
-        
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none bg-gradient-to-br from-gray-50/50 to-white/50">
-          {children}
+            <Menu className="h-6 w-6" />
+          </button>
+
+          <div className="flex-1 px-4 flex justify-between">
+            <div className="flex-1 flex items-center">
+              <div className="max-w-md w-full relative group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 group-focus-within:text-indigo-500 transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Universal Search (Ctrl + K)"
+                  className="w-full pl-10 pr-4 py-2 bg-slate-50 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500/10 focus:border-indigo-500 transition-all shadow-sm"
+                />
+              </div>
+            </div>
+
+            <div className="ml-4 flex items-center md:ml-6 space-x-2">
+              <button
+                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all relative"
+                title="Notifications"
+              >
+                <Bell className="h-5 w-5" />
+                <span className="absolute top-2 right-2.5 block h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
+              </button>
+
+              <button
+                className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                title="Toggle Theme"
+                onClick={() => setIsDarkMode(!isDarkMode)}
+              >
+                {isDarkMode ? <Sun className="h-5 w-5" /> : <Moon className="h-5 w-5" />}
+              </button>
+
+              <div className="h-6 w-px bg-slate-200 mx-2" />
+
+              <button
+                onClick={() => navigate('/admin/products/add')}
+                className="hidden sm:flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-md shadow-indigo-500/20 transition-all active:scale-95"
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Quick Action
+              </button>
+
+              <div className="flex items-center space-x-3 pl-4">
+                <div className="hidden sm:flex flex-col items-end">
+                  <span className="text-xs font-bold text-slate-900 leading-tight">{user?.name}</span>
+                  <span className="text-[10px] text-slate-500 font-bold uppercase tracking-wider">Super Admin</span>
+                </div>
+                <div className="w-9 h-9 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center text-slate-900 text-sm font-bold shadow-sm">
+                  {user?.name?.charAt(0).toUpperCase()}
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main className="flex-1 relative overflow-y-auto focus:outline-none bg-slate-50 p-6 sm:p-8 custom-scrollbar">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
         </main>
       </div>
     </div>
   );
 };
+
+const SidebarContent = ({
+  isMobile,
+  isSidebarCollapsed,
+  setIsSidebarCollapsed,
+  expandedMenus,
+  handleNavItemClick,
+  isActive,
+  isMenuExpanded,
+  navItems,
+  user,
+  dispatch,
+  logout,
+  navigate
+}) => (
+  <div className={`flex flex-col h-full bg-[#0f172a] text-slate-300 transition-all duration-300 ${isSidebarCollapsed && !isMobile ? 'w-20' : 'w-64'}`}>
+    <div className={`flex items-center flex-shrink-0 px-6 py-5 border-b border-slate-800 ${(isSidebarCollapsed && !isMobile) ? 'justify-center px-0' : 'justify-between'}`}>
+      {!(isSidebarCollapsed && !isMobile) ? (
+        <>
+          <div className="flex items-center">
+            <div className="bg-indigo-600 p-1.5 rounded-lg mr-3 shadow-lg shadow-indigo-500/20">
+              <Package className="h-6 w-6 text-white" />
+            </div>
+            <Link to="/" className="text-xl font-bold text-white tracking-tight whitespace-nowrap">
+              Market<span className="text-indigo-400">Admin</span>
+            </Link>
+          </div>
+          <button
+            onClick={() => setIsSidebarCollapsed(true)}
+            className="p-1.5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-all hidden md:block"
+          >
+            <PanelLeftClose className="h-4 w-4" />
+          </button>
+        </>
+      ) : (
+        <button
+          onClick={() => setIsSidebarCollapsed(false)}
+          className="p-1.5 text-slate-500 hover:text-white hover:bg-slate-800 rounded-lg transition-all hidden md:block"
+        >
+          <div className="bg-indigo-600 p-1.5 rounded-lg shadow-lg shadow-indigo-500/20">
+            <Package className="h-5 w-5 text-white" />
+          </div>
+        </button>
+      )}
+    </div>
+
+    <div className="flex-1 overflow-y-auto custom-scrollbar pt-4 pb-4">
+      <nav className="px-3 space-y-1">
+        {navItems.map((item) => (
+          <div key={item.name} className="space-y-1">
+            <button
+              onClick={() => handleNavItemClick(item.name)}
+              className={`w-full group flex items-center justify-between px-3 py-2.5 text-sm font-medium rounded-lg transition-all duration-200 ${isMenuExpanded(item.name) || item.subItems.some(sub => isActive(sub.path))
+                ? 'text-white'
+                : 'hover:text-white hover:bg-slate-800/50'
+                }`}
+            >
+              <div className="flex items-center">
+                <div className={`transition-colors duration-200 ${(isSidebarCollapsed && !isMobile) ? 'mr-0' : 'mr-3'} ${isActive(item.path) || item.subItems.some(sub => isActive(sub.path)) ? 'text-indigo-400' : 'text-slate-500 group-hover:text-slate-300'}`}>
+                  {item.icon}
+                </div>
+                {!(isSidebarCollapsed && !isMobile) && <span>{item.name}</span>}
+              </div>
+              {!(isSidebarCollapsed && !isMobile) && (isMenuExpanded(item.name) ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />)}
+            </button>
+
+            <AnimatePresence>
+              {isMenuExpanded(item.name) && !(isSidebarCollapsed && !isMobile) && (
+                <motion.div
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2 }}
+                  className="overflow-hidden bg-slate-900/40 rounded-lg mx-1"
+                >
+                  <div className="py-1 ml-9 border-l border-slate-800">
+                    {item.subItems.map((sub) => (
+                      <Link
+                        key={sub.name}
+                        to={sub.path}
+                        className={`block px-4 py-2 text-xs font-medium transition-colors duration-200 ${isActive(sub.path)
+                          ? 'text-indigo-400'
+                          : 'text-slate-500 hover:text-white'
+                          }`}
+                      >
+                        {sub.name}
+                      </Link>
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        ))}
+      </nav>
+    </div>
+
+    <div className={`flex-shrink-0 bg-slate-900/50 border-t border-slate-800 p-4 ${(isSidebarCollapsed && !isMobile) ? 'px-2' : 'p-4'}`}>
+      <div className={`flex items-center group ${(isSidebarCollapsed && !isMobile) ? 'justify-center' : 'justify-between'}`}>
+        <div className="flex items-center">
+          <div className="w-9 h-9 rounded-lg bg-indigo-600 flex items-center justify-center text-white text-sm font-semibold shadow-md shadow-indigo-500/10 flex-shrink-0">
+            {user?.name?.charAt(0).toUpperCase() || 'A'}
+          </div>
+          {!(isSidebarCollapsed && !isMobile) && (
+            <div className="ml-3 overflow-hidden">
+              <p className="text-sm font-semibold text-slate-200 truncate w-24">
+                {user?.name || 'Admin'}
+              </p>
+              <p className="text-[10px] uppercase tracking-wider text-slate-500 font-bold">
+                Level 1 Admin
+              </p>
+            </div>
+          )}
+        </div>
+        <button
+          onClick={() => { dispatch(logout()); navigate('/login'); }}
+          className={`p-2 text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all ${isSidebarCollapsed && !isMobile ? 'hidden' : 'block'}`}
+          title="Logout"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
+      </div>
+      {isSidebarCollapsed && !isMobile && (
+        <button
+          onClick={() => { dispatch(logout()); navigate('/login'); }}
+          className="w-9 h-9 mt-4 mx-auto flex items-center justify-center text-slate-500 hover:text-red-400 hover:bg-red-400/10 rounded-lg transition-all"
+          title="Logout"
+        >
+          <LogOut className="h-4 w-4" />
+        </button>
+      )}
+    </div>
+  </div>
+);
 
 export default AdminLayout;

@@ -39,12 +39,12 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
       />
 
       {/* Sidebar */}
-      <div className="absolute right-0 top-0 h-full w-96 bg-white shadow-xl transform transition-transform">
+      <div className="absolute right-0 top-0 h-full w-96 bg-white shadow-sm transform transition-transform">
         <div className="h-full flex flex-col">
           {/* Header */}
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-slate-200">
             <div className="flex items-center justify-between">
-              <h2 className="text-lg font-semibold text-gray-900">
+              <h2 className="text-lg font-semibold text-slate-900">
                 My Wishlist
                 {wishlistItems.length > 0 && (
                   <Badge color="primary" size="sm" className="ml-2">
@@ -54,7 +54,7 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
               </h2>
               <button
                 onClick={onClose}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-slate-400 hover:text-slate-600 transition-colors"
               >
                 <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -71,10 +71,10 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
                   {[...Array(3)].map((_, i) => (
                     <div key={i} className="animate-pulse">
                       <div className="flex gap-3">
-                        <div className="w-16 h-16 bg-gray-300 rounded-lg"></div>
+                        <div className="w-16 h-16 bg-slate-200 rounded-lg"></div>
                         <div className="flex-1">
-                          <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-                          <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+                          <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
+                          <div className="h-3 bg-slate-200 rounded w-1/2"></div>
                         </div>
                       </div>
                     </div>
@@ -83,11 +83,11 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
               </div>
             ) : wishlistItems.length === 0 ? (
               <div className="p-6 text-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-gray-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-12 w-12 text-slate-400 mx-auto mb-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
                 </svg>
-                <h3 className="text-sm font-medium text-gray-900 mb-1">No items in wishlist</h3>
-                <p className="text-xs text-gray-500 mb-4">Start adding products you love!</p>
+                <h3 className="text-sm font-medium text-slate-900 mb-1">No items in wishlist</h3>
+                <p className="text-xs text-slate-500 mb-4">Start adding products you love!</p>
                 <Button variant="outline" size="sm" onClick={onClose}>
                   Continue Shopping
                 </Button>
@@ -105,10 +105,10 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
                       />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <h3 className="text-sm font-medium text-gray-900 line-clamp-2 mb-1">
+                      <h3 className="text-sm font-medium text-slate-900 line-clamp-2 mb-1">
                         {item.title || 'Untitled Product'}
                       </h3>
-                      <span className="text-sm font-bold text-primary-600">
+                      <span className="text-sm font-semibold text-indigo-600">
                         <CurrencyPrice price={item.price || 0} />
                       </span>
                       <div className="flex items-center gap-1 mt-1">
@@ -123,7 +123,7 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
                     <div className="flex flex-col gap-1">
                       <button
                         onClick={() => window.location.href = `/products/${item._id}`}
-                        className="text-xs text-primary-600 hover:text-primary-800 transition-colors"
+                        className="text-xs text-indigo-600 hover:text-indigo-700 transition-colors"
                       >
                         View
                       </button>
@@ -142,7 +142,7 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
 
           {/* Footer */}
           {wishlistItems.length > 0 && (
-            <div className="p-4 border-t border-gray-200">
+            <div className="p-4 border-t border-slate-200">
               <Button
                 variant="primary"
                 fullWidth

@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   Filter,
   Tag,
   DollarSign,
@@ -27,7 +27,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
   const currencySymbol = supportedCurrencies[currentCurrency]?.symbol || '₹';
 
   // Extract unique categories, colors, and sizes from all products
-  const categories = [...new Set((allProducts || []).map(product => 
+  const categories = [...new Set((allProducts || []).map(product =>
     typeof product.category === 'object' ? product.category?.name : product.category
   ).filter(Boolean))];
   const colors = [...new Set((allProducts || []).flatMap(product => product.colors || []))];
@@ -135,10 +135,10 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
     <div className="flex flex-wrap items-center gap-3">
       {/* Filters Title */}
       <div className="flex items-center gap-1">
-        <Filter className="w-4 h-4 text-purple-600" />
-        <span className="text-sm font-medium text-gray-700">Filters:</span>
+        <Filter className="w-4 h-4 text-slate-600" />
+        <span className="text-sm font-medium text-slate-700">Filters:</span>
         {getActiveFilterCount() > 0 && (
-          <span className="px-1.5 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-medium">
+          <span className="px-1.5 py-0.5 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">
             {getActiveFilterCount()}
           </span>
         )}
@@ -147,11 +147,11 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
       {/* Categories */}
       {categories.length > 0 && (
         <div className="flex items-center gap-1">
-          <Tag className="w-4 h-4 text-gray-500" />
+          <Tag className="w-4 h-4 text-slate-500" />
           <select
             value={localFilters.category}
             onChange={(e) => handleCategoryChange(e.target.value)}
-            className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-sm focus:border-purple-400 focus:outline-none"
+            className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-sm focus:border-slate-400 focus:outline-none"
           >
             <option value="">Category</option>
             {categories.map(category => (
@@ -165,7 +165,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
 
       {/* Price Range */}
       <div className="flex items-center gap-1">
-        <DollarSign className="w-4 h-4 text-gray-500" />
+        <DollarSign className="w-4 h-4 text-slate-500" />
         <input
           type="number"
           name="min"
@@ -173,9 +173,9 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
           onChange={handlePriceChange}
           onBlur={applyPriceFilter}
           placeholder={`Min ${currencySymbol}`}
-          className="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs focus:border-purple-400 focus:outline-none"
+          className="w-16 px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs focus:border-slate-400 focus:outline-none"
         />
-        <span className="text-gray-400 text-xs">-</span>
+        <span className="text-slate-400 text-xs">-</span>
         <input
           type="number"
           name="max"
@@ -183,14 +183,14 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
           onChange={handlePriceChange}
           onBlur={applyPriceFilter}
           placeholder={`Max ${currencySymbol}`}
-          className="w-16 px-2 py-1 bg-gray-50 border border-gray-200 rounded text-xs focus:border-purple-400 focus:outline-none"
+          className="w-16 px-2 py-1 bg-slate-50 border border-slate-200 rounded text-xs focus:border-slate-400 focus:outline-none"
         />
       </div>
 
       {/* Colors */}
       {colors.length > 0 && (
         <div className="flex items-center gap-1">
-          <Palette className="w-4 h-4 text-gray-500" />
+          <Palette className="w-4 h-4 text-slate-500" />
           <div className="flex gap-0.5">
             {colors.slice(0, 4).map(color => (
               <motion.button
@@ -198,11 +198,10 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 onClick={() => handleColorChange(color)}
-                className={`w-5 h-5 rounded-full border transition-all duration-200 ${
-                  localFilters.color === color 
-                    ? 'border-purple-500 ring-1 ring-purple-300' 
-                    : 'border-gray-300 hover:border-gray-400'
-                }`}
+                className={`w-5 h-5 rounded-full border transition-all duration-200 ${localFilters.color === color
+                    ? 'border-slate-500 ring-1 ring-slate-300'
+                    : 'border-slate-300 hover:border-slate-300'
+                  }`}
                 style={{ backgroundColor: color.toLowerCase() }}
                 title={color}
               />
@@ -213,11 +212,11 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
 
       {/* Rating */}
       <div className="flex items-center gap-1">
-        <Star className="w-4 h-4 text-gray-500" />
+        <Star className="w-4 h-4 text-slate-500" />
         <select
           value={localFilters.minRating}
           onChange={(e) => handleRatingChange(parseInt(e.target.value) || '')}
-          className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-sm focus:border-purple-400 focus:outline-none"
+          className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-sm focus:border-purple-400 focus:outline-none"
         >
           <option value="">Rating</option>
           {[5, 4, 3, 2, 1].map(rating => (
@@ -231,7 +230,7 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
       {/* Sizes */}
       {sizes.length > 0 && (
         <div className="flex items-center gap-1">
-          <Ruler className="w-4 h-4 text-gray-500" />
+          <Ruler className="w-4 h-4 text-slate-500" />
           <div className="flex gap-0.5">
             {sizes.slice(0, 3).map(size => (
               <motion.button
@@ -239,11 +238,10 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSizeChange(size)}
-                className={`px-1.5 py-0.5 text-xs rounded transition-all duration-200 ${
-                  localFilters.size === size
-                    ? 'bg-purple-500 text-white'
-                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                }`}
+                className={`px-1.5 py-0.5 text-xs rounded transition-all duration-200 ${localFilters.size === size
+                    ? 'bg-slate-700 text-white'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  }`}
               >
                 {size}
               </motion.button>
@@ -254,11 +252,11 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
 
       {/* Sort */}
       <div className="flex items-center gap-1">
-        <TrendingUp className="w-4 h-4 text-gray-500" />
+        <TrendingUp className="w-4 h-4 text-slate-500" />
         <select
           value={`${localFilters.sortBy}-${localFilters.sortOrder}`}
           onChange={handleSortChange}
-          className="px-2 py-1 bg-gray-50 border border-gray-200 rounded text-sm focus:border-purple-400 focus:outline-none"
+          className="px-2 py-1 bg-slate-50 border border-slate-200 rounded text-sm focus:border-purple-400 focus:outline-none"
         >
           <option value="createdAt-desc">Newest</option>
           <option value="createdAt-asc">Oldest</option>

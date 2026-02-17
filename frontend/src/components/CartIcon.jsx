@@ -41,7 +41,7 @@ const CartIcon = () => {
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
     >
-      <div className="relative p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200">
+      <div className="relative p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-all duration-200">
         <motion.div
           animate={isAnimating ? { 
             scale: 1.2,
@@ -64,7 +64,7 @@ const CartIcon = () => {
               <Badge 
                 variant="primary" 
                 size="xs" 
-                className="min-w-[18px] h-[18px] flex items-center justify-center text-white font-bold"
+                className="min-w-[18px] h-[18px] flex items-center justify-center text-white font-semibold"
                 pulse={isAnimating}
               >
                 {itemCount > 99 ? '99+' : itemCount}
@@ -81,10 +81,10 @@ const CartIcon = () => {
             initial={{ opacity: 0, y: 10, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.8 }}
-            className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50"
+            className="absolute -bottom-16 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white text-xs rounded-lg px-3 py-2 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-50"
           >
             {itemCount} item{itemCount !== 1 ? 's' : ''} • <CurrencyPrice price={totalAmount} />
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-gray-800"></div>
+            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rotate-45 w-2 h-2 bg-slate-800"></div>
           </motion.div>
         )}
       </AnimatePresence>

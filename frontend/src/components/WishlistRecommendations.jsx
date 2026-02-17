@@ -106,9 +106,9 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
   ];
 
   return (
-    <div className="bg-white rounded-2xl shadow-card p-6">
+    <div className="bg-white rounded-lg shadow-card p-6">
       <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-bold text-gray-800">Recommended for You</h3>
+        <h3 className="text-xl font-semibold text-slate-800">Recommended for You</h3>
         <div className="flex gap-2">
           {categories.map(category => (
             <button
@@ -116,8 +116,8 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
               onClick={() => setSelectedCategory(category.id)}
               className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
                 selectedCategory === category.id
-                  ? 'bg-primary-500 text-white'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                  ? 'bg-indigo-500 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
               }`}
             >
               <span className="mr-1">{category.icon}</span>
@@ -131,15 +131,15 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {[...Array(4)].map((_, i) => (
             <div key={i} className="animate-pulse">
-              <div className="bg-gray-300 aspect-square rounded-lg mb-3"></div>
-              <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+              <div className="bg-slate-200 aspect-square rounded-lg mb-3"></div>
+              <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
+              <div className="h-3 bg-slate-200 rounded w-1/2"></div>
             </div>
           ))}
         </div>
       ) : recommendations.length === 0 ? (
         <div className="text-center py-8">
-          <p className="text-gray-500">No recommendations available at the moment.</p>
+          <p className="text-slate-500">No recommendations available at the moment.</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -173,7 +173,7 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
 
               {/* Product Info */}
               <div className="p-3">
-                <h4 className="text-sm font-semibold text-gray-900 line-clamp-2 mb-1">
+                <h4 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-1">
                   {product.title}
                 </h4>
                 
@@ -183,14 +183,14 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
                       <svg
                         key={i}
                         className={`w-3 h-3 ${
-                          i < (product.rating || 0) ? 'text-yellow-400 fill-current' : 'text-gray-300'
+                          i < (product.rating || 0) ? 'text-yellow-400 fill-current' : 'text-slate-300'
                         }`}
                         viewBox="0 0 24 24"
                       >
                         <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
                       </svg>
                     ))}
-                    <span className="text-xs text-gray-500 ml-1">
+                    <span className="text-xs text-slate-500 ml-1">
                       ({product.reviews?.length || 0})
                     </span>
                   </div>
@@ -206,15 +206,15 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
                   <div>
                     {product.discount > 0 ? (
                       <div className="flex items-center gap-1">
-                        <span className="text-sm font-bold text-primary-600">
+                        <span className="text-sm font-semibold text-indigo-600">
                           <CurrencyPrice price={product.price * (1 - product.discount / 100)} />
                         </span>
-                        <span className="text-xs text-gray-400 line-through">
+                        <span className="text-xs text-slate-400 line-through">
                           <CurrencyPrice price={product.price} />
                         </span>
                       </div>
                     ) : (
-                      <span className="text-sm font-bold text-primary-600">
+                      <span className="text-sm font-semibold text-indigo-600">
                         <CurrencyPrice price={product.price} />
                       </span>
                     )}

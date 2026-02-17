@@ -9,15 +9,15 @@ import React from 'react';
  * @param {number} width - Width in pixels or CSS value (eg: "100%")
  * @param {number} count - Number of skeleton items to render
  */
-const Skeleton = ({ 
-  className = '', 
+const Skeleton = ({
+  className = '',
   variant = 'rectangle',
   height = 20,
   width = '100%',
   count = 1
 }) => {
   const getVariantClasses = () => {
-    switch(variant) {
+    switch (variant) {
       case 'circle':
         return 'rounded-full';
       case 'text':
@@ -37,7 +37,7 @@ const Skeleton = ({
     return Array.from({ length: count }).map((_, index) => (
       <div
         key={index}
-        className={`bg-gray-200 animate-pulse ${getVariantClasses()} ${className}`}
+        className={`bg-slate-200 animate-pulse ${getVariantClasses()} ${className}`}
         style={containerStyle}
       ></div>
     ));
@@ -55,16 +55,16 @@ const Skeleton = ({
  */
 export const ProductCardSkeleton = () => (
   <div className="animate-pulse">
-    <div className="h-48 bg-gray-300 rounded-t-xl mb-4"></div>
+    <div className="h-48 bg-slate-200 rounded-t-lg mb-4"></div>
     <div className="px-4 pb-4">
-      <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
-      <div className="h-4 bg-gray-300 rounded w-1/2 mb-4"></div>
-      <div className="h-3 bg-gray-300 rounded w-full mb-2"></div>
-      <div className="h-3 bg-gray-300 rounded w-full mb-4"></div>
-      <div className="h-5 bg-gray-300 rounded w-1/4 mb-4"></div>
+      <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
+      <div className="h-4 bg-slate-200 rounded w-1/2 mb-4"></div>
+      <div className="h-3 bg-slate-200 rounded w-full mb-2"></div>
+      <div className="h-3 bg-slate-200 rounded w-full mb-4"></div>
+      <div className="h-5 bg-slate-200 rounded w-1/4 mb-4"></div>
       <div className="flex gap-2">
-        <div className="h-8 bg-gray-300 rounded w-full"></div>
-        <div className="h-8 bg-gray-300 rounded w-12"></div>
+        <div className="h-8 bg-slate-200 rounded w-full"></div>
+        <div className="h-8 bg-slate-200 rounded w-12"></div>
       </div>
     </div>
   </div>
@@ -75,15 +75,15 @@ export const ProductCardSkeleton = () => (
  */
 export const ProductDetailsSkeleton = () => (
   <div className="animate-pulse grid grid-cols-1 md:grid-cols-2 gap-8">
-    <div className="h-96 bg-gray-300 rounded-xl"></div>
+    <div className="h-96 bg-slate-200 rounded-lg"></div>
     <div className="space-y-6">
-      <div className="h-8 bg-gray-300 rounded w-3/4"></div>
-      <div className="h-6 bg-gray-300 rounded w-1/4"></div>
-      <div className="h-4 bg-gray-300 rounded w-full"></div>
-      <div className="h-4 bg-gray-300 rounded w-full"></div>
-      <div className="h-4 bg-gray-300 rounded w-full"></div>
-      <div className="h-4 bg-gray-300 rounded w-1/2"></div>
-      <div className="h-10 bg-gray-300 rounded w-full"></div>
+      <div className="h-8 bg-slate-200 rounded w-3/4"></div>
+      <div className="h-6 bg-slate-200 rounded w-1/4"></div>
+      <div className="h-4 bg-slate-200 rounded w-full"></div>
+      <div className="h-4 bg-slate-200 rounded w-full"></div>
+      <div className="h-4 bg-slate-200 rounded w-full"></div>
+      <div className="h-4 bg-slate-200 rounded w-1/2"></div>
+      <div className="h-10 bg-slate-200 rounded w-full"></div>
     </div>
   </div>
 );
@@ -95,14 +95,14 @@ export const OrderSummarySkeleton = () => (
   <div className="animate-pulse space-y-4">
     {[...Array(3)].map((_, i) => (
       <div key={i} className="flex justify-between">
-        <div className="h-4 bg-gray-300 rounded w-1/3"></div>
-        <div className="h-4 bg-gray-300 rounded w-1/6"></div>
+        <div className="h-4 bg-slate-200 rounded w-1/3"></div>
+        <div className="h-4 bg-slate-200 rounded w-1/6"></div>
       </div>
     ))}
-    <div className="h-px bg-gray-300 w-full my-2"></div>
+    <div className="h-px bg-slate-200 w-full my-2"></div>
     <div className="flex justify-between">
-      <div className="h-5 bg-gray-300 rounded w-1/4"></div>
-      <div className="h-5 bg-gray-300 rounded w-1/6"></div>
+      <div className="h-5 bg-slate-200 rounded w-1/4"></div>
+      <div className="h-5 bg-slate-200 rounded w-1/6"></div>
     </div>
   </div>
 );
@@ -117,7 +117,7 @@ export const TableRowSkeleton = ({ columns = 4, rows = 3 }) => (
         {[...Array(columns)].map((_, j) => (
           <div
             key={j}
-            className="h-6 bg-gray-300 rounded"
+            className="h-6 bg-slate-200 rounded"
             style={{ gridColumn: `span ${Math.floor(12 / columns)} / span ${Math.floor(12 / columns)}` }}
           ></div>
         ))}

@@ -1,12 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Star, 
-  Users, 
-  Award, 
-  Globe, 
-  Heart, 
+import {
+  Star,
+  Users,
+  Award,
+  Globe,
+  Heart,
   Zap,
   Shield,
   Target,
@@ -41,15 +41,15 @@ const AboutUs = () => {
       icon: <Shield className="w-8 h-8" />,
       title: "Trust & Security",
       description: "We prioritize the security of your data and transactions with industry-leading protection measures.",
-      color: "text-green-600",
-      bg: "bg-green-50",
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
       border: "border-green-200"
     },
     {
       icon: <Zap className="w-8 h-8" />,
       title: "Innovation",
       description: "We continuously evolve our platform with cutting-edge technology to serve you better.",
-      color: "text-yellow-600",
+      color: "text-amber-600",
       bg: "bg-yellow-50",
       border: "border-yellow-200"
     },
@@ -57,7 +57,7 @@ const AboutUs = () => {
       icon: <Target className="w-8 h-8" />,
       title: "Excellence",
       description: "We strive for perfection in every aspect of our service, from product quality to customer support.",
-      color: "text-purple-600",
+      color: "text-indigo-600",
       bg: "bg-purple-50",
       border: "border-purple-200"
     }
@@ -69,28 +69,28 @@ const AboutUs = () => {
       role: "CEO & Founder",
       description: "Visionary leader with 15+ years in e-commerce",
       avatar: "SJ",
-      gradient: "from-purple-500 to-pink-500"
+      gradient: "bg-slate-800"
     },
     {
       name: "Michael Chen",
       role: "CTO",
       description: "Tech expert passionate about scalable solutions",
       avatar: "MC",
-      gradient: "from-blue-500 to-cyan-500"
+      gradient: "bg-slate-700"
     },
     {
       name: "Emma Davis",
       role: "Head of Design",
       description: "Creative mind focused on user experience",
       avatar: "ED",
-      gradient: "from-green-500 to-teal-500"
+      gradient: "bg-slate-600"
     },
     {
       name: "David Wilson",
       role: "Head of Operations",
       description: "Operations specialist ensuring smooth delivery",
       avatar: "DW",
-      gradient: "from-orange-500 to-red-500"
+      gradient: "bg-slate-500"
     }
   ];
 
@@ -123,7 +123,7 @@ const AboutUs = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -137,19 +137,19 @@ const AboutUs = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full text-purple-700 font-medium mb-6"
+              className="inline-flex items-center px-6 py-3 bg-slate-100 rounded-full text-slate-700 font-medium mb-6"
             >
               <Star className="w-5 h-5 mr-2" />
               About Our Journey
             </motion.div>
 
-            <h1 className="text-5xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent mb-8">
+            <h1 className="text-5xl lg:text-7xl font-black leading-tight text-slate-900 mb-8">
               Building the Future of Commerce
             </h1>
 
-            <p className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto mb-12">
-              We're more than just an e-commerce platform. We're a team of passionate innovators 
-              dedicated to creating exceptional shopping experiences that connect people with the 
+            <p className="text-xl text-slate-600 leading-relaxed max-w-4xl mx-auto mb-12">
+              We're more than just an e-commerce platform. We're a team of passionate innovators
+              dedicated to creating exceptional shopping experiences that connect people with the
               products they love, when they need them most.
             </p>
 
@@ -158,9 +158,9 @@ const AboutUs = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button 
+                <Button
                   onClick={() => navigate('/contact')}
-                  className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
                 >
                   Get in Touch
                   <Mail className="w-5 h-5 ml-2" />
@@ -171,7 +171,7 @@ const AboutUs = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/products')}
-                className="flex items-center px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-purple-500 hover:text-purple-600 transition-all duration-200 font-semibold"
+                className="flex items-center px-8 py-4 border-2 border-slate-300 text-slate-700 rounded-lg hover:border-slate-500 hover:text-slate-800 transition-all duration-200 font-semibold"
               >
                 <ArrowRight className="w-5 h-5 mr-2" />
                 Explore Products
@@ -185,18 +185,18 @@ const AboutUs = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-r from-purple-200/30 to-pink-200/30 rounded-full blur-3xl"
+            className="absolute -top-32 -right-32 w-96 h-96 bg-slate-200/30 rounded-full blur-3xl"
           />
           <motion.div
             animate={{ rotate: -360 }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-32 -left-32 w-96 h-96 bg-gradient-to-r from-blue-200/30 to-cyan-200/30 rounded-full blur-3xl"
+            className="absolute -bottom-32 -left-32 w-96 h-96 bg-slate-200/30 rounded-full blur-3xl"
           />
         </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm">
+      <section className="py-16 bg-white ">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -213,13 +213,13 @@ const AboutUs = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="text-center bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20"
+                className="text-center bg-white rounded-lg p-8 shadow-sm border border-slate-200"
               >
-                <div className="flex justify-center mb-6 text-purple-600">
+                <div className="flex justify-center mb-6 text-slate-600">
                   {stat.icon}
                 </div>
-                <div className="text-4xl font-bold text-gray-800 mb-3">{stat.value}</div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-4xl font-semibold text-slate-800 mb-3">{stat.value}</div>
+                <div className="text-slate-600 font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -236,30 +236,30 @@ const AboutUs = () => {
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}
             >
-              <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-800 to-pink-800 bg-clip-text text-transparent mb-8">
+              <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-8">
                 Our Story
               </h2>
-              <div className="space-y-6 text-gray-700 leading-relaxed">
+              <div className="space-y-6 text-slate-700 leading-relaxed">
                 <p className="text-lg">
-                  Founded in 2014 with a simple yet powerful vision: to make online shopping 
+                  Founded in 2014 with a simple yet powerful vision: to make online shopping
                   more personal, more efficient, and more enjoyable for everyone.
                 </p>
                 <p>
-                  What started as a small team of passionate entrepreneurs has grown into a 
-                  global platform serving millions of customers worldwide. We've never lost 
+                  What started as a small team of passionate entrepreneurs has grown into a
+                  global platform serving millions of customers worldwide. We've never lost
                   sight of our core mission - putting customers first in everything we do.
                 </p>
                 <p>
-                  Today, we're proud to offer real-time inventory management, AI-powered 
-                  recommendations, and lightning-fast delivery to over 150 countries. 
+                  Today, we're proud to offer real-time inventory management, AI-powered
+                  recommendations, and lightning-fast delivery to over 150 countries.
                   But we're just getting started.
                 </p>
               </div>
-              
+
               <div className="mt-8 flex flex-wrap gap-4">
-                <span className="px-4 py-2 bg-purple-100 text-purple-700 rounded-full font-medium">Innovation</span>
-                <span className="px-4 py-2 bg-pink-100 text-pink-700 rounded-full font-medium">Global Reach</span>
-                <span className="px-4 py-2 bg-blue-100 text-blue-700 rounded-full font-medium">Customer-Centric</span>
+                <span className="px-4 py-2 bg-slate-100 text-slate-700 rounded-full font-medium">Innovation</span>
+                <span className="px-4 py-2 bg-slate-100 text-slate-700 rounded-full font-medium">Global Reach</span>
+                <span className="px-4 py-2 bg-indigo-100 text-indigo-700 rounded-full font-medium">Customer-Centric</span>
               </div>
             </motion.div>
 
@@ -270,27 +270,27 @@ const AboutUs = () => {
               transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
-              <div className="bg-gradient-to-br from-purple-500 to-pink-500 rounded-3xl p-16 text-center text-white shadow-2xl">
+              <div className="bg-slate-800 rounded-lg p-16 text-center text-white shadow-sm">
                 <div className="text-8xl mb-6">🚀</div>
-                <h3 className="text-2xl font-bold mb-4">Our Mission</h3>
+                <h3 className="text-2xl font-semibold mb-4">Our Mission</h3>
                 <p className="text-lg opacity-90">
                   To democratize commerce and empower businesses of all sizes to reach global audiences.
                 </p>
               </div>
-              
+
               {/* Floating Elements */}
               <motion.div
                 animate={{ y: [-10, 10, -10] }}
                 transition={{ duration: 3, repeat: Infinity }}
-                className="absolute -top-6 -right-6 w-20 h-20 bg-yellow-400 rounded-2xl flex items-center justify-center shadow-lg"
+                className="absolute -top-6 -right-6 w-20 h-20 bg-yellow-400 rounded-lg flex items-center justify-center shadow-sm"
               >
                 <Star className="w-10 h-10 text-white" />
               </motion.div>
-              
+
               <motion.div
                 animate={{ y: [10, -10, 10] }}
                 transition={{ duration: 4, repeat: Infinity }}
-                className="absolute -bottom-6 -left-6 w-16 h-16 bg-green-400 rounded-xl flex items-center justify-center shadow-lg"
+                className="absolute -bottom-6 -left-6 w-16 h-16 bg-green-400 rounded-lg flex items-center justify-center shadow-sm"
               >
                 <CheckCircle className="w-8 h-8 text-white" />
               </motion.div>
@@ -300,7 +300,7 @@ const AboutUs = () => {
       </section>
 
       {/* Values Section */}
-      <section className="py-20 bg-gradient-to-r from-gray-50 to-blue-50">
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -309,10 +309,10 @@ const AboutUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-800 to-pink-800 bg-clip-text text-transparent mb-6">
+            <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
               Our Core Values
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               These principles guide everything we do and shape how we serve our customers and community
             </p>
           </motion.div>
@@ -326,13 +326,13 @@ const AboutUs = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 whileHover={{ y: -10, scale: 1.03 }}
-                className={`${value.bg} ${value.border} border-2 rounded-3xl p-8 text-center transition-all duration-300 shadow-lg hover:shadow-xl`}
+                className={`${value.bg} ${value.border} border-2 rounded-lg p-8 text-center transition-all duration-300 shadow-sm hover:shadow-sm`}
               >
                 <div className={`${value.color} mb-6 flex justify-center`}>
                   {value.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">{value.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                <h3 className="text-xl font-semibold text-slate-800 mb-4">{value.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{value.description}</p>
               </motion.div>
             ))}
           </div>
@@ -349,17 +349,17 @@ const AboutUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-800 to-pink-800 bg-clip-text text-transparent mb-6">
+            <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
               Our Journey
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Key milestones that have shaped our company and defined our growth
             </p>
           </motion.div>
 
           <div className="relative">
             {/* Timeline Line */}
-            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-gradient-to-b from-purple-400 to-pink-400 rounded-full"></div>
+            <div className="absolute left-1/2 transform -translate-x-1/2 w-1 h-full bg-slate-300 rounded-full"></div>
 
             <div className="space-y-16">
               {milestones.map((milestone, index) => (
@@ -374,11 +374,11 @@ const AboutUs = () => {
                   <div className={`w-1/2 ${index % 2 === 0 ? 'pr-12 text-right' : 'pl-12 text-left'}`}>
                     <motion.div
                       whileHover={{ scale: 1.05 }}
-                      className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20"
+                      className="bg-white rounded-lg p-8 shadow-sm border border-slate-200"
                     >
-                      <div className="text-3xl font-bold text-purple-600 mb-2">{milestone.year}</div>
-                      <h3 className="text-xl font-bold text-gray-800 mb-3">{milestone.title}</h3>
-                      <p className="text-gray-600 leading-relaxed">{milestone.description}</p>
+                      <div className="text-3xl font-semibold text-slate-600 mb-2">{milestone.year}</div>
+                      <h3 className="text-xl font-semibold text-slate-800 mb-3">{milestone.title}</h3>
+                      <p className="text-slate-600 leading-relaxed">{milestone.description}</p>
                     </motion.div>
                   </div>
 
@@ -389,7 +389,7 @@ const AboutUs = () => {
                       whileInView={{ scale: 1 }}
                       viewport={{ once: true }}
                       transition={{ delay: index * 0.2 + 0.3, type: "spring" }}
-                      className="w-6 h-6 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full border-4 border-white shadow-lg"
+                      className="w-6 h-6 bg-slate-700 rounded-full border-4 border-white shadow-sm"
                     />
                   </div>
 
@@ -402,7 +402,7 @@ const AboutUs = () => {
       </section>
 
       {/* Team Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-50 to-pink-50">
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -411,10 +411,10 @@ const AboutUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-800 to-pink-800 bg-clip-text text-transparent mb-6">
+            <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
               Meet Our Team
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               The passionate people behind our success, working tirelessly to serve you better
             </p>
           </motion.div>
@@ -428,18 +428,18 @@ const AboutUs = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 whileHover={{ y: -10 }}
-                className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 text-center shadow-xl border border-white/20"
+                className="bg-white rounded-lg p-8 text-center shadow-sm border border-slate-200"
               >
                 <motion.div
                   whileHover={{ scale: 1.1, rotate: 360 }}
                   transition={{ duration: 0.5 }}
-                  className={`w-20 h-20 bg-gradient-to-r ${member.gradient} rounded-full flex items-center justify-center text-white font-bold text-2xl mx-auto mb-6 shadow-lg`}
+                  className={`w-20 h-20 ${member.gradient} rounded-full flex items-center justify-center text-white font-semibold text-2xl mx-auto mb-6 shadow-sm`}
                 >
                   {member.avatar}
                 </motion.div>
-                <h3 className="text-xl font-bold text-gray-800 mb-2">{member.name}</h3>
-                <p className="text-purple-600 font-semibold mb-3">{member.role}</p>
-                <p className="text-gray-600 text-sm leading-relaxed">{member.description}</p>
+                <h3 className="text-xl font-semibold text-slate-800 mb-2">{member.name}</h3>
+                <p className="text-slate-600 font-semibold mb-3">{member.role}</p>
+                <p className="text-slate-600 text-sm leading-relaxed">{member.description}</p>
               </motion.div>
             ))}
           </div>
@@ -447,7 +447,7 @@ const AboutUs = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white relative overflow-hidden">
+      <section className="py-20 bg-slate-800 text-white relative overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -456,13 +456,13 @@ const AboutUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h2 className="text-4xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl lg:text-6xl font-semibold mb-6">
               Join Our Community
             </h2>
             <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
               Become part of our growing family and experience the future of online shopping
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -470,18 +470,18 @@ const AboutUs = () => {
               >
                 <Button
                   onClick={() => navigate('/products')}
-                  className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl"
+                  className="bg-white text-slate-800 hover:bg-slate-100 px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
                 >
                   Start Shopping
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </motion.div>
-              
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/contact')}
-                className="border-2 border-white text-white hover:bg-white hover:text-purple-600 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200"
+                className="border-2 border-white text-white hover:bg-white hover:text-slate-800 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200"
               >
                 <Phone className="w-5 h-5 mr-2 inline" />
                 Contact Us

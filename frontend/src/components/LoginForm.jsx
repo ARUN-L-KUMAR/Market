@@ -170,15 +170,15 @@ const LoginForm = ({ isRegistration = false }) => {
 
   if (registrationSuccess) {
     return (
-      <div className="bg-white rounded-2xl shadow-card border border-gray-200 p-8 w-full max-w-md mx-auto text-center">
-        <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div className="bg-white rounded-lg shadow-card border border-slate-200 p-8 w-full max-w-md mx-auto text-center">
+        <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <svg className="w-8 h-8 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
           </svg>
         </div>
-        <h2 className="text-2xl font-bold mb-4 text-gray-800">Check Your Email</h2>
-        <p className="text-gray-600 mb-8">
-          We've sent a verification link to <span className="font-semibold text-gray-800">{formData.email}</span>.
+        <h2 className="text-2xl font-semibold mb-4 text-slate-800">Check Your Email</h2>
+        <p className="text-slate-600 mb-8">
+          We've sent a verification link to <span className="font-semibold text-slate-800">{formData.email}</span>.
           Please click the link to activate your account.
         </p>
         <div className="space-y-4">
@@ -203,8 +203,8 @@ const LoginForm = ({ isRegistration = false }) => {
   }
 
   return (
-    <div className="bg-white rounded-2xl shadow-card border border-gray-200 p-8 w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold mb-6 text-center text-gray-800">
+    <div className="bg-white rounded-lg shadow-card border border-slate-200 p-8 w-full max-w-md mx-auto">
+      <h2 className="text-2xl font-semibold mb-6 text-center text-slate-800">
         {isRegistration ? 'Create an Account' : 'Sign In to Your Account'}
       </h2>
 
@@ -249,7 +249,7 @@ const LoginForm = ({ isRegistration = false }) => {
             }
           });
         }}
-        className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-gray-200 rounded-xl text-gray-700 font-semibold hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 mb-4"
+        className="w-full flex items-center justify-center gap-3 px-4 py-3 border-2 border-slate-200 rounded-lg text-slate-700 font-semibold hover:bg-slate-50 hover:border-slate-300 transition-all duration-200 mb-4"
       >
         <svg className="w-5 h-5" viewBox="0 0 24 24">
           <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.1z" fill="#4285F4" />
@@ -264,10 +264,10 @@ const LoginForm = ({ isRegistration = false }) => {
       {/* OR Divider */}
       <div className="relative mb-6">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t border-gray-200"></div>
+          <div className="w-full border-t border-slate-200"></div>
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-white text-gray-500 font-medium">OR</span>
+          <span className="px-4 bg-white text-slate-500 font-medium">OR</span>
         </div>
       </div>
 
@@ -278,7 +278,7 @@ const LoginForm = ({ isRegistration = false }) => {
             <Button
               variant="outline"
               size="sm"
-              className="w-full bg-white text-blue-600 border-blue-200 hover:bg-blue-50"
+              className="w-full bg-white text-indigo-600 border-indigo-200 hover:bg-indigo-50"
               onClick={handleResendVerification}
               loading={isResendLoading}
             >
@@ -372,22 +372,22 @@ const LoginForm = ({ isRegistration = false }) => {
       {/* Form footer */}
       <div className="text-center">
         {isRegistration ? (
-          <p className="text-gray-600">
+          <p className="text-slate-600">
             Already have an account?{' '}
-            <a href="/login" className="text-primary-600 hover:underline font-semibold">
+            <a href="/login" className="text-indigo-600 hover:underline font-semibold">
               Sign in
             </a>
           </p>
         ) : (
           <div className="space-y-2">
-            <p className="text-gray-600">
+            <p className="text-slate-600">
               Don't have an account?{' '}
-              <a href="/signup" className="text-primary-600 hover:underline font-semibold">
+              <a href="/signup" className="text-indigo-600 hover:underline font-semibold">
                 Sign up
               </a>
             </p>
             <p>
-              <a href="/forgot-password" className="text-primary-600 hover:underline text-sm">
+              <a href="/forgot-password" className="text-indigo-600 hover:underline text-sm">
                 Forgot your password?
               </a>
             </p>

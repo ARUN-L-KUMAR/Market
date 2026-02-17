@@ -50,7 +50,7 @@ const WishlistIcon = ({ product, className = '', size = 'md' }) => {
         relative transition-all duration-200 transform hover:scale-110
         ${isInWishlist 
           ? 'text-red-500 hover:text-red-600' 
-          : 'text-gray-400 hover:text-red-400'
+          : 'text-slate-400 hover:text-red-400'
         }
         ${loading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
         ${className}

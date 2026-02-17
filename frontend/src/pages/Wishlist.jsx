@@ -18,7 +18,7 @@ const EmptyWishlistIllustration = () => (
       <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
     </svg>
     <h2 className="text-xl font-semibold mb-2">Your wishlist is empty!</h2>
-    <p className="mb-4 text-gray-500">Browse products and add your favorites to your wishlist.</p>
+    <p className="mb-4 text-slate-500">Browse products and add your favorites to your wishlist.</p>
     <Button onClick={() => window.location.href = '/products'} icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.35 2.7A1 1 0 007.5 17h9a1 1 0 00.9-.55L21 13M7 13V6a1 1 0 011-1h5a1 1 0 011 1v7" /></svg>}>Browse Products</Button>
   </div>
 );
@@ -89,7 +89,7 @@ const Wishlist = () => {
 
   return (
     <div className="max-w-5xl mx-auto py-8 px-4">
-      <h1 className="text-2xl font-bold mb-6">My Wishlist</h1>
+      <h1 className="text-2xl font-semibold mb-6">My Wishlist</h1>
       {loading ? (
         <div>Loading...</div>
       ) : wishlistItems.length === 0 ? (
@@ -112,7 +112,7 @@ const Wishlist = () => {
               <select
                 value={sortBy}
                 onChange={e => setSortBy(e.target.value)}
-                className="border rounded px-2 py-1 focus:ring-2 focus:ring-primary-500"
+                className="border rounded px-2 py-1 focus:ring-2 focus:ring-indigo-500"
                 aria-label="Sort wishlist"
               >
                 <option value="date">Sort by: Recently Added</option>
@@ -147,7 +147,7 @@ const Wishlist = () => {
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
                       <h3 className="text-lg font-semibold mb-1 line-clamp-2">{product.title}</h3>
-                      <p className="text-primary-600 font-bold mb-2 text-lg"><CurrencyPrice price={product.price || 0} /></p>
+                      <p className="text-indigo-600 font-semibold mb-2 text-lg"><CurrencyPrice price={product.price || 0} /></p>
                     </div>
                     <div className="mt-4 flex gap-2">
                       <Button

@@ -96,16 +96,16 @@ const RealTimeStock = () => {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-card border border-gray-200 p-4">
+    <div className="bg-white rounded-lg shadow-card border border-slate-200 p-4">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-bold text-primary-700">Live Inventory Updates</h3>
+        <h3 className="text-lg font-semibold text-indigo-700">Live Inventory Updates</h3>
         <Badge color="primary" dot={updates.length > 0}>
           {updates.length > 0 ? 'Live' : 'Waiting'}
         </Badge>
       </div>
 
       {updates.length === 0 ? (
-        <div className="text-center py-4 text-gray-500 text-sm">
+        <div className="text-center py-4 text-slate-500 text-sm">
           No recent updates. Updates will appear here in real-time.
         </div>
       ) : (
@@ -113,17 +113,17 @@ const RealTimeStock = () => {
           {updates.map(update => (
             <li 
               key={update.id} 
-              className="bg-gray-50 rounded-lg p-3 border border-gray-100 cursor-pointer hover:bg-gray-100 transition duration-200"
+              className="bg-slate-50 rounded-lg p-3 border border-slate-200 cursor-pointer hover:bg-slate-100 transition duration-200"
               onClick={() => handleClick(update)}
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <p className="text-sm font-medium text-gray-800">{getUpdateMessage(update)}</p>
+                  <p className="text-sm font-medium text-slate-800">{getUpdateMessage(update)}</p>
                   <Badge color={getBadgeColor(update.type)} size="sm" className="mt-1">
                     {update.type}
                   </Badge>
                 </div>
-                <span className="text-xs text-gray-500">{formatTime(update.timestamp)}</span>
+                <span className="text-xs text-slate-500">{formatTime(update.timestamp)}</span>
               </div>
             </li>
           ))}

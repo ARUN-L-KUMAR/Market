@@ -61,14 +61,14 @@ const ResetPassword = () => {
         return (
             <div className="min-h-[80vh] flex flex-col justify-center py-12 px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="bg-white py-8 px-6 rounded-2xl shadow-card text-center border border-gray-100">
-                        <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-                            <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <div className="bg-white py-8 px-6 rounded-lg shadow-card text-center border border-slate-200">
+                        <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Password Reset Successful</h2>
-                        <p className="text-gray-600 mb-8">
+                        <h2 className="text-2xl font-semibold text-slate-900 mb-2">Password Reset Successful</h2>
+                        <p className="text-slate-600 mb-8">
                             Your password has been updated. You will be redirected to the login page shortly.
                         </p>
                         <Button className="w-full" onClick={() => navigate('/login')}>
@@ -84,14 +84,14 @@ const ResetPassword = () => {
         return (
             <div className="min-h-[80vh] flex flex-col justify-center py-12 px-6 lg:px-8">
                 <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <div className="bg-white py-8 px-6 rounded-2xl shadow-card text-center border border-gray-100">
+                    <div className="bg-white py-8 px-6 rounded-lg shadow-card text-center border border-slate-200">
                         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6 text-red-600">
                             <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                             </svg>
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-2">Invalid or Expired Link</h2>
-                        <p className="text-gray-600 mb-8">
+                        <h2 className="text-2xl font-semibold text-slate-900 mb-2">Invalid or Expired Link</h2>
+                        <p className="text-slate-600 mb-8">
                             The password reset link is invalid or has expired. Please request a new one.
                         </p>
                         <Button className="w-full" onClick={() => navigate('/forgot-password')}>
@@ -104,10 +104,10 @@ const ResetPassword = () => {
     }
 
     return (
-        <div className="min-h-[80vh] flex flex-col justify-center py-12 px-6 lg:px-8 bg-gray-50">
+        <div className="min-h-[80vh] flex flex-col justify-center py-12 px-6 lg:px-8 bg-slate-50">
             <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                <h2 className="text-center text-3xl font-bold text-gray-900 mb-8">Set New Password</h2>
-                <div className="bg-white py-8 px-6 rounded-2xl shadow-card sm:px-10 border border-gray-100">
+                <h2 className="text-center text-3xl font-semibold text-slate-900 mb-8">Set New Password</h2>
+                <div className="bg-white py-8 px-6 rounded-lg shadow-card sm:px-10 border border-slate-200">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <Input
                             label="New Password"
@@ -140,7 +140,7 @@ const ResetPassword = () => {
                         </Button>
                     </form>
                     <div className="mt-6 text-center">
-                        <Link to="/login" className="text-sm text-blue-600 hover:underline">
+                        <Link to="/login" className="text-sm text-indigo-600 hover:underline">
                             Back to Login
                         </Link>
                     </div>

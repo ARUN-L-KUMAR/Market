@@ -3,13 +3,13 @@ import { useSelector } from 'react-redux';
 import { useNavigate, Link } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import axios from 'axios';
-import { 
-  ShoppingBag, 
-  Download, 
-  Eye, 
-  X, 
-  Filter, 
-  SortAsc, 
+import {
+  ShoppingBag,
+  Download,
+  Eye,
+  X,
+  Filter,
+  SortAsc,
   Calendar,
   Package,
   Truck,
@@ -26,7 +26,7 @@ import Card from '../components/ui/Card';
 const OrderHistory = () => {
   const { token } = useSelector(state => state.user);
   const navigate = useNavigate();
-  
+
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -73,7 +73,7 @@ const OrderHistory = () => {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
-      
+
       // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
@@ -85,7 +85,7 @@ const OrderHistory = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading invoice:', error);
-      const event = new CustomEvent('show-toast', { 
+      const event = new CustomEvent('show-toast', {
         detail: { message: 'Failed to download invoice', type: 'error' }
       });
       window.dispatchEvent(event);
@@ -98,17 +98,17 @@ const OrderHistory = () => {
       await axios.put(`${apiUrl}/api/orders/${orderId}/cancel`, {}, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      
+
       // Refresh orders
       fetchOrders();
-      
-      const event = new CustomEvent('show-toast', { 
+
+      const event = new CustomEvent('show-toast', {
         detail: { message: 'Order cancelled successfully', type: 'success' }
       });
       window.dispatchEvent(event);
     } catch (error) {
       console.error('Error cancelling order:', error);
-      const event = new CustomEvent('show-toast', { 
+      const event = new CustomEvent('show-toast', {
         detail: { message: 'Failed to cancel order', type: 'error' }
       });
       window.dispatchEvent(event);
@@ -167,7 +167,7 @@ const OrderHistory = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      <div className="min-h-screen bg-slate-50">
         <div className="container mx-auto px-4 py-12 max-w-7xl">
           <div className="flex items-center justify-center min-h-[400px]">
             <LoadingSpinner />
@@ -179,12 +179,12 @@ const OrderHistory = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+      <div className="min-h-screen bg-slate-50">
         <div className="container mx-auto px-4 py-12 max-w-7xl">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-2xl shadow-lg"
+            className="bg-red-50 border-2 border-red-200 text-red-700 px-6 py-4 rounded-lg shadow-sm"
           >
             <div className="flex items-center">
               <XCircle className="w-5 h-5 mr-3" />
@@ -197,23 +197,23 @@ const OrderHistory = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       <div className="container mx-auto px-4 py-12 max-w-7xl">
         {/* Header Section */}
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-12 text-center"
         >
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-blue-100 p-3 rounded-2xl mr-4">
-              <ShoppingBag className="w-8 h-8 text-blue-600" />
+            <div className="bg-indigo-100 p-3 rounded-lg mr-4">
+              <ShoppingBag className="w-8 h-8 text-indigo-600" />
             </div>
-            <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+            <h1 className="text-4xl font-semibold text-slate-900">
               Order History
             </h1>
           </div>
-          <p className="text-gray-600 text-lg">Track and manage your past orders</p>
+          <p className="text-slate-600 text-lg">Track and manage your past orders</p>
         </motion.div>
 
         {/* Filters and Sorting */}
@@ -226,14 +226,14 @@ const OrderHistory = () => {
             <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
               {/* Filter by Status */}
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-gray-700">
+                <div className="flex items-center gap-2 text-slate-700">
                   <Filter className="w-5 h-5" />
                   <span className="font-semibold">Filter:</span>
                 </div>
                 <select
                   value={filter}
                   onChange={(e) => setFilter(e.target.value)}
-                  className="border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200"
+                  className="border-2 border-slate-200 rounded-lg px-4 py-2.5 text-sm bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200"
                 >
                   <option value="all">All Orders</option>
                   <option value="pending">Pending</option>
@@ -246,14 +246,14 @@ const OrderHistory = () => {
 
               {/* Sort Options */}
               <div className="flex items-center gap-4">
-                <div className="flex items-center gap-2 text-gray-700">
+                <div className="flex items-center gap-2 text-slate-700">
                   <SortAsc className="w-5 h-5" />
                   <span className="font-semibold">Sort by:</span>
                 </div>
                 <select
                   value={sortBy}
                   onChange={(e) => setSortBy(e.target.value)}
-                  className="border-2 border-gray-200 rounded-xl px-4 py-2.5 text-sm bg-white focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-all duration-200"
+                  className="border-2 border-slate-200 rounded-lg px-4 py-2.5 text-sm bg-white focus:border-indigo-500 focus:ring-4 focus:ring-indigo-100 transition-all duration-200"
                 >
                   <option value="newest">Newest First</option>
                   <option value="oldest">Oldest First</option>
@@ -281,18 +281,18 @@ const OrderHistory = () => {
                   transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
                   className="mb-6"
                 >
-                  <div className="mx-auto w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
-                    <ShoppingBag className="w-12 h-12 text-gray-400" />
+                  <div className="mx-auto w-24 h-24 bg-slate-100 rounded-full flex items-center justify-center">
+                    <ShoppingBag className="w-12 h-12 text-slate-400" />
                   </div>
                 </motion.div>
-                <h2 className="text-3xl font-bold text-gray-700 mb-4">No Orders Found</h2>
-                <p className="text-gray-500 mb-8 max-w-md mx-auto text-lg">
-                  {filter === 'all' 
-                    ? "You haven't placed any orders yet. Start shopping to see your order history here!" 
+                <h2 className="text-3xl font-semibold text-slate-700 mb-4">No Orders Found</h2>
+                <p className="text-slate-500 mb-8 max-w-md mx-auto text-lg">
+                  {filter === 'all'
+                    ? "You haven't placed any orders yet. Start shopping to see your order history here!"
                     : `No orders found with status "${filter}". Try adjusting your filters.`}
                 </p>
-                <Button 
-                  variant="primary" 
+                <Button
+                  variant="primary"
                   size="lg"
                   onClick={() => navigate('/products')}
                   icon={<ShoppingBag className="w-5 h-5" />}
@@ -312,20 +312,20 @@ const OrderHistory = () => {
                 >
                   <Card className="overflow-hidden" shadow="xl" gradient hover>
                     {/* Order Header */}
-                    <div className="px-8 py-6 bg-gradient-to-r from-gray-50 to-blue-50 border-b border-gray-100">
+                    <div className="px-8 py-6 bg-slate-50 border-b border-slate-200">
                       <div className="flex flex-col xl:flex-row xl:items-center xl:justify-between gap-4">
                         <div className="flex items-center gap-6">
                           <div>
-                            <h3 className="text-xl font-bold text-gray-800 mb-1">
+                            <h3 className="text-xl font-semibold text-slate-800 mb-1">
                               Order #{order.orderNumber || order._id.slice(-8).toUpperCase()}
                             </h3>
-                            <div className="flex items-center text-sm text-gray-600">
+                            <div className="flex items-center text-sm text-slate-600">
                               <Calendar className="w-4 h-4 mr-2" />
                               {formatDate(order.createdAt)}
                             </div>
                           </div>
                           <div className="flex items-center gap-2">
-                            <Badge 
+                            <Badge
                               variant={getStatusColor(order.status)}
                               size="md"
                               dot
@@ -338,12 +338,12 @@ const OrderHistory = () => {
                             </Badge>
                           </div>
                         </div>
-                        
+
                         <div className="flex items-center gap-4">
                           <div className="text-right">
-                            <div className="text-sm text-gray-500 mb-1">Total Amount</div>
-                            <div className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                             ₹{order.total?.toFixed(2) || '0.00'}
+                            <div className="text-sm text-slate-500 mb-1">Total Amount</div>
+                            <div className="text-2xl font-semibold text-slate-900">
+                              ₹{order.total?.toFixed(2) || '0.00'}
                             </div>
                           </div>
                           <div className="flex gap-2">
@@ -383,38 +383,38 @@ const OrderHistory = () => {
                       <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
                         {/* Items List */}
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                          <h4 className="text-lg font-semibold text-slate-700 mb-4 flex items-center">
                             <Package className="w-5 h-5 mr-2" />
                             Items Ordered
                           </h4>
                           <div className="space-y-4">
                             {order.items?.slice(0, 3).map((item, itemIndex) => (
-                              <motion.div 
+                              <motion.div
                                 key={itemIndex}
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 transition={{ delay: (index * 0.1) + (itemIndex * 0.05) }}
-                                className="flex items-center gap-4 p-3 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors duration-200"
+                                className="flex items-center gap-4 p-3 bg-slate-50 rounded-lg hover:bg-slate-100 transition-colors duration-200"
                               >
                                 <div className="relative">
                                   <img
                                     src={item.product?.images?.[0]?.url || 'https://via.placeholder.com/80'}
                                     alt={item.product?.title || 'Product'}
-                                    className="w-16 h-16 object-cover rounded-lg shadow-md"
+                                    className="w-16 h-16 object-cover rounded-lg shadow-sm"
                                     onError={e => { e.target.src = 'https://via.placeholder.com/80'; }}
                                   />
-                                  <div className="absolute -top-2 -right-2 bg-blue-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-bold">
+                                  <div className="absolute -top-2 -right-2 bg-indigo-500 text-white text-xs rounded-full w-6 h-6 flex items-center justify-center font-semibold">
                                     {item.quantity}
                                   </div>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                  <div className="text-sm font-semibold text-gray-800 truncate">
+                                  <div className="text-sm font-semibold text-slate-800 truncate">
                                     {item.product?.title || 'Product'}
                                   </div>
-                                  <span className="text-xs text-gray-500">
+                                  <span className="text-xs text-slate-500">
                                     <CurrencyPrice price={item.price} /> each
                                   </span>
-                                  <span className="text-sm font-medium text-blue-600">
+                                  <span className="text-sm font-medium text-indigo-600">
                                     Total: <CurrencyPrice price={item.quantity * item.price} />
                                   </span>
                                 </div>
@@ -432,22 +432,22 @@ const OrderHistory = () => {
 
                         {/* Shipping Info */}
                         <div>
-                          <h4 className="text-lg font-semibold text-gray-700 mb-4 flex items-center">
+                          <h4 className="text-lg font-semibold text-slate-700 mb-4 flex items-center">
                             <Truck className="w-5 h-5 mr-2" />
                             Shipping Address
                           </h4>
-                          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-6 rounded-xl border border-blue-100">
-                            <div className="text-sm text-gray-700 space-y-2">
-                              <p className="font-semibold text-lg text-gray-800">
+                          <div className="bg-slate-50 p-6 rounded-lg border border-slate-200">
+                            <div className="text-sm text-slate-700 space-y-2">
+                              <p className="font-semibold text-lg text-slate-800">
                                 {order.shippingAddress?.fullName}
                               </p>
-                              <p className="text-gray-600">{order.shippingAddress?.address}</p>
-                              <p className="text-gray-600">
+                              <p className="text-slate-600">{order.shippingAddress?.address}</p>
+                              <p className="text-slate-600">
                                 {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}
                               </p>
-                              <p className="text-gray-600">{order.shippingAddress?.country}</p>
+                              <p className="text-slate-600">{order.shippingAddress?.country}</p>
                               {order.shippingAddress?.phone && (
-                                <p className="text-gray-600 mt-3 pt-2 border-t border-blue-200">
+                                <p className="text-slate-600 mt-3 pt-2 border-t border-indigo-200">
                                   📞 {order.shippingAddress.phone}
                                 </p>
                               )}

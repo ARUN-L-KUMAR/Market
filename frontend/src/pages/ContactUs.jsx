@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Mail, 
-  Phone, 
-  MapPin, 
-  Clock, 
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Clock,
   Send,
   MessageCircle,
   Headphones,
@@ -34,9 +34,9 @@ const ContactUs = () => {
       description: "Get in touch via email for detailed inquiries",
       value: "support@market.com",
       action: "mailto:support@market.com",
-      color: "text-blue-600",
-      bg: "bg-blue-50",
-      border: "border-blue-200"
+      color: "text-indigo-600",
+      bg: "bg-indigo-50",
+      border: "border-indigo-200"
     },
     {
       icon: <Phone className="w-8 h-8" />,
@@ -44,8 +44,8 @@ const ContactUs = () => {
       description: "Call us for immediate assistance",
       value: "+1 (555) 123-4567",
       action: "tel:+15551234567",
-      color: "text-green-600",
-      bg: "bg-green-50",
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
       border: "border-green-200"
     },
     {
@@ -54,7 +54,7 @@ const ContactUs = () => {
       description: "Chat with our support team in real-time",
       value: "Available 24/7",
       action: "#",
-      color: "text-purple-600",
+      color: "text-indigo-600",
       bg: "bg-purple-50",
       border: "border-purple-200"
     },
@@ -122,7 +122,7 @@ const ContactUs = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20">
         <div className="container mx-auto px-4 max-w-7xl">
@@ -136,18 +136,18 @@ const ContactUs = () => {
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
               transition={{ delay: 0.2, type: "spring" }}
-              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full text-blue-700 font-medium mb-6"
+              className="inline-flex items-center px-6 py-3 bg-slate-100 rounded-full text-slate-700 font-medium mb-6"
             >
               <MessageCircle className="w-5 h-5 mr-2" />
               Get in Touch
             </motion.div>
 
-            <h1 className="text-5xl lg:text-7xl font-black leading-tight bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 bg-clip-text text-transparent mb-8">
+            <h1 className="text-5xl lg:text-7xl font-black leading-tight text-slate-900 mb-8">
               We're Here to Help
             </h1>
 
-            <p className="text-xl text-gray-600 leading-relaxed max-w-4xl mx-auto mb-12">
-              Have questions, feedback, or need assistance? Our dedicated support team is ready to help you 
+            <p className="text-xl text-slate-600 leading-relaxed max-w-4xl mx-auto mb-12">
+              Have questions, feedback, or need assistance? Our dedicated support team is ready to help you
               with anything you need. Reach out to us through any of the channels below.
             </p>
 
@@ -156,9 +156,9 @@ const ContactUs = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                <Button 
+                <Button
                   onClick={() => document.getElementById('contact-form').scrollIntoView({ behavior: 'smooth' })}
-                  className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl"
+                  className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
                 >
                   Send Message
                   <Send className="w-5 h-5 ml-2" />
@@ -169,7 +169,7 @@ const ContactUs = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/faq')}
-                className="flex items-center px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-blue-500 hover:text-blue-600 transition-all duration-200 font-semibold"
+                className="flex items-center px-8 py-4 border-2 border-slate-300 text-slate-700 rounded-lg hover:border-indigo-500 hover:text-indigo-600 transition-all duration-200 font-semibold"
               >
                 <ArrowRight className="w-5 h-5 mr-2" />
                 Check FAQ
@@ -183,18 +183,18 @@ const ContactUs = () => {
           <motion.div
             animate={{ rotate: 360 }}
             transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-r from-blue-200/30 to-purple-200/30 rounded-full blur-3xl"
+            className="absolute -top-32 -right-32 w-96 h-96 bg-slate-200/30 rounded-full blur-3xl"
           />
           <motion.div
             animate={{ rotate: -360 }}
             transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-32 -left-32 w-96 h-96 bg-gradient-to-r from-pink-200/30 to-cyan-200/30 rounded-full blur-3xl"
+            className="absolute -bottom-32 -left-32 w-96 h-96 bg-slate-200/30 rounded-full blur-3xl"
           />
         </div>
       </section>
 
       {/* Contact Methods */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm">
+      <section className="py-16 bg-white ">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -203,10 +203,10 @@ const ContactUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent mb-4">
+            <h2 className="text-4xl font-semibold text-slate-900 mb-4">
               Choose Your Preferred Contact Method
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto">
               Multiple ways to reach us - pick the one that works best for you
             </p>
           </motion.div>
@@ -220,7 +220,7 @@ const ContactUs = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 whileHover={{ y: -10, scale: 1.03 }}
-                className={`${method.bg} ${method.border} border-2 rounded-3xl p-8 text-center transition-all duration-300 shadow-lg hover:shadow-xl cursor-pointer`}
+                className={`${method.bg} ${method.border} border-2 rounded-lg p-8 text-center transition-all duration-300 shadow-sm hover:shadow-sm cursor-pointer`}
                 onClick={() => {
                   if (method.action.startsWith('mailto:') || method.action.startsWith('tel:')) {
                     window.location.href = method.action;
@@ -234,8 +234,8 @@ const ContactUs = () => {
                 <div className={`${method.color} mb-6 flex justify-center`}>
                   {method.icon}
                 </div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">{method.title}</h3>
-                <p className="text-gray-600 mb-4">{method.description}</p>
+                <h3 className="text-xl font-semibold text-slate-800 mb-4">{method.title}</h3>
+                <p className="text-slate-600 mb-4">{method.description}</p>
                 <p className={`${method.color} font-semibold`}>{method.value}</p>
               </motion.div>
             ))}
@@ -255,8 +255,8 @@ const ContactUs = () => {
               transition={{ duration: 0.6 }}
               id="contact-form"
             >
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-2xl border border-white/20 p-8">
-                <h2 className="text-3xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent mb-8">
+              <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-8">
+                <h2 className="text-3xl font-semibold text-slate-900 mb-8">
                   Send us a Message
                 </h2>
 
@@ -266,14 +266,14 @@ const ContactUs = () => {
                       whileFocus={{ scale: 1.02 }}
                       className="relative"
                     >
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Your Name</label>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Your Name</label>
                       <input
                         type="text"
                         name="name"
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
+                        className="w-full border-2 border-slate-200 rounded-lg px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white text-slate-800 font-medium"
                         placeholder="Enter your full name"
                       />
                     </motion.div>
@@ -282,14 +282,14 @@ const ContactUs = () => {
                       whileFocus={{ scale: 1.02 }}
                       className="relative"
                     >
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">Email Address</label>
+                      <label className="block text-sm font-semibold text-slate-700 mb-2">Email Address</label>
                       <input
                         type="email"
                         name="email"
                         value={formData.email}
                         onChange={handleInputChange}
                         required
-                        className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
+                        className="w-full border-2 border-slate-200 rounded-lg px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white text-slate-800 font-medium"
                         placeholder="your.email@example.com"
                       />
                     </motion.div>
@@ -299,14 +299,14 @@ const ContactUs = () => {
                     whileFocus={{ scale: 1.02 }}
                     className="relative"
                   >
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Subject</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Subject</label>
                     <input
                       type="text"
                       name="subject"
                       value={formData.subject}
                       onChange={handleInputChange}
                       required
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium"
+                      className="w-full border-2 border-slate-200 rounded-lg px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white text-slate-800 font-medium"
                       placeholder="What's this about?"
                     />
                   </motion.div>
@@ -315,14 +315,14 @@ const ContactUs = () => {
                     whileFocus={{ scale: 1.02 }}
                     className="relative"
                   >
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Message</label>
+                    <label className="block text-sm font-semibold text-slate-700 mb-2">Message</label>
                     <textarea
                       name="message"
                       value={formData.message}
                       onChange={handleInputChange}
                       required
                       rows="6"
-                      className="w-full border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all bg-white/80 backdrop-blur-sm text-gray-800 font-medium resize-none"
+                      className="w-full border-2 border-slate-200 rounded-lg px-4 py-4 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all bg-white text-slate-800 font-medium resize-none"
                       placeholder="Tell us how we can help you..."
                     />
                   </motion.div>
@@ -334,9 +334,8 @@ const ContactUs = () => {
                     <Button
                       type="submit"
                       disabled={isSubmitting}
-                      className={`w-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl ${
-                        isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
-                      }`}
+                      className={`w-full bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm ${isSubmitting ? 'opacity-75 cursor-not-allowed' : ''
+                        }`}
                     >
                       {isSubmitting ? (
                         <>
@@ -364,31 +363,31 @@ const ContactUs = () => {
               className="space-y-8"
             >
               {/* Support Hours */}
-              <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-3xl p-8 border border-blue-100">
+              <div className="bg-slate-50 rounded-lg p-8 border border-slate-200">
                 <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-slate-700 rounded-lg flex items-center justify-center mr-4">
                     <Clock className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800">Support Hours</h3>
+                  <h3 className="text-2xl font-semibold text-slate-800">Support Hours</h3>
                 </div>
-                
+
                 <div className="space-y-4">
                   {supportHours.map((schedule, index) => (
-                    <div key={index} className="flex justify-between items-center py-2 border-b border-blue-200 last:border-b-0">
-                      <span className="font-medium text-gray-700">{schedule.day}</span>
-                      <span className="text-blue-600 font-semibold">{schedule.hours}</span>
+                    <div key={index} className="flex justify-between items-center py-2 border-b border-indigo-200 last:border-b-0">
+                      <span className="font-medium text-slate-700">{schedule.day}</span>
+                      <span className="text-indigo-600 font-semibold">{schedule.hours}</span>
                     </div>
                   ))}
                 </div>
               </div>
 
               {/* Office Locations */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20">
+              <div className="bg-white rounded-lg p-8 shadow-sm border border-slate-200">
                 <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-slate-600 rounded-lg flex items-center justify-center mr-4">
                     <MapPin className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-800">Our Offices</h3>
+                  <h3 className="text-2xl font-semibold text-slate-800">Our Offices</h3>
                 </div>
 
                 <div className="space-y-6">
@@ -396,28 +395,28 @@ const ContactUs = () => {
                     <motion.div
                       key={index}
                       whileHover={{ scale: 1.02 }}
-                      className="p-4 bg-gray-50 rounded-2xl border border-gray-200 hover:border-blue-300 transition-all duration-200"
+                      className="p-4 bg-slate-50 rounded-lg border border-slate-200 hover:border-blue-300 transition-all duration-200"
                     >
-                      <h4 className="font-bold text-gray-800 mb-2">{office.city}</h4>
-                      <p className="text-gray-600 mb-1">{office.address}</p>
-                      <p className="text-blue-600 font-medium mb-1">{office.phone}</p>
-                      <p className="text-sm text-gray-500">{office.timezone}</p>
+                      <h4 className="font-semibold text-slate-800 mb-2">{office.city}</h4>
+                      <p className="text-slate-600 mb-1">{office.address}</p>
+                      <p className="text-indigo-600 font-medium mb-1">{office.phone}</p>
+                      <p className="text-sm text-slate-500">{office.timezone}</p>
                     </motion.div>
                   ))}
                 </div>
               </div>
 
               {/* Quick Stats */}
-              <div className="bg-gradient-to-r from-green-500 to-emerald-500 rounded-3xl p-8 text-white">
-                <h3 className="text-2xl font-bold mb-6">Response Times</h3>
+              <div className="bg-slate-800 rounded-lg p-8 text-white">
+                <h3 className="text-2xl font-semibold mb-6">Response Times</h3>
                 <div className="grid grid-cols-2 gap-6">
                   <div className="text-center">
-                    <div className="text-3xl font-bold mb-2">&lt; 1 hour</div>
-                    <div className="text-green-100">Email Response</div>
+                    <div className="text-3xl font-semibold mb-2">&lt; 1 hour</div>
+                    <div className="text-slate-300">Email Response</div>
                   </div>
                   <div className="text-center">
-                    <div className="text-3xl font-bold mb-2">24/7</div>
-                    <div className="text-green-100">Live Chat</div>
+                    <div className="text-3xl font-semibold mb-2">24/7</div>
+                    <div className="text-slate-300">Live Chat</div>
                   </div>
                 </div>
               </div>
@@ -427,7 +426,7 @@ const ContactUs = () => {
       </section>
 
       {/* FAQ Preview */}
-      <section className="py-20 bg-gradient-to-r from-gray-50 to-blue-50">
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -436,20 +435,20 @@ const ContactUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <h2 className="text-4xl font-bold bg-gradient-to-r from-blue-800 to-purple-800 bg-clip-text text-transparent mb-4">
+            <h2 className="text-4xl font-semibold text-slate-900 mb-4">
               Common Questions
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto mb-8">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8">
               Can't find what you're looking for? Check out our comprehensive FAQ section
             </p>
-            
+
             <motion.div
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
             >
               <Button
                 onClick={() => navigate('/faq')}
-                className="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl"
+                className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
               >
                 View All FAQs
                 <ArrowRight className="w-5 h-5 ml-2" />
@@ -460,7 +459,7 @@ const ContactUs = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-blue-600 to-purple-600 text-white relative overflow-hidden">
+      <section className="py-20 bg-slate-800 text-white relative overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -469,13 +468,13 @@ const ContactUs = () => {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h2 className="text-4xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl lg:text-6xl font-semibold mb-6">
               Still Have Questions?
             </h2>
             <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
               Our customer success team is standing by to help you succeed
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -483,18 +482,18 @@ const ContactUs = () => {
               >
                 <Button
                   onClick={() => window.location.href = 'mailto:support@market.com'}
-                  className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl"
+                  className="bg-white text-indigo-600 hover:bg-slate-100 px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
                 >
                   Email Support
                   <Mail className="w-5 h-5 ml-2" />
                 </Button>
               </motion.div>
-              
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/about')}
-                className="border-2 border-white text-white hover:bg-white hover:text-blue-600 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200"
+                className="border-2 border-white text-white hover:bg-white hover:text-indigo-600 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200"
               >
                 <Globe className="w-5 h-5 mr-2 inline" />
                 Learn More About Us

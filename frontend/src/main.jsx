@@ -66,13 +66,13 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="payment-failure" element={<ProtectedRoute><PaymentFailure /></ProtectedRoute>} />
               {AdminRoutes}
               <Route path="*" element={
-                <div className="min-h-screen bg-gray-50 flex flex-col justify-center items-center p-6 text-center">
-                  <div className="bg-white rounded-2xl shadow-card p-8 max-w-lg w-full">
-                    <h2 className="text-2xl font-bold text-gray-800 mb-4">Page Not Found</h2>
-                    <p className="text-gray-600 mb-6">The page you are looking for doesn't exist or has been moved.</p>
+                <div className="min-h-screen bg-slate-50 flex flex-col justify-center items-center p-6 text-center">
+                  <div className="bg-white rounded-lg shadow-card p-8 max-w-lg w-full">
+                    <h2 className="text-2xl font-semibold text-slate-800 mb-4">Page Not Found</h2>
+                    <p className="text-slate-600 mb-6">The page you are looking for doesn't exist or has been moved.</p>
                     <button
                       onClick={() => window.location.href = '/'}
-                      className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition"
+                      className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition"
                     >
                       Go to Homepage
                     </button>

@@ -6,10 +6,10 @@ const ToastItem = ({ id, message, type = 'success', onClose }) => {
   
   // Type-specific properties
   const typeClasses = {
-    success: 'bg-green-50 border-green-300 text-green-800',
+    success: 'bg-emerald-50 border-green-300 text-emerald-700',
     error: 'bg-red-50 border-red-300 text-red-800',
-    warning: 'bg-yellow-50 border-yellow-300 text-yellow-800',
-    info: 'bg-blue-50 border-blue-300 text-blue-800'
+    warning: 'bg-yellow-50 border-yellow-300 text-amber-700',
+    info: 'bg-indigo-50 border-blue-300 text-indigo-700'
   };
   
   const typeIcons = {
@@ -57,7 +57,7 @@ const ToastItem = ({ id, message, type = 'success', onClose }) => {
   return (
     <div 
       className={`
-        rounded-lg border px-4 py-3 shadow-md mb-3 flex items-start
+        rounded-lg border px-4 py-3 shadow-sm mb-3 flex items-start
         transition-all duration-300 transform
         ${typeClasses[type]}
         ${isExiting ? 'opacity-0 translate-x-full' : 'opacity-100 translate-x-0'}
@@ -71,7 +71,7 @@ const ToastItem = ({ id, message, type = 'success', onClose }) => {
       </div>
       <button 
         onClick={handleClose}
-        className="text-gray-400 hover:text-gray-600 transition-colors"
+        className="text-slate-400 hover:text-slate-600 transition-colors"
       >
         <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

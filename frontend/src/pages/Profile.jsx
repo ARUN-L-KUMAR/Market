@@ -321,7 +321,7 @@ const Profile = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 pt-20">
+    <div className="min-h-screen bg-slate-50 pt-20">
       <div className="container mx-auto px-4 py-12 max-w-7xl">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -329,10 +329,10 @@ const Profile = () => {
           transition={{ duration: 0.6 }}
           className="mb-8"
         >
-          <h1 className="text-4xl lg:text-5xl font-black leading-tight bg-gradient-to-r from-purple-600 via-pink-600 to-red-600 bg-clip-text text-transparent mb-4">
+          <h1 className="text-4xl lg:text-5xl font-black leading-tight text-slate-900 mb-4">
             My Account
           </h1>
-          <p className="text-xl text-gray-600 leading-relaxed">Manage your account settings and preferences</p>
+          <p className="text-xl text-slate-600 leading-relaxed">Manage your account settings and preferences</p>
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
@@ -342,16 +342,16 @@ const Profile = () => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
-              className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6 sticky top-24"
+              className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-24"
             >
               {/* User info */}
-              <div className="flex items-center space-x-4 mb-6 pb-6 border-b border-gray-200">
-                <div className="h-16 w-16 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-full flex items-center justify-center font-bold text-xl shadow-lg">
+              <div className="flex items-center space-x-4 mb-6 pb-6 border-b border-slate-200">
+                <div className="h-16 w-16 bg-indigo-600 text-white rounded-full flex items-center justify-center font-semibold text-xl shadow-sm">
                   {info?.name?.charAt(0)?.toUpperCase() || 'U'}
                 </div>
                 <div>
-                  <h2 className="font-bold text-gray-800 text-lg">{info?.name}</h2>
-                  <p className="text-gray-500 text-sm">{info?.email}</p>
+                  <h2 className="font-semibold text-slate-800 text-lg">{info?.name}</h2>
+                  <p className="text-slate-500 text-sm">{info?.email}</p>
                 </div>
               </div>
 
@@ -361,7 +361,7 @@ const Profile = () => {
                   <li>
                     <button
                       onClick={() => setActiveTab('orders')}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${activeTab === 'orders' ? 'bg-primary-100 text-primary-800 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${activeTab === 'orders' ? 'bg-indigo-100 text-indigo-700 font-medium' : 'text-slate-700 hover:bg-slate-100'}`}
                     >
                       Orders
                     </button>
@@ -369,7 +369,7 @@ const Profile = () => {
                   <li>
                     <button
                       onClick={() => setActiveTab('addresses')}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${activeTab === 'addresses' ? 'bg-primary-100 text-primary-800 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${activeTab === 'addresses' ? 'bg-indigo-100 text-indigo-700 font-medium' : 'text-slate-700 hover:bg-slate-100'}`}
                     >
                       Addresses
                     </button>
@@ -377,7 +377,7 @@ const Profile = () => {
                   <li>
                     <button
                       onClick={() => setActiveTab('profile')}
-                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${activeTab === 'profile' ? 'bg-primary-100 text-primary-800 font-medium' : 'text-gray-700 hover:bg-gray-100'}`}
+                      className={`w-full text-left px-3 py-2 rounded-lg transition-colors ${activeTab === 'profile' ? 'bg-indigo-100 text-indigo-700 font-medium' : 'text-slate-700 hover:bg-slate-100'}`}
                     >
                       Profile Settings
                     </button>
@@ -395,30 +395,30 @@ const Profile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden"
+                className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
               >
-                <div className="bg-gradient-to-r from-purple-500 to-pink-500 text-white p-6">
-                  <h2 className="text-2xl font-bold flex items-center">
+                <div className="bg-indigo-600 text-white p-6">
+                  <h2 className="text-2xl font-semibold flex items-center">
                     <Package className="w-6 h-6 mr-3" />
                     Order History
                   </h2>
-                  <p className="text-purple-100 mt-2">Track all your orders and their status</p>
+                  <p className="text-slate-300 mt-2">Track all your orders and their status</p>
                 </div>
 
                 {loadingOrders ? (
                   <div className="p-6 animate-pulse space-y-4">
                     {[...Array(3)].map((_, i) => (
-                      <div key={i} className="h-24 bg-gray-200 rounded"></div>
+                      <div key={i} className="h-24 bg-slate-200 rounded"></div>
                     ))}
                   </div>
                 ) : orders.length > 0 ? (
-                  <div className="divide-y divide-gray-200">
+                  <div className="divide-y divide-slate-200">
                     {orders.map(order => (
-                      <div key={order._id} className="p-6 hover:bg-gray-50 transition-colors">
+                      <div key={order._id} className="p-6 hover:bg-slate-50 transition-colors">
                         <div className="flex flex-wrap justify-between items-center mb-4">
                           <div>
-                            <p className="font-semibold text-gray-800">Order #{order.orderNumber}</p>
-                            <p className="text-gray-500 text-sm">Placed on {formatDate(order.createdAt)}</p>
+                            <p className="font-semibold text-slate-800">Order #{order.orderNumber}</p>
+                            <p className="text-slate-500 text-sm">Placed on {formatDate(order.createdAt)}</p>
                           </div>
                           <Badge color={getStatusColor(order.status)}>
                             {order.status.charAt(0).toUpperCase() + order.status.slice(1)}
@@ -426,7 +426,7 @@ const Profile = () => {
                         </div>
 
                         <div className="flex justify-between items-center">
-                          <div className="text-gray-800">
+                          <div className="text-slate-800">
                             {order.items.length} item{order.items.length !== 1 ? 's' : ''} ·
                             <span className="font-semibold ml-2"><CurrencyPrice price={order.total} /></span>
                           </div>
@@ -443,13 +443,13 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="p-12 text-center">
-                    <div className="h-16 w-16 mx-auto mb-4 text-gray-300">
+                    <div className="h-16 w-16 mx-auto mb-4 text-slate-300">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No orders yet</h3>
-                    <p className="text-gray-500 mb-6">You haven't placed any orders yet.</p>
+                    <h3 className="text-lg font-semibold text-slate-700 mb-2">No orders yet</h3>
+                    <p className="text-slate-500 mb-6">You haven't placed any orders yet.</p>
                     <Button onClick={() => navigate('/products')}>
                       Start Shopping
                     </Button>
@@ -464,20 +464,20 @@ const Profile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden"
+                className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
               >
-                <div className="bg-gradient-to-r from-blue-500 to-cyan-500 text-white p-6">
-                  <h2 className="text-2xl font-bold flex items-center">
+                <div className="bg-indigo-600 text-white p-6">
+                  <h2 className="text-2xl font-semibold flex items-center">
                     <MapPin className="w-6 h-6 mr-3" />
                     Saved Addresses
                   </h2>
-                  <p className="text-blue-100 mt-2">Manage your delivery addresses</p>
+                  <p className="text-slate-300 mt-2">Manage your delivery addresses</p>
                 </div>
 
                 {loadingAddresses ? (
                   <div className="p-6 animate-pulse space-y-4">
                     {[...Array(2)].map((_, i) => (
-                      <div key={i} className="h-32 bg-gray-200 rounded"></div>
+                      <div key={i} className="h-32 bg-slate-200 rounded"></div>
                     ))}
                   </div>
                 ) : addresses.length > 0 ? (
@@ -488,18 +488,18 @@ const Profile = () => {
                         className="border rounded-lg p-4 relative"
                       >
                         {address.isDefault && (
-                          <span className="absolute right-2 top-2 bg-primary-100 text-primary-800 text-xs px-2 py-1 rounded">
+                          <span className="absolute right-2 top-2 bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded">
                             Default
                           </span>
                         )}
                         <p className="font-semibold">{address.fullName}</p>
-                        <p className="text-gray-600 text-sm mt-1">{address.address}</p>
-                        <p className="text-gray-600 text-sm">
+                        <p className="text-slate-600 text-sm mt-1">{address.address}</p>
+                        <p className="text-slate-600 text-sm">
                           {address.city}, {address.state} {address.zipCode}
                         </p>
-                        <p className="text-gray-600 text-sm">{address.country}</p>
+                        <p className="text-slate-600 text-sm">{address.country}</p>
                         {address.phone && (
-                          <p className="text-gray-600 text-sm mt-1">{address.phone}</p>
+                          <p className="text-slate-600 text-sm mt-1">{address.phone}</p>
                         )}
 
                         <div className="mt-4 flex space-x-2">
@@ -516,10 +516,10 @@ const Profile = () => {
                     ))}
 
                     <div className="border-2 border-dashed rounded-lg p-4 flex flex-col items-center justify-center text-center h-full min-h-[160px]">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-gray-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-8 w-8 text-slate-400 mb-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                       </svg>
-                      <p className="text-gray-600 mb-4">Add a new address</p>
+                      <p className="text-slate-600 mb-4">Add a new address</p>
                       <Button>
                         Add Address
                       </Button>
@@ -527,13 +527,13 @@ const Profile = () => {
                   </div>
                 ) : (
                   <div className="p-12 text-center">
-                    <div className="h-16 w-16 mx-auto mb-4 text-gray-300">
+                    <div className="h-16 w-16 mx-auto mb-4 text-slate-300">
                       <svg xmlns="http://www.w3.org/2000/svg" className="h-full w-full" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
                       </svg>
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-700 mb-2">No addresses saved</h3>
-                    <p className="text-gray-500 mb-6">Add an address for faster checkout.</p>
+                    <h3 className="text-lg font-semibold text-slate-700 mb-2">No addresses saved</h3>
+                    <p className="text-slate-500 mb-6">Add an address for faster checkout.</p>
                     <Button>
                       Add New Address
                     </Button>
@@ -548,14 +548,14 @@ const Profile = () => {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.4 }}
-                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden"
+                className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
               >
-                <div className="bg-gradient-to-r from-green-500 to-teal-500 text-white p-6">
-                  <h2 className="text-2xl font-bold flex items-center">
+                <div className="bg-slate-600 text-white p-6">
+                  <h2 className="text-2xl font-semibold flex items-center">
                     <Settings className="w-6 h-6 mr-3" />
                     Profile Settings
                   </h2>
-                  <p className="text-green-100 mt-2">Update your account information</p>
+                  <p className="text-slate-300 mt-2">Update your account information</p>
                 </div>
 
                 <form onSubmit={handleSaveProfile} className="p-6">
@@ -585,7 +585,7 @@ const Profile = () => {
                       error={profileErrors.phone}
                     />
 
-                    <div className="border-t border-gray-200 pt-6">
+                    <div className="border-t border-slate-200 pt-6">
                       <h3 className="text-lg font-semibold mb-4">Change Password</h3>
                       <Input
                         label="Current Password"

@@ -111,16 +111,16 @@ const ProductDetails = () => {
         <div className="animate-pulse">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Image skeleton */}
-            <div className="bg-gray-200 rounded-2xl h-96"></div>
+            <div className="bg-slate-200 rounded-lg h-96"></div>
             
             {/* Content skeleton */}
             <div className="space-y-4">
-              <div className="h-8 bg-gray-200 rounded w-3/4"></div>
-              <div className="h-6 bg-gray-200 rounded w-1/2"></div>
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-full"></div>
-              <div className="h-4 bg-gray-200 rounded w-2/3"></div>
-              <div className="h-12 bg-gray-200 rounded w-1/3 mt-8"></div>
+              <div className="h-8 bg-slate-200 rounded w-3/4"></div>
+              <div className="h-6 bg-slate-200 rounded w-1/2"></div>
+              <div className="h-4 bg-slate-200 rounded w-full"></div>
+              <div className="h-4 bg-slate-200 rounded w-full"></div>
+              <div className="h-4 bg-slate-200 rounded w-2/3"></div>
+              <div className="h-12 bg-slate-200 rounded w-1/3 mt-8"></div>
             </div>
           </div>
         </div>
@@ -131,8 +131,8 @@ const ProductDetails = () => {
   if (error || !product) {
     return (
       <div className="container mx-auto px-4 py-12 max-w-7xl text-center">
-        <div className="bg-red-50 p-6 rounded-2xl border border-red-100">
-          <h2 className="text-2xl font-bold text-red-700 mb-2">Error Loading Product</h2>
+        <div className="bg-red-50 p-6 rounded-lg border border-red-100">
+          <h2 className="text-2xl font-semibold text-red-700 mb-2">Error Loading Product</h2>
           <p className="text-red-600">{error || "Product not found"}</p>
           <Button 
             variant="outline" 
@@ -151,7 +151,7 @@ const ProductDetails = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12">
         {/* Product images */}
         <div className="space-y-4">
-          <div className="bg-white rounded-2xl shadow-subtle overflow-hidden h-96 border border-gray-200">
+          <div className="bg-white rounded-lg shadow-subtle overflow-hidden h-96 border border-slate-200">
             <img
               src={product.images && product.images[selectedImageIndex] 
                 ? product.images[selectedImageIndex].url 
@@ -169,7 +169,7 @@ const ProductDetails = () => {
                   key={index} 
                   className={`
                     border-2 rounded-lg overflow-hidden cursor-pointer h-20 w-20 flex-shrink-0
-                    ${selectedImageIndex === index ? 'border-primary-500' : 'border-gray-200'}
+                    ${selectedImageIndex === index ? 'border-indigo-500' : 'border-slate-200'}
                   `}
                   onClick={() => setSelectedImageIndex(index)}
                 >
@@ -188,16 +188,16 @@ const ProductDetails = () => {
         <div>
           {/* Brand & title */}
           {product.brand && (
-            <p className="text-primary-600 font-medium mb-1">{product.brand}</p>
+            <p className="text-indigo-600 font-medium mb-1">{product.brand}</p>
           )}
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.title}</h1>
+          <h1 className="text-3xl font-semibold text-slate-900 mb-2">{product.title}</h1>
           
           {/* Price */}
           <div className="flex items-end mb-6">
-            <span className="text-2xl font-bold text-primary-700"><CurrencyPrice price={product.price} /></span>
+            <span className="text-2xl font-semibold text-indigo-700"><CurrencyPrice price={product.price} /></span>
             {product.comparePrice && product.comparePrice > product.price && (
               <>
-                <span className="text-gray-400 line-through ml-2 text-lg"><CurrencyPrice price={product.comparePrice} /></span>
+                <span className="text-slate-400 line-through ml-2 text-lg"><CurrencyPrice price={product.comparePrice} /></span>
                 <Badge color="warning" className="ml-3">
                   {Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}% OFF
                 </Badge>
@@ -207,13 +207,13 @@ const ProductDetails = () => {
           
           {/* Description */}
           <div className="mb-8">
-            <p className="text-gray-600">{product.description}</p>
+            <p className="text-slate-600">{product.description}</p>
           </div>
           
           {/* Color selection */}
           {product.colors && product.colors.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Color</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-2">Color</h3>
               <div className="flex space-x-2">
                 {product.colors.map(color => (
                   <div
@@ -221,7 +221,7 @@ const ProductDetails = () => {
                     onClick={() => setSelectedColor(color.name)}
                     className={`
                       w-10 h-10 rounded-full cursor-pointer border-2 flex items-center justify-center
-                      ${selectedColor === color.name ? 'border-primary-500' : 'border-gray-200'}
+                      ${selectedColor === color.name ? 'border-indigo-500' : 'border-slate-200'}
                     `}
                     title={color.name}
                   >
@@ -238,7 +238,7 @@ const ProductDetails = () => {
           {/* Size selection */}
           {product.sizes && product.sizes.length > 0 && (
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Size</h3>
+              <h3 className="text-sm font-medium text-slate-700 mb-2">Size</h3>
               <div className="flex flex-wrap gap-2">
                 {product.sizes.map(size => (
                   <div
@@ -247,8 +247,8 @@ const ProductDetails = () => {
                     className={`
                       px-4 py-2 rounded-md cursor-pointer font-medium
                       ${selectedSize === size.name 
-                        ? 'bg-primary-100 text-primary-800 border border-primary-300' 
-                        : 'bg-gray-100 text-gray-800 border border-gray-200'}
+                        ? 'bg-indigo-100 text-indigo-700 border border-indigo-300' 
+                        : 'bg-slate-100 text-slate-800 border border-slate-200'}
                       ${size.stock <= 0 && 'opacity-50 cursor-not-allowed'}
                     `}
                   >
@@ -261,12 +261,12 @@ const ProductDetails = () => {
           
           {/* Quantity and add to cart */}
           <div className="mb-8">
-            <h3 className="text-sm font-medium text-gray-700 mb-2">Quantity</h3>
+            <h3 className="text-sm font-medium text-slate-700 mb-2">Quantity</h3>
             <div className="flex items-center">
               <button
                 onClick={decrementQuantity}
                 disabled={quantity <= 1}
-                className="w-10 h-10 rounded-l-md bg-gray-100 border border-gray-300 flex items-center justify-center"
+                className="w-10 h-10 rounded-l-md bg-slate-100 border border-slate-300 flex items-center justify-center"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
@@ -276,12 +276,12 @@ const ProductDetails = () => {
                 type="number"
                 value={quantity}
                 onChange={handleQuantityChange}
-                className="w-16 h-10 text-center border-t border-b border-gray-300 focus:outline-none focus:ring-0"
+                className="w-16 h-10 text-center border-t border-b border-slate-300 focus:outline-none focus:ring-0"
               />
               <button
                 onClick={incrementQuantity}
                 disabled={quantity >= product.stock}
-                className="w-10 h-10 rounded-r-md bg-gray-100 border border-gray-300 flex items-center justify-center"
+                className="w-10 h-10 rounded-r-md bg-slate-100 border border-slate-300 flex items-center justify-center"
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

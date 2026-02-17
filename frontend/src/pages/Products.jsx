@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Filter, 
-  Grid, 
-  List, 
-  Search, 
-  Star, 
+import {
+  Filter,
+  Grid,
+  List,
+  Search,
+  Star,
   ShoppingBag,
   TrendingUp,
   Zap,
@@ -29,16 +29,16 @@ const Products = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const productsPerPage = 20;
-  
+
   useEffect(() => {
     dispatch(fetchProducts({ ...filters, page: currentPage, limit: productsPerPage }));
   }, [dispatch, filters, currentPage]);
-  
+
   const handleFilterChange = (newFilters) => {
     dispatch(setFilters(newFilters));
     setCurrentPage(1); // Reset to first page when filters change
   };
-  
+
   const handlePageChange = (pageNumber) => {
     setCurrentPage(pageNumber);
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -78,13 +78,13 @@ const Products = () => {
     }
     handleFilterChange(newFilters);
   };
-  
+
   if (loading) return <LoadingSpinner />;
   if (error) return (
-    <div className="min-h-screen bg-gradient-to-br from-red-50 to-pink-50 flex items-center justify-center">
-      <div className="text-center p-8 bg-white rounded-3xl shadow-xl border border-red-100">
+    <div className="min-h-screen bg-red-50 flex items-center justify-center">
+      <div className="text-center p-8 bg-white rounded-lg shadow-sm border border-red-100">
         <div className="text-6xl mb-4">😔</div>
-        <h2 className="text-2xl font-bold text-red-600 mb-2">Oops! Something went wrong</h2>
+        <h2 className="text-2xl font-semibold text-red-600 mb-2">Oops! Something went wrong</h2>
         <p className="text-red-500 mb-4">{error}</p>
         <Button onClick={() => window.location.reload()} variant="primary">
           Try Again
@@ -92,9 +92,9 @@ const Products = () => {
       </div>
     </div>
   );
-  
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-slate-50">
       <div className="container mx-auto px-4 py-8 max-w-7xl">
         {/* Enhanced Header */}
         <motion.div
@@ -105,10 +105,10 @@ const Products = () => {
         >
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6">
             <div>
-              <h1 className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 bg-clip-text text-transparent mb-2">
+              <h1 className="text-4xl lg:text-5xl font-black text-slate-900 mb-2">
                 Discover Products
               </h1>
-              <p className="text-gray-600 text-lg">
+              <p className="text-slate-600 text-lg">
                 Explore our curated collection of {totalProducts || 0} amazing products
               </p>
             </div>
@@ -121,14 +121,14 @@ const Products = () => {
                   placeholder="Search products..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 bg-white/80 backdrop-blur-sm border-2 border-gray-200 rounded-2xl focus:border-purple-400 focus:outline-none focus:ring-4 focus:ring-purple-100 transition-all duration-200"
+                  className="w-full pl-12 pr-4 py-3 bg-white border-2 border-slate-200 rounded-lg focus:border-slate-400 focus:outline-none focus:ring-4 focus:ring-slate-100 transition-all duration-200"
                 />
-                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
+                <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-slate-400 w-5 h-5" />
                 <motion.button
                   type="submit"
                   whileHover={{ scale: 1.05 }}
                   whileTap={{ scale: 0.95 }}
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-gradient-to-r from-purple-500 to-pink-500 text-white p-2 rounded-xl hover:shadow-lg transition-all duration-200"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-slate-800 text-white p-2 rounded-lg hover:bg-slate-700 hover:shadow-sm transition-all duration-200"
                 >
                   <Search className="w-4 h-4" />
                 </motion.button>
@@ -154,11 +154,10 @@ const Products = () => {
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleQuickFilter(filter.value)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl font-medium transition-all duration-200 ${
-                  filters[filter.value] || (filter.value === '' && !filters.isNew && !filters.onSale && !filters.minRating)
-                    ? 'bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg'
-                    : 'bg-white/80 backdrop-blur-sm text-gray-700 hover:bg-white hover:shadow-md border border-gray-200'
-                }`}
+                className={`flex items-center gap-2 px-4 py-2 rounded-lg font-medium transition-all duration-200 ${filters[filter.value] || (filter.value === '' && !filters.isNew && !filters.onSale && !filters.minRating)
+                    ? 'bg-slate-800 text-white shadow-sm'
+                    : 'bg-white text-slate-700 hover:bg-white hover:shadow-sm border border-slate-200'
+                  }`}
               >
                 {filter.icon}
                 {filter.label}
@@ -172,7 +171,7 @@ const Products = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 p-4 bg-white/60 backdrop-blur-sm rounded-2xl border border-gray-200"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8 p-4 bg-white/60 rounded-lg border border-slate-200"
         >
           <div className="flex items-center gap-4">
             <Button
@@ -184,49 +183,47 @@ const Products = () => {
               <SlidersHorizontal className="w-4 h-4" />
               {showFilters ? 'Hide' : 'Show'} Filters
             </Button>
-            
+
             <div className="flex items-center gap-2">
-              <span className="text-sm text-gray-600 font-medium">View:</span>
-              <div className="flex bg-gray-100 rounded-lg p-1">
+              <span className="text-sm text-slate-600 font-medium">View:</span>
+              <div className="flex bg-slate-100 rounded-lg p-1">
                 <button
                   onClick={() => setViewMode('grid')}
-                  className={`p-2 rounded-lg transition-all duration-200 ${
-                    viewMode === 'grid' 
-                      ? 'bg-white text-purple-600 shadow-sm' 
-                      : 'text-gray-600 hover:text-purple-600'
-                  }`}
+                  className={`p-2 rounded-lg transition-all duration-200 ${viewMode === 'grid'
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-800'
+                    }`}
                 >
                   <Grid className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => setViewMode('list')}
-                  className={`p-2 rounded-lg transition-all duration-200 ${
-                    viewMode === 'list' 
-                      ? 'bg-white text-purple-600 shadow-sm' 
-                      : 'text-gray-600 hover:text-purple-600'
-                  }`}
+                  className={`p-2 rounded-lg transition-all duration-200 ${viewMode === 'list'
+                      ? 'bg-white text-slate-800 shadow-sm'
+                      : 'text-slate-600 hover:text-slate-800'
+                    }`}
                 >
                   <List className="w-4 h-4" />
                 </button>
               </div>
             </div>
-            
+
             {/* Inline Filter Controls */}
             <div className="hidden lg:flex">
-              <FilterSidebar 
-                filters={filters} 
-                onFilterChange={handleFilterChange} 
+              <FilterSidebar
+                filters={filters}
+                onFilterChange={handleFilterChange}
               />
             </div>
           </div>
 
           <div className="flex items-center gap-4">
-            <span className="text-sm text-gray-600">
+            <span className="text-sm text-slate-600">
               Showing {products.length} of {totalProducts || 0} products
             </span>
           </div>
         </motion.div>
-        
+
         {/* Mobile Filters */}
         <AnimatePresence>
           {showFilters && (
@@ -235,25 +232,25 @@ const Products = () => {
               animate={{ opacity: 1, height: 'auto' }}
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
-              className="lg:hidden mb-6 p-4 bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200"
+              className="lg:hidden mb-6 p-4 bg-white rounded-lg border border-slate-200"
             >
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-800">Filters</h3>
+                <h3 className="text-lg font-semibold text-slate-800">Filters</h3>
                 <button
                   onClick={() => setShowFilters(false)}
-                  className="p-2 hover:bg-gray-100 rounded-lg transition-colors duration-200"
+                  className="p-2 hover:bg-slate-100 rounded-lg transition-colors duration-200"
                 >
                   <X className="w-5 h-5" />
                 </button>
               </div>
-              <FilterSidebar 
-                filters={filters} 
-                onFilterChange={handleFilterChange} 
+              <FilterSidebar
+                filters={filters}
+                onFilterChange={handleFilterChange}
               />
             </motion.div>
           )}
         </AnimatePresence>
-        
+
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Products Grid */}
           <div className="w-full">
@@ -263,11 +260,11 @@ const Products = () => {
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
-                  className="text-center p-12 bg-gradient-to-br from-gray-50 to-blue-50 rounded-3xl border-2 border-dashed border-gray-300"
+                  className="text-center p-12 bg-slate-50 rounded-lg border-2 border-dashed border-slate-300"
                 >
                   <div className="text-6xl mb-4">🔍</div>
-                  <h3 className="text-2xl font-bold text-gray-800 mb-2">No Products Found</h3>
-                  <p className="text-gray-600 mb-6">
+                  <h3 className="text-2xl font-semibold text-slate-800 mb-2">No Products Found</h3>
+                  <p className="text-slate-600 mb-6">
                     We couldn't find any products matching your criteria. Try adjusting your filters or search terms.
                   </p>
                   <Button
@@ -286,21 +283,20 @@ const Products = () => {
                   exit={{ opacity: 0 }}
                   transition={{ duration: 0.3 }}
                 >
-                  <div className={`grid gap-8 ${
-                    viewMode === 'grid' 
-                      ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' 
+                  <div className={`grid gap-8 ${viewMode === 'grid'
+                      ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3'
                       : 'grid-cols-1'
-                  }`}>
+                    }`}>
                     {products.map((product, index) => (
-                      <ProductCard 
-                        key={product._id} 
-                        product={product} 
+                      <ProductCard
+                        key={product._id}
+                        product={product}
                         index={index}
                         viewMode={viewMode}
                       />
                     ))}
                   </div>
-                  
+
                   {/* Enhanced Pagination */}
                   {Math.ceil((totalProducts || 0) / productsPerPage) > 1 && (
                     <motion.div
@@ -309,8 +305,8 @@ const Products = () => {
                       transition={{ duration: 0.6, delay: 0.3 }}
                       className="mt-12 flex justify-center"
                     >
-                      <div className="bg-white/80 backdrop-blur-sm rounded-2xl p-4 border border-gray-200 shadow-lg">
-                        <Pagination 
+                      <div className="bg-white rounded-lg p-4 border border-slate-200 shadow-sm">
+                        <Pagination
                           currentPage={currentPage}
                           totalPages={Math.ceil((totalProducts || 0) / productsPerPage)}
                           onPageChange={handlePageChange}
@@ -331,7 +327,7 @@ const Products = () => {
         animate={{ scale: 1 }}
         transition={{ delay: 0.5 }}
         onClick={() => setShowFilters(true)}
-        className="fixed bottom-6 right-6 lg:hidden bg-gradient-to-r from-purple-500 to-pink-500 text-white p-4 rounded-full shadow-2xl hover:shadow-3xl transition-all duration-300 z-50"
+        className="fixed bottom-6 right-6 lg:hidden bg-slate-800 text-white p-4 rounded-full shadow-sm hover:bg-slate-700 hover:shadow-3xl transition-all duration-300 z-50"
       >
         <Filter className="w-6 h-6" />
       </motion.button>

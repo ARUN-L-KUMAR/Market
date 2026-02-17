@@ -10,11 +10,11 @@ const StatusIndicator = ({
 }) => {
   // Status colors
   const statusColors = {
-    online: 'bg-green-500',
+    online: 'bg-emerald-500',
     offline: 'bg-red-500',
     away: 'bg-yellow-500',
     busy: 'bg-orange-500',
-    pending: 'bg-blue-500',
+    pending: 'bg-indigo-500',
     custom: 'bg-purple-500'
   };
   

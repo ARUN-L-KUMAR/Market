@@ -18,8 +18,8 @@ const Signup = () => {
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       <div className="flex flex-col items-center justify-center min-h-[70vh]">
         <div className="w-full max-w-md mb-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-800 mb-2">Create an Account</h1>
-          <p className="text-gray-600">Join us to enjoy personalized shopping experience</p>
+          <h1 className="text-3xl font-semibold text-slate-800 mb-2">Create an Account</h1>
+          <p className="text-slate-600">Join us to enjoy personalized shopping experience</p>
         </div>
         
         <LoginForm isRegistration={true} />

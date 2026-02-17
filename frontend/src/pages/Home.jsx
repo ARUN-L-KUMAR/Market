@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Star, 
-  Zap, 
-  Shield, 
-  Truck, 
-  ArrowRight, 
+import {
+  Star,
+  Zap,
+  Shield,
+  Truck,
+  ArrowRight,
   PlayCircle,
   TrendingUp,
   Users,
@@ -31,22 +31,19 @@ const Home = () => {
       title: "Premium Collection 2024",
       subtitle: "Discover the latest trends",
       description: "Explore our curated selection of premium products with unbeatable quality and style.",
-      image: "🏆",
-      gradient: "from-purple-600 via-pink-600 to-red-600"
+      image: "🏆"
     },
     {
       title: "Flash Sale Today",
       subtitle: "Up to 70% Off",
       description: "Limited time offers on your favorite brands. Don't miss out on these incredible deals!",
-      image: "⚡",
-      gradient: "from-blue-600 via-cyan-600 to-teal-600"
+      image: "⚡"
     },
     {
       title: "Global Shipping",
       subtitle: "Worldwide delivery",
       description: "Fast, secure, and reliable shipping to over 150 countries. Your order, delivered with care.",
-      image: "🌍",
-      gradient: "from-green-600 via-emerald-600 to-cyan-600"
+      image: "🌍"
     }
   ];
 
@@ -55,33 +52,33 @@ const Home = () => {
       icon: <Zap className="w-8 h-8" />,
       title: "Lightning Fast",
       description: "Real-time inventory updates and instant order processing",
-      color: "text-yellow-600",
-      bg: "bg-yellow-50",
-      border: "border-yellow-200"
+      color: "text-amber-600",
+      bg: "bg-amber-50",
+      border: "border-amber-200"
     },
     {
       icon: <Shield className="w-8 h-8" />,
       title: "Secure & Safe",
       description: "Bank-level security for all your transactions and data",
-      color: "text-green-600",
-      bg: "bg-green-50",
-      border: "border-green-200"
+      color: "text-emerald-600",
+      bg: "bg-emerald-50",
+      border: "border-emerald-200"
     },
     {
       icon: <Truck className="w-8 h-8" />,
       title: "Free Shipping",
       description: "Complimentary shipping on orders over ₹4000 worldwide",
-      color: "text-blue-600",
-      bg: "bg-blue-50",
-      border: "border-blue-200"
+      color: "text-sky-600",
+      bg: "bg-sky-50",
+      border: "border-sky-200"
     },
     {
       icon: <Award className="w-8 h-8" />,
       title: "Best Quality",
       description: "Premium products with lifetime warranty and support",
-      color: "text-purple-600",
-      bg: "bg-purple-50",
-      border: "border-purple-200"
+      color: "text-slate-600",
+      bg: "bg-slate-50",
+      border: "border-slate-200"
     }
   ];
 
@@ -124,10 +121,10 @@ const Home = () => {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50">
+    <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="relative overflow-hidden">
-        <div className="container mx-auto px-4 py-12 max-w-7xl">
+        <div className="container mx-auto px-4 py-16 max-w-7xl">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             {/* Hero Content */}
             <motion.div
@@ -147,17 +144,17 @@ const Home = () => {
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
                   transition={{ delay: 0.2, type: "spring" }}
-                  className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full text-purple-700 font-medium"
+                  className="inline-flex items-center px-4 py-2 bg-indigo-50 rounded-full text-indigo-700 font-medium"
                 >
                   <Star className="w-4 h-4 mr-2" />
                   {heroSlides[currentSlide].subtitle}
                 </motion.div>
 
-                <h1 className={`text-5xl lg:text-7xl font-black leading-tight bg-gradient-to-r ${heroSlides[currentSlide].gradient} bg-clip-text text-transparent`}>
+                <h1 className="text-5xl lg:text-7xl font-black leading-tight text-slate-900">
                   {heroSlides[currentSlide].title}
                 </h1>
 
-                <p className="text-xl text-gray-600 leading-relaxed max-w-lg">
+                <p className="text-xl text-slate-500 leading-relaxed max-w-lg">
                   {heroSlides[currentSlide].description}
                 </p>
 
@@ -166,9 +163,9 @@ const Home = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    <Button 
+                    <Button
                       onClick={() => navigate('/products')}
-                      className="bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl transform transition-all duration-200"
+                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-sm transform transition-all duration-200"
                     >
                       Shop Now
                       <ArrowRight className="w-5 h-5 ml-2" />
@@ -179,7 +176,7 @@ const Home = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigate('/about')}
-                    className="flex items-center px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-purple-500 hover:text-purple-600 transition-all duration-200 font-semibold"
+                    className="flex items-center px-8 py-4 border-2 border-slate-300 text-slate-700 rounded-lg hover:border-slate-500 hover:text-slate-800 transition-all duration-200 font-semibold"
                   >
                     <PlayCircle className="w-5 h-5 mr-2" />
                     Learn More
@@ -193,11 +190,10 @@ const Home = () => {
                   <motion.button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                      index === currentSlide 
-                        ? 'bg-purple-600 w-8' 
-                        : 'bg-gray-300 hover:bg-purple-400'
-                    }`}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
+                      ? 'bg-indigo-600 w-8'
+                      : 'bg-slate-200 hover:bg-slate-400'
+                      }`}
                     whileHover={{ scale: 1.2 }}
                   />
                 ))}
@@ -213,28 +209,28 @@ const Home = () => {
             >
               <motion.div
                 key={currentSlide}
-                initial={{ opacity: 0, scale: 0.8, rotate: -10 }}
-                animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
                 transition={{ duration: 0.6 }}
-                className={`relative bg-gradient-to-br ${heroSlides[currentSlide].gradient} rounded-3xl p-16 shadow-2xl transform hover:scale-105 transition-transform duration-300`}
+                className="relative bg-indigo-600 rounded-lg p-16 shadow-sm"
               >
                 <div className="text-9xl text-center text-white/90">
                   {heroSlides[currentSlide].image}
                 </div>
-                
+
                 {/* Floating Elements */}
                 <motion.div
                   animate={{ y: [-10, 10, -10] }}
                   transition={{ duration: 3, repeat: Infinity }}
-                  className="absolute -top-4 -right-4 w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl flex items-center justify-center"
+                  className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center"
                 >
                   <Star className="w-8 h-8 text-white" />
                 </motion.div>
-                
+
                 <motion.div
                   animate={{ y: [10, -10, 10] }}
                   transition={{ duration: 4, repeat: Infinity }}
-                  className="absolute -bottom-4 -left-4 w-12 h-12 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center"
+                  className="absolute -bottom-4 -left-4 w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center"
                 >
                   <Heart className="w-6 h-6 text-white" />
                 </motion.div>
@@ -242,24 +238,10 @@ const Home = () => {
             </motion.div>
           </div>
         </div>
-
-        {/* Background Elements */}
-        <div className="absolute inset-0 -z-10 overflow-hidden">
-          <motion.div
-            animate={{ rotate: 360 }}
-            transition={{ duration: 50, repeat: Infinity, ease: "linear" }}
-            className="absolute -top-32 -right-32 w-96 h-96 bg-gradient-to-r from-purple-200/30 to-pink-200/30 rounded-full blur-3xl"
-          />
-          <motion.div
-            animate={{ rotate: -360 }}
-            transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
-            className="absolute -bottom-32 -left-32 w-96 h-96 bg-gradient-to-r from-blue-200/30 to-cyan-200/30 rounded-full blur-3xl"
-          />
-        </div>
       </section>
 
       {/* Stats Section */}
-      <section className="py-16 bg-white/50 backdrop-blur-sm">
+      <section className="py-16 bg-slate-50">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -276,13 +258,13 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.4, delay: index * 0.1 }}
                 whileHover={{ y: -5 }}
-                className="text-center bg-white/80 backdrop-blur-sm rounded-2xl p-6 shadow-lg border border-white/20"
+                className="text-center bg-white rounded-lg p-6 shadow-sm border border-slate-200"
               >
-                <div className="flex justify-center mb-4 text-purple-600">
+                <div className="flex justify-center mb-4 text-slate-700">
                   {stat.icon}
                 </div>
-                <div className="text-3xl font-bold text-gray-800 mb-2">{stat.value}</div>
-                <div className="text-gray-600 font-medium">{stat.label}</div>
+                <div className="text-3xl font-semibold text-slate-900 mb-2">{stat.value}</div>
+                <div className="text-slate-500 font-medium">{stat.label}</div>
               </motion.div>
             ))}
           </motion.div>
@@ -299,10 +281,10 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-800 to-pink-800 bg-clip-text text-transparent mb-6">
+            <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
               Why Choose Our Platform?
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-500 max-w-3xl mx-auto">
               Experience the future of online shopping with our cutting-edge features designed for your convenience
             </p>
           </motion.div>
@@ -315,23 +297,18 @@ const Home = () => {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -10, scale: 1.05 }}
+                whileHover={{ y: -10 }}
                 onHoverStart={() => setHoveredCard(index)}
                 onHoverEnd={() => setHoveredCard(null)}
-                className={`${feature.bg} ${feature.border} border-2 rounded-3xl p-8 text-center transition-all duration-300 ${
-                  hoveredCard === index ? 'shadow-2xl' : 'shadow-lg'
-                }`}
+                className={`${feature.bg} ${feature.border} border-2 rounded-lg p-8 text-center transition-all duration-300 ${hoveredCard === index ? 'shadow-sm' : 'shadow-sm'
+                  }`}
               >
-                <motion.div
-                  animate={hoveredCard === index ? { rotate: 360 } : { rotate: 0 }}
-                  transition={{ duration: 0.5 }}
-                  className={`${feature.color} mb-6 flex justify-center`}
-                >
+                <div className={`${feature.color} mb-6 flex justify-center`}>
                   {feature.icon}
-                </motion.div>
-                <h3 className="text-xl font-bold text-gray-800 mb-4">{feature.title}</h3>
-                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
-                
+                </div>
+                <h3 className="text-xl font-semibold text-slate-800 mb-4">{feature.title}</h3>
+                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
+
                 <AnimatePresence>
                   {hoveredCard === index && (
                     <motion.div
@@ -340,7 +317,7 @@ const Home = () => {
                       exit={{ opacity: 0, scale: 0 }}
                       className="mt-4"
                     >
-                      <CheckCircle className="w-6 h-6 text-green-500 mx-auto" />
+                      <CheckCircle className="w-6 h-6 text-emerald-500 mx-auto" />
                     </motion.div>
                   )}
                 </AnimatePresence>
@@ -364,43 +341,43 @@ const Home = () => {
             >
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 overflow-hidden"
+                className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
               >
                 <RealTimeStock />
               </motion.div>
 
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-3xl shadow-xl border border-purple-100 p-6"
+                className="bg-slate-50 rounded-lg shadow-sm border border-slate-200 p-6"
               >
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-xl flex items-center justify-center mr-4">
+                  <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mr-4">
                     <Clock className="w-6 h-6 text-white" />
                   </div>
-                  <h3 className="text-xl font-bold text-purple-800">About Market App</h3>
+                  <h3 className="text-xl font-semibold text-slate-800">About Market App</h3>
                 </div>
-                <p className="text-gray-700 leading-relaxed mb-6">
-                  Welcome to our real-time market platform where innovation meets convenience. 
+                <p className="text-slate-600 leading-relaxed mb-6">
+                  Welcome to our real-time market platform where innovation meets convenience.
                   Experience lightning-fast inventory updates and seamless shopping like never before.
                 </p>
                 <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">Real-time</span>
-                  <span className="px-3 py-1 bg-pink-100 text-pink-700 rounded-full text-sm font-medium">Secure</span>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">Global</span>
+                  <span className="px-3 py-1 bg-slate-200 text-slate-700 rounded-full text-sm font-medium">Real-time</span>
+                  <span className="px-3 py-1 bg-slate-200 text-slate-700 rounded-full text-sm font-medium">Secure</span>
+                  <span className="px-3 py-1 bg-slate-200 text-slate-700 rounded-full text-sm font-medium">Global</span>
                 </div>
               </motion.div>
 
               {/* Quick Links */}
               <motion.div
                 whileHover={{ scale: 1.02 }}
-                className="bg-white/80 backdrop-blur-sm rounded-3xl shadow-xl border border-white/20 p-6"
+                className="bg-white rounded-lg shadow-sm border border-slate-200 p-6"
               >
-                <h3 className="text-lg font-bold text-gray-800 mb-4">Quick Links</h3>
+                <h3 className="text-lg font-semibold text-slate-800 mb-4">Quick Links</h3>
                 <div className="space-y-3">
                   <motion.button
                     whileHover={{ x: 5 }}
                     onClick={() => navigate('/about')}
-                    className="flex items-center text-gray-600 hover:text-purple-600 transition-colors duration-200 w-full text-left"
+                    className="flex items-center text-slate-600 hover:text-indigo-600 transition-colors duration-200 w-full text-left"
                   >
                     <ArrowRight className="w-4 h-4 mr-3" />
                     About Us
@@ -408,7 +385,7 @@ const Home = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     onClick={() => navigate('/contact')}
-                    className="flex items-center text-gray-600 hover:text-purple-600 transition-colors duration-200 w-full text-left"
+                    className="flex items-center text-slate-600 hover:text-indigo-600 transition-colors duration-200 w-full text-left"
                   >
                     <ArrowRight className="w-4 h-4 mr-3" />
                     Contact Us
@@ -416,7 +393,7 @@ const Home = () => {
                   <motion.button
                     whileHover={{ x: 5 }}
                     onClick={() => navigate('/faq')}
-                    className="flex items-center text-gray-600 hover:text-purple-600 transition-colors duration-200 w-full text-left"
+                    className="flex items-center text-slate-600 hover:text-indigo-600 transition-colors duration-200 w-full text-left"
                   >
                     <ArrowRight className="w-4 h-4 mr-3" />
                     FAQ
@@ -434,15 +411,14 @@ const Home = () => {
               className="lg:col-span-9"
             >
               <motion.div
-                whileHover={{ scale: 1.01 }}
-                className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-3xl shadow-2xl p-8 mb-12 text-white relative overflow-hidden"
+                className="bg-indigo-600 rounded-lg shadow-sm p-8 mb-12 text-white relative overflow-hidden"
               >
                 <div className="relative z-10">
                   <motion.h1
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.3 }}
-                    className="text-4xl lg:text-5xl font-bold mb-4"
+                    className="text-4xl lg:text-5xl font-semibold mb-4"
                   >
                     Featured Products
                   </motion.h1>
@@ -450,7 +426,7 @@ const Home = () => {
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: 0.4 }}
-                    className="text-xl opacity-90 mb-6"
+                    className="text-xl opacity-80 mb-6"
                   >
                     Discover our handpicked collection of premium items crafted for excellence
                   </motion.p>
@@ -461,29 +437,11 @@ const Home = () => {
                     whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.95 }}
                     onClick={() => navigate('/products')}
-                    className="bg-white text-purple-600 px-6 py-3 rounded-xl font-semibold hover:shadow-lg transition-all duration-200"
+                    className="bg-white text-slate-800 px-6 py-3 rounded-lg font-semibold hover:shadow-sm transition-all duration-200"
                   >
                     View All Products
                   </motion.button>
                 </div>
-
-                {/* Background Animation */}
-                <motion.div
-                  animate={{ 
-                    scale: [1, 1.2, 1],
-                    rotate: [0, 180, 360]
-                  }}
-                  transition={{ duration: 20, repeat: Infinity }}
-                  className="absolute -top-16 -right-16 w-48 h-48 bg-white/10 rounded-full"
-                />
-                <motion.div
-                  animate={{ 
-                    scale: [1.2, 1, 1.2],
-                    rotate: [360, 180, 0]
-                  }}
-                  transition={{ duration: 15, repeat: Infinity }}
-                  className="absolute -bottom-16 -left-16 w-48 h-48 bg-white/10 rounded-full"
-                />
               </motion.div>
 
               <ProductList />
@@ -493,7 +451,7 @@ const Home = () => {
       </section>
 
       {/* Testimonials Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-50 to-pink-50">
+      <section className="py-20 bg-slate-50">
         <div className="container mx-auto px-4 max-w-7xl">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -502,10 +460,10 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center mb-16"
           >
-            <h2 className="text-4xl lg:text-5xl font-bold bg-gradient-to-r from-purple-800 to-pink-800 bg-clip-text text-transparent mb-6">
+            <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
               What Our Customers Say
             </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-xl text-slate-500 max-w-3xl mx-auto">
               Join thousands of satisfied customers who trust our platform for their shopping needs
             </p>
           </motion.div>
@@ -519,25 +477,25 @@ const Home = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.2 }}
                 whileHover={{ y: -10 }}
-                className="bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl border border-white/20"
+                className="bg-white rounded-lg p-8 shadow-sm border border-slate-200"
               >
                 <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-white font-bold mr-4">
+                  <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
                     {testimonial.avatar}
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-800">{testimonial.name}</h4>
-                    <p className="text-gray-600 text-sm">{testimonial.role}</p>
+                    <h4 className="font-semibold text-slate-800">{testimonial.name}</h4>
+                    <p className="text-slate-500 text-sm">{testimonial.role}</p>
                   </div>
                 </div>
-                
+
                 <div className="flex mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
+                    <Star key={i} className="w-5 h-5 text-amber-400 fill-current" />
                   ))}
                 </div>
-                
-                <p className="text-gray-700 italic leading-relaxed">
+
+                <p className="text-slate-600 italic leading-relaxed">
                   "{testimonial.comment}"
                 </p>
               </motion.div>
@@ -547,7 +505,7 @@ const Home = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-purple-600 to-pink-600 text-white relative overflow-hidden">
+      <section className="py-20 bg-slate-900 text-white relative overflow-hidden">
         <div className="container mx-auto px-4 max-w-7xl relative z-10">
           <motion.div
             initial={{ opacity: 0, y: 50 }}
@@ -556,13 +514,13 @@ const Home = () => {
             transition={{ duration: 0.6 }}
             className="text-center"
           >
-            <h2 className="text-4xl lg:text-6xl font-bold mb-6">
+            <h2 className="text-4xl lg:text-6xl font-semibold mb-6">
               Ready to Start Shopping?
             </h2>
-            <p className="text-xl opacity-90 mb-8 max-w-2xl mx-auto">
+            <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
               Join millions of happy customers and discover why we're the #1 choice for online shopping
             </p>
-            
+
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -570,39 +528,27 @@ const Home = () => {
               >
                 <Button
                   onClick={() => navigate('/products')}
-                  className="bg-white text-purple-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-xl hover:shadow-2xl"
+                  className="bg-white text-slate-900 hover:bg-slate-100 px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
                 >
                   Start Shopping Now
                   <ArrowRight className="w-5 h-5 ml-2" />
                 </Button>
               </motion.div>
-              
+
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 onClick={() => navigate('/contact')}
-                className="border-2 border-white text-white hover:bg-white hover:text-purple-600 px-8 py-4 rounded-xl text-lg font-semibold transition-all duration-200"
+                className="border-2 border-white/30 text-white hover:bg-white hover:text-slate-900 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200"
               >
                 Contact Support
               </motion.button>
             </div>
           </motion.div>
         </div>
-
-        {/* Background Animation */}
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
-          className="absolute -top-24 -right-24 w-96 h-96 bg-white/10 rounded-full"
-        />
-        <motion.div
-          animate={{ rotate: -360 }}
-          transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-          className="absolute -bottom-24 -left-24 w-96 h-96 bg-white/10 rounded-full"
-        />
       </section>
     </div>
   );
 };
 
-export default Home; 
+export default Home;

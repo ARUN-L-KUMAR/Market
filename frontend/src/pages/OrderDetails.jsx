@@ -139,10 +139,10 @@ const OrderDetails = () => {
         </Button>
         <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-gray-800">
+            <h1 className="text-3xl font-semibold text-slate-800">
               Order #{order.orderNumber || order._id.slice(-8).toUpperCase()}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-slate-600">
               Placed on {formatDate(order.createdAt)}
             </p>
           </div>
@@ -162,33 +162,33 @@ const OrderDetails = () => {
         <div className="lg:col-span-2 space-y-8">
           {/* Order Tracking */}
           {order.status !== 'cancelled' && (
-            <div className="bg-white rounded-2xl shadow-subtle border border-gray-200 p-6">
-              <h2 className="text-xl font-bold mb-6">Order Tracking</h2>
+            <div className="bg-white rounded-lg shadow-subtle border border-slate-200 p-6">
+              <h2 className="text-xl font-semibold mb-6">Order Tracking</h2>
               <div className="space-y-6">
                 {trackingSteps.map((step, index) => (
                   <div key={step.key} className="flex items-center">
                     <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
                       step.completed 
-                        ? 'bg-green-100 text-green-800' 
+                        ? 'bg-emerald-100 text-emerald-700' 
                         : step.active 
-                        ? 'bg-blue-100 text-blue-800' 
-                        : 'bg-gray-100 text-gray-400'
+                        ? 'bg-indigo-100 text-indigo-700' 
+                        : 'bg-slate-100 text-slate-400'
                     }`}>
                       {step.completed ? '✓' : step.icon}
                     </div>
                     <div className="ml-4 flex-1">
                       <p className={`text-sm font-medium ${
-                        step.completed || step.active ? 'text-gray-900' : 'text-gray-400'
+                        step.completed || step.active ? 'text-slate-900' : 'text-slate-400'
                       }`}>
                         {step.label}
                       </p>
                       {step.active && (
-                        <p className="text-xs text-blue-600">Current Status</p>
+                        <p className="text-xs text-indigo-600">Current Status</p>
                       )}
                     </div>
                     {index < trackingSteps.length - 1 && (
                       <div className={`absolute left-5 mt-10 w-0.5 h-6 ${
-                        step.completed ? 'bg-green-300' : 'bg-gray-200'
+                        step.completed ? 'bg-green-300' : 'bg-slate-200'
                       }`} />
                     )}
                   </div>
@@ -198,34 +198,34 @@ const OrderDetails = () => {
           )}
 
           {/* Order Items */}
-          <div className="bg-white rounded-2xl shadow-subtle border border-gray-200 p-6">
-            <h2 className="text-xl font-bold mb-6">Order Items</h2>
+          <div className="bg-white rounded-lg shadow-subtle border border-slate-200 p-6">
+            <h2 className="text-xl font-semibold mb-6">Order Items</h2>
             <div className="space-y-4">
               {order.items?.map((item, index) => (
-                <div key={index} className="flex items-center gap-4 p-4 border border-gray-200 rounded-lg">
+                <div key={index} className="flex items-center gap-4 p-4 border border-slate-200 rounded-lg">
                   <img
                     src={item.product?.images?.[0]?.url || '/placeholder-image.jpg'}
                     alt={item.product?.title || 'Product'}
                     className="w-20 h-20 object-cover rounded-lg"
                   />
                   <div className="flex-1">
-                    <h3 className="font-medium text-gray-800">
+                    <h3 className="font-medium text-slate-800">
                       {item.product?.title || 'Product'}
                     </h3>
-                    <p className="text-sm text-gray-600">
+                    <p className="text-sm text-slate-600">
                       {item.product?.description || 'No description available'}
                     </p>
                     <div className="flex items-center gap-4 mt-2">
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-slate-500">
                         Quantity: {item.quantity}
                       </span>
-                      <span className="text-sm text-gray-500">
+                      <span className="text-sm text-slate-500">
                         Price: <CurrencyPrice price={item.price} />
                       </span>
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-gray-800">
+                    <p className="font-semibold text-slate-800">
                       <CurrencyPrice price={item.quantity * item.price} />
                     </p>
                   </div>
@@ -238,35 +238,35 @@ const OrderDetails = () => {
         {/* Sidebar */}
         <div className="space-y-6">
           {/* Order Summary */}
-          <div className="bg-white rounded-2xl shadow-subtle border border-gray-200 p-6">
-            <h2 className="text-xl font-bold mb-4">Order Summary</h2>
+          <div className="bg-white rounded-lg shadow-subtle border border-slate-200 p-6">
+            <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-gray-600">Subtotal</span>
+                <span className="text-slate-600">Subtotal</span>
                 <span>₹{order.subtotal?.toFixed(2) || '0.00'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Tax</span>
+                <span className="text-slate-600">Tax</span>
                 <span>₹{order.tax?.toFixed(2) || '0.00'}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">Shipping</span>
+                <span className="text-slate-600">Shipping</span>
                 <span>₹{order.shipping?.toFixed(2) || '0.00'}</span>
               </div>
-              <div className="border-t border-gray-200 pt-3">
-                <div className="flex justify-between text-lg font-bold">
+              <div className="border-t border-slate-200 pt-3">
+                <div className="flex justify-between text-lg font-semibold">
                   <span>Total</span>
-                  <span className="text-primary-700">₹{order.total?.toFixed(2) || '0.00'}</span>
+                  <span className="text-indigo-700">₹{order.total?.toFixed(2) || '0.00'}</span>
                 </div>
               </div>
             </div>
           </div>
 
           {/* Shipping Address */}
-          <div className="bg-white rounded-2xl shadow-subtle border border-gray-200 p-6">
-            <h2 className="text-xl font-bold mb-4">Shipping Address</h2>
-            <div className="text-sm text-gray-600 space-y-1">
-              <p className="font-medium text-gray-800">{order.shippingAddress?.fullName}</p>
+          <div className="bg-white rounded-lg shadow-subtle border border-slate-200 p-6">
+            <h2 className="text-xl font-semibold mb-4">Shipping Address</h2>
+            <div className="text-sm text-slate-600 space-y-1">
+              <p className="font-medium text-slate-800">{order.shippingAddress?.fullName}</p>
               <p>{order.shippingAddress?.address}</p>
               <p>
                 {order.shippingAddress?.city}, {order.shippingAddress?.state} {order.shippingAddress?.zipCode}
@@ -279,14 +279,14 @@ const OrderDetails = () => {
           </div>
 
           {/* Payment Method */}
-          <div className="bg-white rounded-2xl shadow-subtle border border-gray-200 p-6">
-            <h2 className="text-xl font-bold mb-4">Payment Method</h2>
-            <div className="text-sm text-gray-600">
+          <div className="bg-white rounded-lg shadow-subtle border border-slate-200 p-6">
+            <h2 className="text-xl font-semibold mb-4">Payment Method</h2>
+            <div className="text-sm text-slate-600">
               <p className="capitalize font-medium">
                 {order.paymentMethod?.replace('_', ' ') || 'Not specified'}
               </p>
               {order.paymentMethod === 'credit_card' && (
-                <p className="text-xs text-gray-500 mt-1">
+                <p className="text-xs text-slate-500 mt-1">
                   Payment processed securely
                 </p>
               )}
@@ -294,9 +294,9 @@ const OrderDetails = () => {
           </div>
 
           {/* Need Help? */}
-          <div className="bg-blue-50 rounded-2xl border border-blue-200 p-6">
-            <h3 className="text-lg font-semibold text-blue-800 mb-2">Need Help?</h3>
-            <p className="text-sm text-blue-700 mb-4">
+          <div className="bg-indigo-50 rounded-lg border border-indigo-200 p-6">
+            <h3 className="text-lg font-semibold text-indigo-700 mb-2">Need Help?</h3>
+            <p className="text-sm text-indigo-700 mb-4">
               If you have questions about your order, our customer support team is here to help.
             </p>
             <Button 

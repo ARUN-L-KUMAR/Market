@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react';
 import Button from './ui/Button';
 
-const Modal = ({ 
-  isOpen, 
-  onClose, 
-  title, 
-  children, 
+const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  children,
   actions,
   size = 'md',
   closeOnClickOutside = true,
@@ -13,7 +13,7 @@ const Modal = ({
   className = ''
 }) => {
   const modalRef = useRef(null);
-  
+
   // Close modal on Escape key press
   useEffect(() => {
     const handleEscape = (e) => {
@@ -21,21 +21,21 @@ const Modal = ({
         onClose();
       }
     };
-    
+
     window.addEventListener('keydown', handleEscape);
-    
+
     return () => {
       window.removeEventListener('keydown', handleEscape);
     };
   }, [isOpen, onClose]);
-  
+
   // Handle click outside
   const handleOutsideClick = (e) => {
     if (closeOnClickOutside && modalRef.current && !modalRef.current.contains(e.target)) {
       onClose();
     }
   };
-  
+
   // Prevent scrolling when modal is open
   useEffect(() => {
     if (isOpen) {
@@ -43,12 +43,12 @@ const Modal = ({
     } else {
       document.body.style.overflow = '';
     }
-    
+
     return () => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-  
+
   // Size classes
   const sizeClasses = {
     sm: 'max-w-sm',
@@ -60,29 +60,28 @@ const Modal = ({
     '4xl': 'max-w-4xl',
     'full': 'max-w-full'
   };
-  
+
   // Return null if modal is closed
   if (!isOpen) return null;
-  
+
   return (
-    <div 
-      className="fixed inset-0 z-50 overflow-y-auto bg-gray-600 bg-opacity-50 flex justify-center items-center p-4"
+    <div
+      className="fixed inset-0 z-50 overflow-y-auto bg-slate-600 bg-opacity-50 flex justify-center items-center p-4"
       onClick={handleOutsideClick}
     >
-      <div 
+      <div
         ref={modalRef}
         className={`
-          bg-white rounded-2xl shadow-xl transform transition-all duration-300 ease-in-out
-          w-full ${sizeClasses[size]} ${className}
+          bg-white rounded-lg shadow-sm w-full ${sizeClasses[size]} ${className}
         `}
       >
         {/* Header */}
-        <div className="px-6 py-4 flex justify-between items-center border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
+        <div className="px-6 py-4 flex justify-between items-center border-b border-slate-200">
+          <h3 className="text-lg font-medium text-slate-900">{title}</h3>
           {showCloseButton && (
             <button
               onClick={onClose}
-              className="text-gray-400 hover:text-gray-600 transition-colors focus:outline-none"
+              className="text-slate-400 hover:text-slate-600 transition-colors focus:outline-none"
             >
               <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -90,15 +89,15 @@ const Modal = ({
             </button>
           )}
         </div>
-        
+
         {/* Body */}
         <div className="px-6 py-4">
           {children}
         </div>
-        
+
         {/* Footer */}
         {actions && (
-          <div className="px-6 py-4 border-t border-gray-200 flex justify-end space-x-2">
+          <div className="px-6 py-4 border-t border-slate-200 flex justify-end space-x-2">
             {actions}
           </div>
         )}
@@ -108,13 +107,13 @@ const Modal = ({
 };
 
 // Predefined modal types
-export const ConfirmModal = ({ 
-  isOpen, 
-  onClose, 
-  onConfirm, 
-  title, 
-  message, 
-  confirmText = 'Confirm', 
+export const ConfirmModal = ({
+  isOpen,
+  onClose,
+  onConfirm,
+  title,
+  message,
+  confirmText = 'Confirm',
   cancelText = 'Cancel',
   confirmVariant = 'primary',
   size = 'md'
@@ -137,19 +136,19 @@ export const ConfirmModal = ({
       ]}
     >
       {isString ? (
-        <p className="text-gray-700">{message}</p>
+        <p className="text-slate-700">{message}</p>
       ) : (
-        <span className="text-gray-700">{message}</span>
+        <span className="text-slate-700">{message}</span>
       )}
     </Modal>
   );
 };
 
-export const AlertModal = ({ 
-  isOpen, 
-  onClose, 
-  title, 
-  message, 
+export const AlertModal = ({
+  isOpen,
+  onClose,
+  title,
+  message,
   buttonText = 'OK',
   variant = 'primary',
   size = 'md'
@@ -166,7 +165,7 @@ export const AlertModal = ({
         </Button>
       ]}
     >
-      <p className="text-gray-700">{message}</p>
+      <p className="text-slate-700">{message}</p>
     </Modal>
   );
 };

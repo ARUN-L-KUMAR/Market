@@ -1,8 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { getUsers, deleteUser } from '../../services/adminService';
+import { useNavigate } from 'react-router-dom';
+import { getUsers, deleteUser, updateUser } from '../../services/adminService';
 import AdminLayout from '../../components/admin/AdminLayout';
+import {
+  UserCircle,
+  Mail,
+  Shield,
+  Settings,
+  Trash2,
+  CheckCircle2,
+  XCircle,
+  MoreVertical,
+  Edit2,
+  ShieldAlert,
+  ShieldCheck as ShieldOn,
+  UserCheck
+} from 'lucide-react';
+import { toast } from 'react-toastify';
 
 const Users = () => {
+  const navigate = useNavigate();
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -10,8 +27,11 @@ const Users = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
   const [deleteModal, setDeleteModal] = useState(null);
+  const [editModal, setEditModal] = useState(null);
+  const [suspendModal, setSuspendModal] = useState(null);
+  const [confirmCode, setConfirmCode] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
-  
+
   const fetchUsers = async (page = 1, search = '', role = 'all') => {
     try {
       setLoading(true);
@@ -19,18 +39,14 @@ const Users = () => {
         page,
         limit: 10
       };
-      
-      if (search) {
-        params.search = search;
-      }
-      
-      if (role !== 'all') {
-        params.role = role;
-      }
-      
+
+      if (search) params.search = search;
+      if (role !== 'all') params.role = role;
+
       const response = await getUsers(params);
-      setUsers(response.data.users);
-      setTotalPages(Math.ceil(response.data.total / 10));
+      const { users, pagination } = response.data.data;
+      setUsers(users);
+      setTotalPages(pagination.pages || Math.ceil(pagination.total / 10));
       setCurrentPage(page);
     } catch (error) {
       console.error('Error fetching users:', error);
@@ -39,73 +55,120 @@ const Users = () => {
       setLoading(false);
     }
   };
-  
+
   useEffect(() => {
     fetchUsers(currentPage, searchQuery, roleFilter);
   }, [currentPage, roleFilter]);
-  
+
   const handleSearch = (e) => {
     e.preventDefault();
     setCurrentPage(1);
     fetchUsers(1, searchQuery, roleFilter);
   };
-  
+
   const handleDeleteUser = async (userId) => {
     try {
       await deleteUser(userId);
       setDeleteModal(null);
-      
-      // Remove the user from the local state
       setUsers(users.filter(user => user._id !== userId));
+      toast.success('User deleted successfully');
     } catch (error) {
       console.error('Error deleting user:', error);
-      setError('Failed to delete user. Please try again.');
+      toast.error('Failed to delete user');
     }
   };
-  
-  // Function to format date
+
+  const handleUpdateRole = async (e) => {
+    e.preventDefault();
+    try {
+      await updateUser(editModal._id, { role: editModal.role });
+      setUsers(users.map(u => u._id === editModal._id ? { ...u, role: editModal.role } : u));
+      setEditModal(null);
+      toast.success('User role updated successfully');
+    } catch (error) {
+      console.error('Error updating role:', error);
+      toast.error('Failed to update user role');
+    }
+  };
+
+  const handleToggleStatus = async (user) => {
+    // If we are suspending, show the safety modal first
+    if (user.isActive) {
+      setSuspendModal(user);
+      setConfirmCode('');
+      return;
+    }
+
+    // If we are restoring, proceed directly
+    try {
+      await updateUser(user._id, { isActive: true });
+      setUsers(users.map(u => u._id === user._id ? { ...u, isActive: true } : u));
+      toast.success('Account access restored');
+    } catch (error) {
+      console.error('Error toggling status:', error);
+      toast.error('Failed to restore user status');
+    }
+  };
+
+  const confirmSuspension = async () => {
+    if (confirmCode !== 'DOIT') return;
+
+    try {
+      await updateUser(suspendModal._id, { isActive: false });
+      setUsers(users.map(u => u._id === suspendModal._id ? { ...u, isActive: false } : u));
+      toast.success('Account suspended successfully');
+      setSuspendModal(null);
+    } catch (error) {
+      console.error('Error suspending user:', error);
+      toast.error('Failed to suspend user');
+    }
+  };
+
   const formatDate = (dateString) => {
     const options = { year: 'numeric', month: 'short', day: 'numeric' };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
-  
+
+  const getRoleBadgeColor = (role) => {
+    switch (role) {
+      case 'admin': return 'bg-indigo-50 text-indigo-600 border-indigo-100';
+      case 'manager': return 'bg-emerald-50 text-emerald-600 border-emerald-100';
+      case 'inventory': return 'bg-amber-50 text-amber-600 border-amber-100';
+      case 'support': return 'bg-blue-50 text-blue-600 border-blue-100';
+      case 'user': return 'bg-slate-50 text-slate-500 border-slate-100';
+      default: return 'bg-slate-50 text-slate-500 border-slate-100';
+    }
+  };
+
   return (
     <AdminLayout>
       <div className="p-6">
-        <div className="flex justify-between items-center mb-6">
-          <h1 className="text-2xl font-bold">Users</h1>
-        </div>
-        
-        {/* Search and Filters */}
-        <div className="mb-6 flex flex-wrap gap-4 items-end">
-          <div className="flex-grow max-w-md">
-            <form onSubmit={handleSearch}>
-              <label htmlFor="search" className="block text-sm font-medium text-gray-700 mb-1">Search Users</label>
-              <div className="relative rounded-md shadow-sm">
-                <input
-                  type="text"
-                  id="search"
-                  className="focus:ring-primary-500 focus:border-primary-500 block w-full pl-3 pr-10 py-2 sm:text-sm border-gray-300 rounded-md"
-                  placeholder="Search by name or email"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                />
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <button type="submit" className="text-gray-400 hover:text-gray-500">
-                    <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </form>
-          </div>
-          
+        <div className="flex justify-between items-center mb-8">
           <div>
-            <label htmlFor="role-filter" className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+            <h1 className="text-2xl font-bold text-slate-900">User Directory</h1>
+            <p className="text-sm text-slate-500 mt-1">Manage all platform members and their system access.</p>
+          </div>
+        </div>
+
+        {/* Search and Filters */}
+        <div className="mb-8 flex flex-wrap gap-4 items-center justify-between">
+          <form onSubmit={handleSearch} className="flex-grow max-w-md relative">
+            <input
+              type="text"
+              placeholder="Search by name or email..."
+              className="w-full pl-10 pr-4 py-2.5 bg-white border border-slate-200 rounded-2xl text-sm outline-none focus:border-indigo-500 transition-all shadow-sm"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+            <svg className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </form>
+
+          <div className="flex items-center gap-3">
+            <span className="text-xs font-bold text-slate-400 uppercase tracking-widest">Filter:</span>
             <select
-              id="role-filter"
-              className="block w-full pl-3 pr-10 py-2 text-base border-gray-300 focus:outline-none focus:ring-primary-500 focus:border-primary-500 sm:text-sm rounded-md"
+              className="bg-white border border-slate-200 rounded-xl px-4 py-2 text-sm text-slate-600 outline-none focus:border-indigo-500 transition-all cursor-pointer shadow-sm"
               value={roleFilter}
               onChange={(e) => {
                 setRoleFilter(e.target.value);
@@ -113,186 +176,301 @@ const Users = () => {
               }}
             >
               <option value="all">All Roles</option>
-              <option value="admin">Admin</option>
-              <option value="user">User</option>
+              <option value="admin">Super Admin</option>
+              <option value="manager">Store Manager</option>
+              <option value="user">Registered User</option>
+              <option value="inventory">Inventory Manager</option>
+              <option value="support">Customer Support</option>
             </select>
           </div>
         </div>
-        
-        {/* Error message */}
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
-        
+
         {/* Users table */}
-        {loading ? (
-          <div className="flex justify-center items-center h-64">
-            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary-600"></div>
-          </div>
-        ) : (
-          <div className="bg-white shadow overflow-hidden sm:rounded-md">
-            <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+        <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
+          <table className="min-w-full divide-y divide-slate-100">
+            <thead className="bg-slate-50/50">
+              <tr>
+                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">User Details</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">System Role</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Join Date</th>
+                <th className="px-6 py-4 text-left text-xs font-bold text-slate-400 uppercase tracking-widest">Status</th>
+                <th className="px-6 py-4 text-right text-xs font-bold text-slate-400 uppercase tracking-widest">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 bg-white">
+              {loading ? (
                 <tr>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    User
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Role
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Joined
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Status
-                  </th>
-                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Actions
-                  </th>
+                  <td colSpan="5" className="px-6 py-20 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="animate-spin rounded-full h-10 w-10 border-t-2 border-b-2 border-indigo-600 mb-4"></div>
+                      <p className="text-sm text-slate-500 font-medium">Accessing user directory...</p>
+                    </div>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
-                {users.length === 0 ? (
-                  <tr>
-                    <td colSpan="5" className="px-6 py-4 text-center text-gray-500">
-                      No users found
-                    </td>
-                  </tr>
-                ) : (
-                  users.map((user) => (
-                    <tr key={user._id} className="hover:bg-gray-50">
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <div className="flex items-center">
-                          <div className="flex-shrink-0 h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                            {user.avatar ? (
-                              <img className="h-10 w-10 rounded-full" src={user.avatar} alt="" />
-                            ) : (
-                              <span className="text-gray-500 font-medium">
-                                {user.name.charAt(0).toUpperCase()}
-                              </span>
-                            )}
-                          </div>
-                          <div className="ml-4">
-                            <div className="text-sm font-medium text-gray-900">{user.name}</div>
-                            <div className="text-sm text-gray-500">{user.email}</div>
+              ) : users.length === 0 ? (
+                <tr>
+                  <td colSpan="5" className="px-6 py-20 text-center">
+                    <div className="flex flex-col items-center">
+                      <div className="w-16 h-16 bg-slate-50 rounded-2xl flex items-center justify-center mb-4">
+                        <UserCircle className="h-8 w-8 text-slate-300" />
+                      </div>
+                      <p className="text-slate-500 font-bold">No users found</p>
+                      <p className="text-xs text-slate-400 mt-1">Try adjusting your filters or search terms.</p>
+                    </div>
+                  </td>
+                </tr>
+              ) : (
+                users.map((user) => (
+                  <tr key={user._id} className="hover:bg-slate-50/50 transition-colors group">
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex items-center">
+                        <div className="flex-shrink-0 h-10 w-10 rounded-xl bg-slate-100 border border-slate-200 flex items-center justify-center group-hover:border-indigo-200 transition-colors overflow-hidden">
+                          {user.avatar ? (
+                            <img className="h-full w-full object-cover" src={user.avatar} alt="" />
+                          ) : (
+                            <span className="text-slate-500 font-bold">
+                              {user.name.charAt(0).toUpperCase()}
+                            </span>
+                          )}
+                        </div>
+                        <div className="ml-4">
+                          <div className="text-sm font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">{user.name}</div>
+                          <div className="text-[11px] text-slate-400 font-medium flex items-center">
+                            <Mail className="h-3 w-3 mr-1" />
+                            {user.email}
                           </div>
                         </div>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.role === 'admin' ? 'bg-purple-100 text-purple-800' : 'bg-blue-100 text-blue-800'}`}>
-                          {user.role}
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className={`px-2.5 py-1 text-[10px] font-black rounded-lg border uppercase tracking-widest ${getRoleBadgeColor(user.role)}`}>
+                        {user.role.replace('_', ' ')}
+                      </span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-[11px] font-bold text-slate-500">
+                      {formatDate(user.createdAt)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="flex flex-col gap-1">
+                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-lg border uppercase w-fit tracking-tighter ${user.isActive ? 'bg-emerald-50 text-emerald-600 border-emerald-100' : 'bg-red-50 text-red-600 border-red-100'}`}>
+                          {user.isActive ? 'Active' : 'Suspended'}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {formatDate(user.createdAt)}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${user.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                          {user.isActive ? 'Active' : 'Inactive'}
+                        <span className={`px-2 py-0.5 text-[9px] font-black rounded-lg border uppercase w-fit tracking-tighter ${user.isEmailVerified ? 'bg-blue-50 text-blue-600 border-blue-100' : 'bg-amber-50 text-amber-600 border-amber-100'}`}>
+                          {user.isEmailVerified ? 'Verified' : 'Unverified'}
                         </span>
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                        <button 
-                          onClick={() => setDeleteModal(user)}
-                          className="text-red-600 hover:text-red-900 ml-4"
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm">
+                      <div className="flex items-center justify-end gap-2">
+                        <button
+                          onClick={() => navigate(`/admin/users/${user._id}`)}
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                          title="View Profile"
                         >
-                          Delete
+                          <UserCircle className="h-4 w-4" />
                         </button>
-                      </td>
-                    </tr>
-                  ))
-                )}
-              </tbody>
-            </table>
-          </div>
-        )}
-        
-        {/* Pagination */}
-        {totalPages > 1 && (
-          <div className="flex justify-center mt-6">
-            <nav className="relative z-0 inline-flex rounded-md shadow-sm -space-x-px" aria-label="Pagination">
-              <button
-                onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-                className="relative inline-flex items-center px-2 py-2 rounded-l-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span className="sr-only">Previous</span>
-                <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-              
-              {[...Array(totalPages).keys()].map(page => (
+                        <button
+                          onClick={() => handleToggleStatus(user)}
+                          className={`p-2 rounded-xl transition-all ${user.isActive ? 'text-slate-400 hover:text-red-600 hover:bg-red-50' : 'text-emerald-600 bg-emerald-50 hover:bg-emerald-100'}`}
+                          title={user.isActive ? 'Suspend User' : 'Restore User'}
+                        >
+                          {user.isActive ? <ShieldAlert className="h-4 w-4" /> : <UserCheck className="h-4 w-4" />}
+                        </button>
+                        <button
+                          onClick={() => setEditModal(user)}
+                          className="p-2 text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 rounded-xl transition-all"
+                          title="Change Role"
+                        >
+                          <Settings className="h-4 w-4" />
+                        </button>
+                        <button
+                          onClick={() => setDeleteModal(user)}
+                          className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded-xl transition-all"
+                          title="Delete User"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+
+          {/* Pagination */}
+          {!loading && totalPages > 1 && (
+            <div className="px-6 py-4 bg-slate-50/50 border-t border-slate-100 flex items-center justify-between">
+              <p className="text-xs text-slate-500 font-bold">Page {currentPage} of {totalPages}</p>
+              <div className="flex gap-2">
                 <button
-                  key={page + 1}
-                  onClick={() => setCurrentPage(page + 1)}
-                  className={`relative inline-flex items-center px-4 py-2 border border-gray-300 bg-white text-sm font-medium ${currentPage === page + 1 ? 'text-primary-600 bg-primary-50' : 'text-gray-700 hover:bg-gray-50'}`}
+                  onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
+                  className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-all shadow-sm"
                 >
-                  {page + 1}
+                  Previous
                 </button>
-              ))}
-              
-              <button
-                onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-                className="relative inline-flex items-center px-2 py-2 rounded-r-md border border-gray-300 bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                <span className="sr-only">Next</span>
-                <svg className="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                  <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </nav>
-          </div>
-        )}
-      </div>
-      
-      {/* Delete confirmation modal */}
-      {deleteModal && (
-        <div className="fixed z-10 inset-0 overflow-y-auto">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 transition-opacity" aria-hidden="true">
-              <div className="absolute inset-0 bg-gray-500 opacity-75"></div>
+                <button
+                  onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                  className="px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs font-bold text-slate-600 hover:bg-slate-50 disabled:opacity-50 transition-all shadow-sm"
+                >
+                  Next
+                </button>
+              </div>
             </div>
-            
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-            
-            <div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
-              <div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
-                <div className="sm:flex sm:items-start">
-                  <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-                    <svg className="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                    </svg>
-                  </div>
-                  <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-                    <h3 className="text-lg leading-6 font-medium text-gray-900">Delete User</h3>
-                    <div className="mt-2">
-                      <p className="text-sm text-gray-500">
-                        Are you sure you want to delete the user <span className="font-medium">{deleteModal.name}</span>? This action cannot be undone.
-                      </p>
-                    </div>
-                  </div>
+          )}
+        </div>
+      </div>
+
+      {/* Edit Role Modal */}
+      {editModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white w-full max-w-md rounded-2xl shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+              <h3 className="font-bold text-slate-900">Manage System Role</h3>
+              <button
+                onClick={() => setEditModal(null)}
+                className="p-2 text-slate-400 hover:text-slate-900 rounded-xl transition-all"
+              >
+                <XCircle className="h-5 w-5" />
+              </button>
+            </div>
+            <form onSubmit={handleUpdateRole} className="p-6 space-y-6">
+              <div className="flex items-center gap-4 p-4 bg-indigo-50/50 rounded-2xl border border-indigo-100">
+                <div className="w-12 h-12 bg-white rounded-xl border border-indigo-200 flex items-center justify-center text-indigo-600 font-bold shadow-sm">
+                  {editModal.name.charAt(0).toUpperCase()}
+                </div>
+                <div>
+                  <h4 className="font-bold text-slate-900">{editModal.name}</h4>
+                  <p className="text-[10px] text-indigo-600 font-black uppercase tracking-widest">Current: {editModal.role}</p>
                 </div>
               </div>
-              <div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
-                <button 
-                  type="button" 
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-red-600 text-base font-medium text-white hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={() => handleDeleteUser(deleteModal._id)}
-                >
-                  Delete
-                </button>
-                <button 
-                  type="button" 
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm"
-                  onClick={() => setDeleteModal(null)}
+
+              <div>
+                <label className="block text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Select New Access Level</label>
+                <div className="grid grid-cols-2 gap-3">
+                  {[
+                    { id: 'user', label: 'Registered User', desc: 'Customer' },
+                    { id: 'manager', label: 'Store Manager', desc: 'Ops' },
+                    { id: 'inventory', label: 'Inventory', desc: 'Stock' },
+                    { id: 'support', label: 'Support', desc: 'Service' },
+                    { id: 'marketing', label: 'Marketing', desc: 'Growth' },
+                    { id: 'finance', label: 'Finance', desc: 'Reports' },
+                    { id: 'engineer', label: 'Engineer', desc: 'System' },
+                    { id: 'admin', label: 'Super Admin', desc: 'Root' }
+                  ].map((r) => (
+                    <button
+                      key={r.id}
+                      type="button"
+                      onClick={() => setEditModal({ ...editModal, role: r.id })}
+                      className={`flex items-center justify-between p-3 rounded-2xl border text-left transition-all group ${editModal.role === r.id
+                        ? 'bg-indigo-600 border-indigo-600 text-white shadow-lg shadow-indigo-200'
+                        : 'bg-slate-50 border-slate-200 text-slate-600 hover:border-indigo-300'
+                        }`}
+                    >
+                      <div>
+                        <p className={`text-[11px] font-black uppercase tracking-tight ${editModal.role === r.id ? 'text-white' : 'text-slate-900'}`}>{r.label}</p>
+                        <p className={`text-[9px] ${editModal.role === r.id ? 'text-indigo-100' : 'text-slate-400'}`}>{r.desc}</p>
+                      </div>
+                      {editModal.role === r.id && <CheckCircle2 className="h-3 w-3 text-white" />}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="pt-4 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => setEditModal(null)}
+                  className="flex-1 px-4 py-3 border border-slate-200 text-slate-600 font-bold rounded-xl hover:bg-slate-50 transition-all"
                 >
                   Cancel
                 </button>
+                <button
+                  type="submit"
+                  className="flex-1 px-4 py-3 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-700 shadow-lg shadow-indigo-500/20 transition-all active:scale-95"
+                >
+                  Confirm Promotion
+                </button>
               </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Delete confirmation modal */}
+      {deleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white max-w-sm w-full rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <Trash2 className="h-8 w-8 text-red-500" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">Remove Account</h3>
+              <p className="text-sm text-slate-500 mt-2">
+                Are you sure you want to delete <span className="font-bold text-slate-900">{deleteModal.name}</span>? This action is permanent.
+              </p>
+            </div>
+            <div className="p-6 bg-slate-50 flex gap-3">
+              <button
+                onClick={() => setDeleteModal(null)}
+                className="flex-1 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded-xl hover:bg-slate-100 transition-all"
+              >
+                Keep User
+              </button>
+              <button
+                onClick={() => handleDeleteUser(deleteModal._id)}
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 shadow-lg shadow-red-500/20 transition-all"
+              >
+                Delete Account
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Suspend confirmation modal */}
+      {suspendModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm">
+          <div className="bg-white max-w-sm w-full rounded-2xl shadow-xl overflow-hidden border border-slate-200">
+            <div className="p-6 text-center">
+              <div className="w-16 h-16 bg-red-50 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                <ShieldAlert className="h-8 w-8 text-red-600" />
+              </div>
+              <h3 className="text-lg font-bold text-slate-900">Suspend Access</h3>
+              <p className="text-sm text-slate-500 mt-2">
+                This will instantly revoke <span className="font-bold text-slate-900">{suspendModal.name}</span>'s access to the platform.
+              </p>
+
+              <div className="mt-6 text-left">
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 text-center">
+                  Type <span className="text-red-600">DOIT</span> to confirm
+                </label>
+                <input
+                  type="text"
+                  value={confirmCode}
+                  onChange={(e) => setConfirmCode(e.target.value.toUpperCase())}
+                  placeholder="Enter code..."
+                  className="w-full px-4 py-3 bg-slate-50 border border-slate-200 rounded-xl text-center text-sm font-bold outline-none focus:border-red-500 transition-all"
+                  autoFocus
+                />
+              </div>
+            </div>
+            <div className="p-6 bg-slate-50 flex gap-3">
+              <button
+                onClick={() => setSuspendModal(null)}
+                className="flex-1 px-4 py-2.5 bg-white border border-slate-200 text-slate-600 text-sm font-bold rounded-xl hover:bg-slate-100 transition-all"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmSuspension}
+                disabled={confirmCode !== 'DOIT'}
+                className="flex-1 px-4 py-2.5 bg-red-600 text-white text-sm font-bold rounded-xl hover:bg-red-700 shadow-lg shadow-red-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Suspend
+              </button>
             </div>
           </div>
         </div>

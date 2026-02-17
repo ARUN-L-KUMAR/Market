@@ -14,7 +14,7 @@ const DealsOfTheDay = () => {
 
   useEffect(() => {
     fetchDeals();
-    
+
     // Update countdown every second
     const timer = setInterval(() => {
       updateCountdown();
@@ -27,11 +27,11 @@ const DealsOfTheDay = () => {
     try {
       setLoading(true);
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
-      
+
       // Fetch products with deals/discounts
       const response = await axios.get(`${apiUrl}/api/products?deals=true&limit=20`);
       const products = response.data.products || [];
-      
+
       // Mock deal data with different discount percentages and end times
       const dealsWithOffers = products.map((product, index) => ({
         ...product,
@@ -103,10 +103,10 @@ const DealsOfTheDay = () => {
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       {/* Header */}
       <div className="text-center mb-12">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">
+        <h1 className="text-4xl font-semibold text-slate-800 mb-4">
           🔥 Deals of the Day
         </h1>
-        <p className="text-xl text-gray-600 mb-6">
+        <p className="text-xl text-slate-600 mb-6">
           Amazing discounts that won't last long!
         </p>
         <div className="inline-flex items-center gap-2 bg-red-100 text-red-700 px-4 py-2 rounded-full">
@@ -119,36 +119,36 @@ const DealsOfTheDay = () => {
 
       {/* Featured Deal Hero */}
       {featuredDeal && (
-        <div className="bg-gradient-to-r from-red-500 to-pink-500 rounded-3xl overflow-hidden mb-12 text-white">
+        <div className="bg-slate-800 rounded-lg overflow-hidden mb-12 text-white">
           <div className="grid grid-cols-1 lg:grid-cols-2 items-center">
             <div className="p-8 lg:p-12">
               <div className="inline-flex items-center gap-2 bg-white/20 px-3 py-1 rounded-full text-sm font-medium mb-4">
                 <span className="animate-pulse w-2 h-2 bg-white rounded-full"></span>
                 Featured Deal
               </div>
-              
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4">
+
+              <h2 className="text-3xl lg:text-4xl font-semibold mb-4">
                 {featuredDeal.title}
               </h2>
-              
+
               <div className="flex items-center gap-4 mb-6">
-                <span className="text-4xl font-bold">
+                <span className="text-4xl font-semibold">
                   <CurrencyPrice price={featuredDeal.discountedPrice} />
                 </span>
                 <div className="text-lg">
                   <span className="line-through text-white/70">
                     <CurrencyPrice price={featuredDeal.originalPrice} />
                   </span>
-                  <span className="ml-2 bg-white/20 px-2 py-1 rounded text-sm font-bold">
+                  <span className="ml-2 bg-white/20 px-2 py-1 rounded text-sm font-semibold">
                     {featuredDeal.discountPercentage}% OFF
                   </span>
                 </div>
               </div>
 
               {/* Countdown Timer */}
-              <div className="bg-white/10 rounded-xl p-4 mb-6">
+              <div className="bg-white/10 rounded-lg p-4 mb-6">
                 <p className="text-sm font-medium mb-2">Deal ends in:</p>
-                <div className="text-2xl font-bold font-mono">
+                <div className="text-2xl font-semibold font-mono">
                   {formatCountdown(timeLeft[currentDealIndex])}
                 </div>
               </div>
@@ -160,7 +160,7 @@ const DealsOfTheDay = () => {
                   <span>Available: {featuredDeal.totalStock - featuredDeal.soldCount}</span>
                 </div>
                 <div className="w-full bg-white/20 rounded-full h-2">
-                  <div 
+                  <div
                     className="bg-white h-2 rounded-full transition-all duration-300"
                     style={{ width: `${getProgressPercentage(featuredDeal.soldCount, featuredDeal.totalStock)}%` }}
                   ></div>
@@ -168,7 +168,7 @@ const DealsOfTheDay = () => {
               </div>
 
               <Link to={`/products/${featuredDeal._id}`}>
-                <Button size="lg" className="bg-white text-red-500 hover:bg-gray-100">
+                <Button size="lg" className="bg-white text-red-500 hover:bg-slate-100">
                   Shop Now
                 </Button>
               </Link>
@@ -178,7 +178,7 @@ const DealsOfTheDay = () => {
               <img
                 src={featuredDeal.images?.[0]?.url || '/placeholder-image.jpg'}
                 alt={featuredDeal.title}
-                className="w-full h-64 lg:h-80 object-cover rounded-2xl"
+                className="w-full h-64 lg:h-80 object-cover rounded-lg"
               />
             </div>
           </div>
@@ -188,10 +188,10 @@ const DealsOfTheDay = () => {
       {/* Flash Sales Section */}
       <div className="mb-12">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-semibold text-slate-800">
             ⚡ Flash Sales
           </h2>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-slate-600">
             {deals.filter(deal => deal.dealType === 'flash').length} items
           </div>
         </div>
@@ -201,68 +201,68 @@ const DealsOfTheDay = () => {
             .filter(deal => deal.dealType === 'flash')
             .slice(0, 8)
             .map((deal, index) => (
-            <div key={deal._id} className="bg-white rounded-2xl shadow-subtle border border-gray-200 overflow-hidden group hover:shadow-lg transition-all duration-300">
-              {/* Deal Badge */}
-              <div className="relative">
-                <img
-                  src={deal.images?.[0]?.url || '/placeholder-image.jpg'}
-                  alt={deal.title}
-                  className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                />
-                <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                  -{deal.discountPercentage}%
-                </div>
-                <div className="absolute top-3 right-3 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
-                  {formatCountdown(timeLeft[deals.indexOf(deal)])}
-                </div>
-              </div>
-
-              <div className="p-4">
-                <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2">
-                  {deal.title}
-                </h3>
-                
-                <div className="flex items-center gap-2 mb-3">
-                  <span className="text-lg font-bold text-red-600">
-                    <CurrencyPrice price={deal.discountedPrice} />
-                  </span>
-                  <span className="text-sm text-gray-500 line-through">
-                    <CurrencyPrice price={deal.originalPrice} />
-                  </span>
-                </div>
-
-                {/* Progress Bar */}
-                <div className="mb-3">
-                  <div className="flex justify-between text-xs text-gray-500 mb-1">
-                    <span>Sold: {deal.soldCount}</span>
-                    <span>{deal.totalStock - deal.soldCount} left</span>
+              <div key={deal._id} className="bg-white rounded-lg shadow-subtle border border-slate-200 overflow-hidden group hover:shadow-sm transition-all duration-300">
+                {/* Deal Badge */}
+                <div className="relative">
+                  <img
+                    src={deal.images?.[0]?.url || '/placeholder-image.jpg'}
+                    alt={deal.title}
+                    className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
+                  />
+                  <div className="absolute top-3 left-3 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-semibold">
+                    -{deal.discountPercentage}%
                   </div>
-                  <div className="w-full bg-gray-200 rounded-full h-1.5">
-                    <div 
-                      className="bg-red-500 h-1.5 rounded-full transition-all duration-300"
-                      style={{ width: `${getProgressPercentage(deal.soldCount, deal.totalStock)}%` }}
-                    ></div>
+                  <div className="absolute top-3 right-3 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
+                    {formatCountdown(timeLeft[deals.indexOf(deal)])}
                   </div>
                 </div>
 
-                <Link to={`/products/${deal._id}`}>
-                  <Button size="sm" className="w-full">
-                    Buy Now
-                  </Button>
-                </Link>
+                <div className="p-4">
+                  <h3 className="font-semibold text-slate-800 mb-2 line-clamp-2">
+                    {deal.title}
+                  </h3>
+
+                  <div className="flex items-center gap-2 mb-3">
+                    <span className="text-lg font-semibold text-red-600">
+                      <CurrencyPrice price={deal.discountedPrice} />
+                    </span>
+                    <span className="text-sm text-slate-500 line-through">
+                      <CurrencyPrice price={deal.originalPrice} />
+                    </span>
+                  </div>
+
+                  {/* Progress Bar */}
+                  <div className="mb-3">
+                    <div className="flex justify-between text-xs text-slate-500 mb-1">
+                      <span>Sold: {deal.soldCount}</span>
+                      <span>{deal.totalStock - deal.soldCount} left</span>
+                    </div>
+                    <div className="w-full bg-slate-200 rounded-full h-1.5">
+                      <div
+                        className="bg-red-500 h-1.5 rounded-full transition-all duration-300"
+                        style={{ width: `${getProgressPercentage(deal.soldCount, deal.totalStock)}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <Link to={`/products/${deal._id}`}>
+                    <Button size="sm" className="w-full">
+                      Buy Now
+                    </Button>
+                  </Link>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
       {/* Daily Deals Section */}
       <div className="mb-12">
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-semibold text-slate-800">
             📅 Daily Deals
           </h2>
-          <div className="text-sm text-gray-600">
+          <div className="text-sm text-slate-600">
             Valid for 24 hours
           </div>
         </div>
@@ -272,47 +272,47 @@ const DealsOfTheDay = () => {
             .filter(deal => deal.dealType === 'daily')
             .slice(0, 6)
             .map((deal) => (
-            <div key={deal._id} className="bg-white rounded-2xl shadow-subtle border border-gray-200 overflow-hidden">
-              <div className="flex">
-                <img
-                  src={deal.images?.[0]?.url || '/placeholder-image.jpg'}
-                  alt={deal.title}
-                  className="w-24 h-24 object-cover"
-                />
-                <div className="flex-1 p-4">
-                  <h3 className="font-semibold text-gray-800 mb-2 line-clamp-2 text-sm">
-                    {deal.title}
-                  </h3>
-                  
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-sm font-bold text-orange-600">
-                      <CurrencyPrice price={deal.discountedPrice} />
-                    </span>
-                    <span className="text-xs text-gray-500 line-through">
-                      <CurrencyPrice price={deal.originalPrice} />
-                    </span>
-                    <span className="text-xs bg-orange-100 text-orange-700 px-1 py-0.5 rounded">
-                      -{deal.discountPercentage}%
-                    </span>
-                  </div>
+              <div key={deal._id} className="bg-white rounded-lg shadow-subtle border border-slate-200 overflow-hidden">
+                <div className="flex">
+                  <img
+                    src={deal.images?.[0]?.url || '/placeholder-image.jpg'}
+                    alt={deal.title}
+                    className="w-24 h-24 object-cover"
+                  />
+                  <div className="flex-1 p-4">
+                    <h3 className="font-semibold text-slate-800 mb-2 line-clamp-2 text-sm">
+                      {deal.title}
+                    </h3>
 
-                  <div className="text-xs text-gray-500">
-                    Ends: {formatCountdown(timeLeft[deals.indexOf(deal)])}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-sm font-semibold text-orange-600">
+                        <CurrencyPrice price={deal.discountedPrice} />
+                      </span>
+                      <span className="text-xs text-slate-500 line-through">
+                        <CurrencyPrice price={deal.originalPrice} />
+                      </span>
+                      <span className="text-xs bg-orange-100 text-orange-700 px-1 py-0.5 rounded">
+                        -{deal.discountPercentage}%
+                      </span>
+                    </div>
+
+                    <div className="text-xs text-slate-500">
+                      Ends: {formatCountdown(timeLeft[deals.indexOf(deal)])}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
         </div>
       </div>
 
       {/* Weekly Specials */}
       <div>
         <div className="flex items-center justify-between mb-8">
-          <h2 className="text-2xl font-bold text-gray-800">
+          <h2 className="text-2xl font-semibold text-slate-800">
             🗓️ Weekly Specials
           </h2>
-          <Link to="/products?deals=true" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
+          <Link to="/products?deals=true" className="text-indigo-600 hover:text-indigo-700 text-sm font-medium">
             View All Deals →
           </Link>
         </div>
@@ -322,35 +322,35 @@ const DealsOfTheDay = () => {
             .filter(deal => deal.dealType === 'weekly')
             .slice(0, 4)
             .map((deal) => (
-            <ProductCard
-              key={deal._id}
-              product={{
-                ...deal,
-                price: deal.discountedPrice,
-                originalPrice: deal.originalPrice,
-                discount: deal.discountPercentage
-              }}
-              showDiscount={true}
-            />
-          ))}
+              <ProductCard
+                key={deal._id}
+                product={{
+                  ...deal,
+                  price: deal.discountedPrice,
+                  originalPrice: deal.originalPrice,
+                  discount: deal.discountPercentage
+                }}
+                showDiscount={true}
+              />
+            ))}
         </div>
       </div>
 
       {/* Newsletter Signup */}
-      <div className="mt-16 bg-gradient-to-r from-blue-500 to-purple-600 rounded-3xl p-8 text-center text-white">
-        <h3 className="text-2xl font-bold mb-4">
+      <div className="mt-16 bg-slate-800 rounded-lg p-8 text-center text-white">
+        <h3 className="text-2xl font-semibold mb-4">
           Never Miss a Deal!
         </h3>
-        <p className="text-lg mb-6 text-blue-100">
+        <p className="text-lg mb-6 text-slate-300">
           Subscribe to get notified about exclusive offers and flash sales
         </p>
         <div className="flex flex-col sm:flex-row gap-4 max-w-md mx-auto">
           <input
             type="email"
             placeholder="Enter your email"
-            className="flex-1 px-4 py-3 rounded-lg text-gray-800"
+            className="flex-1 px-4 py-3 rounded-lg text-slate-800"
           />
-          <Button className="bg-white text-blue-600 hover:bg-gray-100">
+          <Button className="bg-white text-indigo-600 hover:bg-slate-100">
             Subscribe
           </Button>
         </div>

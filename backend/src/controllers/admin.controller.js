@@ -13,38 +13,38 @@ exports.getCollectionData = async (req, res, next) => {
     const { collection } = req.params;
     const limit = parseInt(req.query.limit) || 10;
     const skip = parseInt(req.query.skip) || 0;
-    
+
     // Validate collection name to prevent security issues
     const validCollections = ['products', 'categories', 'reviews', 'users', 'orders'];
-    
+
     if (!validCollections.includes(collection)) {
-      return res.status(400).json({ 
-        message: `Invalid collection name. Valid collections are: ${validCollections.join(', ')}` 
+      return res.status(400).json({
+        message: `Invalid collection name. Valid collections are: ${validCollections.join(', ')}`
       });
     }
-    
+
     // Get model name (singular, capitalized)
-    const modelName = collection.charAt(0).toUpperCase() + 
-                     collection.slice(1, -1); // Remove 's' at the end
-    
+    const modelName = collection.charAt(0).toUpperCase() +
+      collection.slice(1, -1); // Remove 's' at the end
+
     let Model;
     try {
       Model = mongoose.model(modelName);
     } catch (err) {
-      return res.status(404).json({ 
-        message: `Model "${modelName}" not found. Make sure it is registered.` 
+      return res.status(404).json({
+        message: `Model "${modelName}" not found. Make sure it is registered.`
       });
     }
-    
+
     // Count total documents
     const total = await Model.countDocuments();
-    
+
     // Get documents with pagination
     const documents = await Model.find()
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-    
+
     res.json({
       collection,
       total,
@@ -60,43 +60,43 @@ exports.getCollectionData = async (req, res, next) => {
 exports.getDocumentById = async (req, res, next) => {
   try {
     const { collection, id } = req.params;
-    
+
     // Validate collection name
     const validCollections = ['products', 'categories', 'reviews', 'users', 'orders'];
-    
+
     if (!validCollections.includes(collection)) {
-      return res.status(400).json({ 
-        message: `Invalid collection name. Valid collections are: ${validCollections.join(', ')}` 
+      return res.status(400).json({
+        message: `Invalid collection name. Valid collections are: ${validCollections.join(', ')}`
       });
     }
-    
+
     // Validate ID format
     if (!mongoose.Types.ObjectId.isValid(id)) {
       return res.status(400).json({ message: 'Invalid document ID format' });
     }
-    
+
     // Get model name (singular, capitalized)
-    const modelName = collection.charAt(0).toUpperCase() + 
-                     collection.slice(1, -1); // Remove 's' at the end
-    
+    const modelName = collection.charAt(0).toUpperCase() +
+      collection.slice(1, -1); // Remove 's' at the end
+
     let Model;
     try {
       Model = mongoose.model(modelName);
     } catch (err) {
-      return res.status(404).json({ 
-        message: `Model "${modelName}" not found. Make sure it is registered.` 
+      return res.status(404).json({
+        message: `Model "${modelName}" not found. Make sure it is registered.`
       });
     }
-    
+
     // Find document by ID
     const document = await Model.findById(id);
-    
+
     if (!document) {
-      return res.status(404).json({ 
-        message: `Document not found with ID: ${id}` 
+      return res.status(404).json({
+        message: `Document not found with ID: ${id}`
       });
     }
-    
+
     res.json(document);
   } catch (err) {
     next(err);
@@ -108,7 +108,7 @@ exports.getDatabaseStats = async (req, res, next) => {
   try {
     const stats = {};
     const collections = ['Product', 'Category', 'Review', 'User', 'Order'];
-    
+
     for (const modelName of collections) {
       try {
         const Model = mongoose.model(modelName);
@@ -117,7 +117,7 @@ exports.getDatabaseStats = async (req, res, next) => {
         stats[modelName.toLowerCase() + 's'] = 'Model not registered';
       }
     }
-    
+
     res.json({
       database: 'MongoDB',
       stats,
@@ -162,15 +162,19 @@ exports.getStats = async (req, res, next) => {
     const last7Days = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
     const salesData = await Order.aggregate([
-      { $match: { 
-        createdAt: { $gte: last7Days },
-        status: { $in: ['completed', 'delivered', 'processing'] }
-      }},
-      { $group: {
-        _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-        sales: { $sum: '$totalAmount' },
-        count: { $sum: 1 }
-      }},
+      {
+        $match: {
+          createdAt: { $gte: last7Days },
+          status: { $in: ['completed', 'delivered', 'processing'] }
+        }
+      },
+      {
+        $group: {
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
+          sales: { $sum: '$totalAmount' },
+          count: { $sum: 1 }
+        }
+      },
       { $sort: { _id: 1 } }
     ]);
 
@@ -182,26 +186,32 @@ exports.getStats = async (req, res, next) => {
     // Get top selling products
     const topSellingProducts = await Order.aggregate([
       { $unwind: '$items' },
-      { $group: {
-        _id: '$items.product',
-        totalSold: { $sum: '$items.quantity' }
-      }},
+      {
+        $group: {
+          _id: '$items.product',
+          totalSold: { $sum: '$items.quantity' }
+        }
+      },
       { $sort: { totalSold: -1 } },
       { $limit: 5 },
-      { $lookup: {
-        from: 'products',
-        localField: '_id',
-        foreignField: '_id',
-        as: 'productInfo'
-      }},
+      {
+        $lookup: {
+          from: 'products',
+          localField: '_id',
+          foreignField: '_id',
+          as: 'productInfo'
+        }
+      },
       { $unwind: '$productInfo' },
-      { $project: {
-        _id: 1,
-        name: '$productInfo.name',
-        price: '$productInfo.price',
-        image: '$productInfo.images',
-        totalSold: 1
-      }}
+      {
+        $project: {
+          _id: 1,
+          name: '$productInfo.name',
+          price: '$productInfo.price',
+          image: '$productInfo.images',
+          totalSold: 1
+        }
+      }
     ]);
 
     res.status(200).json({
@@ -380,12 +390,18 @@ exports.getUsers = async (req, res, next) => {
     const skip = (page - 1) * limit;
     const role = req.query.role;
     const search = req.query.search;
+    const isActive = req.query.isActive;
 
     let query = {};
 
     // Filter by role if provided
     if (role && role !== 'all') {
       query.role = role;
+    }
+
+    // Filter by isActive status if provided
+    if (isActive !== undefined) {
+      query.isActive = isActive === 'true';
     }
 
     // Search by name or email
@@ -397,11 +413,29 @@ exports.getUsers = async (req, res, next) => {
     }
 
     const total = await User.countDocuments(query);
-    const users = await User.find(query)
-      .select('-password')
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit);
+
+    // Convert to aggregate for complex metrics
+    const users = await User.aggregate([
+      { $match: query },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'orders',
+          localField: '_id',
+          foreignField: 'user',
+          as: 'orders'
+        }
+      },
+      {
+        $addFields: {
+          totalOrders: { $size: '$orders' },
+          totalSpent: { $sum: '$orders.total' }
+        }
+      },
+      { $project: { password: 0, orders: 0 } }
+    ]);
 
     res.status(200).json({
       success: true,
@@ -421,9 +455,56 @@ exports.getUsers = async (req, res, next) => {
 
 exports.getUserById = async (req, res, next) => {
   try {
-    const user = await User.findById(req.params.id).select('-password');
+    const { id } = req.params;
 
-    if (!user) {
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: 'Invalid User ID' });
+    }
+
+    const userData = await User.aggregate([
+      { $match: { _id: new mongoose.Types.ObjectId(id) } },
+      {
+        $lookup: {
+          from: 'orders',
+          localField: '_id',
+          foreignField: 'user',
+          as: 'orders'
+        }
+      },
+      {
+        $addFields: {
+          totalOrders: { $size: '$orders' },
+          totalSpent: { $sum: '$orders.total' },
+          recentOrders: {
+            $map: {
+              input: {
+                $slice: [
+                  {
+                    $sortArray: {
+                      input: '$orders',
+                      sortBy: { createdAt: -1 }
+                    }
+                  },
+                  5
+                ]
+              },
+              as: 'order',
+              in: {
+                _id: '$$order._id',
+                orderNumber: '$$order.orderNumber',
+                totalAmount: '$$order.total',
+                status: '$$order.status',
+                createdAt: '$$order.createdAt',
+                items: '$$order.items'
+              }
+            }
+          }
+        }
+      },
+      { $project: { password: 0, orders: 0 } }
+    ]);
+
+    if (!userData || userData.length === 0) {
       return res.status(404).json({
         success: false,
         message: 'User not found'
@@ -432,7 +513,7 @@ exports.getUserById = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      data: user
+      data: userData[0]
     });
   } catch (err) {
     next(err);
@@ -441,12 +522,16 @@ exports.getUserById = async (req, res, next) => {
 
 exports.updateUser = async (req, res, next) => {
   try {
-    const { name, email, role } = req.body;
+    const updateData = {};
+    if (req.body.name) updateData.name = req.body.name;
+    if (req.body.email) updateData.email = req.body.email;
+    if (req.body.role) updateData.role = req.body.role;
+    if (req.body.isActive !== undefined) updateData.isActive = req.body.isActive;
 
     const user = await User.findByIdAndUpdate(
       req.params.id,
-      { name, email, role },
-      { new: true }
+      { $set: updateData },
+      { new: true, runValidators: true }
     ).select('-password');
 
     if (!user) {
@@ -470,7 +555,7 @@ exports.getAllUsers = async (req, res, next) => {
   try {
     const users = await User.find({}, '-password')
       .sort({ createdAt: -1 });
-    
+
     res.status(200).json(users);
   } catch (err) {
     next(err);
@@ -479,9 +564,10 @@ exports.getAllUsers = async (req, res, next) => {
 
 exports.getAdminUsers = async (req, res, next) => {
   try {
-    const adminUsers = await User.find({ role: 'admin' }, '-password')
+    // Return all users who are not standard 'user' role
+    const adminUsers = await User.find({ role: { $ne: 'user' } }, '-password')
       .sort({ createdAt: -1 });
-    
+
     res.status(200).json(adminUsers);
   } catch (err) {
     next(err);
@@ -490,7 +576,7 @@ exports.getAdminUsers = async (req, res, next) => {
 
 exports.createAdminUser = async (req, res, next) => {
   try {
-    const { email, password, firstName, lastName } = req.body;
+    const { email, password, firstName, lastName, role = 'admin' } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ email });
@@ -509,21 +595,24 @@ exports.createAdminUser = async (req, res, next) => {
     const adminUser = new User({
       email,
       password: hashedPassword,
+      name: `${firstName} ${lastName}`.trim(),
       firstName,
       lastName,
-      role: 'admin',
-      isAdmin: true
+      role,
+      isAdmin: true,
+      isEmailVerified: true // Admins are verified by default
     });
 
     await adminUser.save();
 
     // Remove password from response
-    const { password: _, ...userResponse } = adminUser.toObject();
+    const adminResponse = adminUser.toObject();
+    delete adminResponse.password;
 
     res.status(201).json({
       success: true,
-      message: 'Admin user created successfully',
-      data: userResponse
+      message: 'Staff user created successfully',
+      data: adminResponse
     });
   } catch (err) {
     next(err);
@@ -678,7 +767,7 @@ exports.updateSettings = async (req, res, next) => {
     if (taxRate !== undefined) settings.taxRate = taxRate;
     if (shippingFee !== undefined) settings.shippingFee = shippingFee;
     if (freeShippingThreshold !== undefined) settings.freeShippingThreshold = freeShippingThreshold;
-    
+
     // Update nested objects if provided
     if (features) {
       settings.features = {
@@ -686,14 +775,14 @@ exports.updateSettings = async (req, res, next) => {
         ...features
       };
     }
-    
+
     if (appearance) {
       settings.appearance = {
         ...settings.appearance,
         ...appearance
       };
     }
-    
+
     if (socialLinks) {
       settings.socialLinks = {
         ...settings.socialLinks,
@@ -706,6 +795,35 @@ exports.updateSettings = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: settings
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getRolesStats = async (req, res, next) => {
+  try {
+    const rolesStats = await User.aggregate([
+      { $group: { _id: '$role', count: { $sum: 1 } } }
+    ]);
+
+    // Map to a more friendly format
+    const statsArr = rolesStats || [];
+    const stats = {
+      admin: statsArr.find(r => r._id === 'admin')?.count || 0,
+      user: statsArr.find(r => r._id === 'user')?.count || 0,
+      manager: statsArr.find(r => r._id === 'manager')?.count || 0,
+      inventory: statsArr.find(r => r._id === 'inventory')?.count || 0,
+      order_processor: statsArr.find(r => r._id === 'order_processor')?.count || 0,
+      support: statsArr.find(r => r._id === 'support')?.count || 0,
+      marketing: statsArr.find(r => r._id === 'marketing')?.count || 0,
+      finance: statsArr.find(r => r._id === 'finance')?.count || 0,
+      engineer: statsArr.find(r => r._id === 'engineer')?.count || 0
+    };
+
+    res.status(200).json({
+      success: true,
+      data: stats
     });
   } catch (err) {
     next(err);
