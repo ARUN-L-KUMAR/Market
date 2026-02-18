@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getProducts, deleteProduct, getBrands } from '../../services/adminService';
 import apiClient from '../../services/api';
 import AdminLayout from '../../components/admin/AdminLayout';
@@ -22,25 +22,61 @@ import {
 import { toast } from 'react-toastify';
 
 const Products = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState(searchParams.get('search') || '');
   const [deleteConfirm, setDeleteConfirm] = useState(null);
   const [showFilters, setShowFilters] = useState(false);
   const [categories, setCategories] = useState([]);
   const [brands, setBrands] = useState([]);
-  const [filters, setFilters] = useState({ category: '', brand: '', stockStatus: '' });
+  const [totalRecords, setTotalRecords] = useState(0);
+  const [filters, setFilters] = useState({
+    category: searchParams.get('category') || searchParams.get('categoryName') || '',
+    subcategory: searchParams.get('subcategory') || searchParams.get('subcategoryName') || '',
+    brand: searchParams.get('brand') || '',
+    stockStatus: searchParams.get('stockStatus') || ''
+  });
+  const [subcategories, setSubcategories] = useState([]);
 
-  const fetchProducts = async (page = 1, search = '') => {
+  const fetchProducts = async (page = 1, search = searchTerm, filterData = filters) => {
     try {
       setLoading(true);
-      const response = await getProducts({ page, limit: 10, search });
+
+      const apiParams = {
+        page,
+        limit: 10,
+        search: search || undefined,
+        brand: filterData.brand || undefined,
+        stockStatus: filterData.stockStatus || undefined
+      };
+
+      // Handle category filtering
+      if (filterData.category) {
+        if (/^[0-9a-fA-F]{24}$/.test(filterData.category)) {
+          apiParams.category = filterData.category;
+        } else {
+          apiParams.categoryName = filterData.category;
+        }
+      }
+
+      // Handle subcategory filtering
+      if (filterData.subcategory) {
+        if (/^[0-9a-fA-F]{24}$/.test(filterData.subcategory)) {
+          apiParams.subcategory = filterData.subcategory;
+        } else {
+          apiParams.subcategoryName = filterData.subcategory;
+        }
+      }
+
+      const response = await getProducts(apiParams);
       const { products, pagination } = response.data.data;
       setProducts(products);
-      setTotalPages(pagination.pages || Math.ceil(pagination.total / 10));
+      setTotalPages(pagination.pages || Math.ceil((pagination.total || 0) / 10));
+      setTotalRecords(pagination.total || 0);
       setCurrentPage(page);
     } catch (error) {
       console.error('Error fetching products:', error);
@@ -51,8 +87,8 @@ const Products = () => {
   };
 
   useEffect(() => {
-    fetchProducts(currentPage, searchTerm);
-  }, [currentPage]);
+    fetchProducts(currentPage, searchTerm, filters);
+  }, [currentPage, filters.category, filters.subcategory, filters.brand, filters.stockStatus]);
 
   useEffect(() => {
     const loadFilterOptions = async () => {
@@ -70,9 +106,31 @@ const Products = () => {
     loadFilterOptions();
   }, []);
 
+  // Fetch subcategories when category changes
+  useEffect(() => {
+    const loadSubcategories = async () => {
+      if (!filters.category) {
+        setSubcategories([]);
+        return;
+      }
+
+      try {
+        // Find parent category ID
+        const parentCat = categories.find(c => c.name === filters.category || c._id === filters.category);
+        if (parentCat) {
+          const res = await apiClient.get(`/api/categories?parent=${parentCat._id}`);
+          setSubcategories(res.data || []);
+        }
+      } catch (err) {
+        console.error('Error loading subcategories:', err);
+      }
+    };
+    loadSubcategories();
+  }, [filters.category, categories]);
+
   const handleSearch = (e) => {
     e.preventDefault();
-    fetchProducts(1, searchTerm);
+    fetchProducts(1, searchTerm, filters);
   };
 
   const handleDeleteConfirm = async () => {
@@ -81,7 +139,7 @@ const Products = () => {
       await deleteProduct(deleteConfirm);
       toast.success('Product deleted successfully');
       setDeleteConfirm(null);
-      fetchProducts(currentPage, searchTerm);
+      fetchProducts(currentPage, searchTerm, filters);
     } catch (error) {
       console.error('Error deleting product:', error);
       toast.error('Failed to delete product');
@@ -94,23 +152,10 @@ const Products = () => {
     return { label: 'In Stock', color: 'bg-emerald-100 text-emerald-700 border-emerald-200' };
   };
 
-  const activeFilterCount = [filters.category, filters.brand, filters.stockStatus].filter(Boolean).length;
-
-  const filteredProducts = products.filter(p => {
-    if (filters.category) {
-      const catName = typeof p.category === 'object' ? p.category?.name : p.category;
-      if (catName !== filters.category) return false;
-    }
-    if (filters.brand && p.brand !== filters.brand) return false;
-    if (filters.stockStatus) {
-      const status = getStockStatus(p.stock).label;
-      if (status !== filters.stockStatus) return false;
-    }
-    return true;
-  });
+  const activeFilterCount = [filters.category, filters.subcategory, filters.brand, filters.stockStatus].filter(Boolean).length;
 
   const clearFilters = () => {
-    setFilters({ category: '', brand: '', stockStatus: '' });
+    setFilters({ category: '', subcategory: '', brand: '', stockStatus: '' });
   };
 
   return (
@@ -177,24 +222,38 @@ const Products = () => {
               )}
               <div className="h-8 w-[1px] bg-slate-200 hidden md:block"></div>
               <p className="text-sm text-slate-500 font-medium whitespace-nowrap">
-                Showing <span className="text-slate-900">{filteredProducts.length}</span> products
+                Showing <span className="text-slate-900 font-black">{products.length}</span> of <span className="text-slate-900 font-black">{totalRecords}</span> products
               </p>
             </div>
           </div>
 
           {/* Filter Panel */}
           {showFilters && (
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-4 border-t border-slate-100 animate-in slide-in-from-top duration-200">
+            <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-5 gap-4 pt-4 border-t border-slate-100 animate-in slide-in-from-top duration-200">
               <div>
                 <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Category</label>
                 <select
                   value={filters.category}
-                  onChange={(e) => setFilters({ ...filters, category: e.target.value })}
+                  onChange={(e) => setFilters({ ...filters, category: e.target.value, subcategory: '' })}
                   className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer"
                 >
                   <option value="">All Categories</option>
                   {categories.map(c => (
                     <option key={c._id} value={c.name}>{c.name}</option>
+                  ))}
+                </select>
+              </div>
+              <div>
+                <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2">Subcategory</label>
+                <select
+                  value={filters.subcategory}
+                  onChange={(e) => setFilters({ ...filters, subcategory: e.target.value })}
+                  disabled={!filters.category}
+                  className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-sm font-bold focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <option value="">{filters.category ? 'All Subcategories' : 'Select Category First'}</option>
+                  {subcategories.map(s => (
+                    <option key={s._id} value={s.name}>{s.name}</option>
                   ))}
                 </select>
               </div>
@@ -257,7 +316,7 @@ const Products = () => {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {filteredProducts.length === 0 ? (
+                  {products.length === 0 ? (
                     <tr>
                       <td colSpan="6" className="px-6 py-24 text-center">
                         <div className="flex flex-col items-center">
@@ -277,7 +336,7 @@ const Products = () => {
                       </td>
                     </tr>
                   ) : (
-                    filteredProducts.map((product) => {
+                    products.map((product) => {
                       const status = getStockStatus(product.stock);
                       return (
                         <tr key={product._id} className="group hover:bg-slate-50/50 transition-colors">
@@ -296,10 +355,41 @@ const Products = () => {
                               </div>
                             </div>
                           </td>
-                          <td className="px-6 py-4 whitespace-nowrap">
-                            <span className="text-xs font-bold text-slate-600 bg-slate-100 px-2 py-1 rounded-lg">
-                              {typeof product.category === 'object' ? product.category?.name || 'General' : product.category || 'General'}
-                            </span>
+                          <td className="px-6 py-4">
+                            <div className="flex flex-col gap-1.5">
+                              <div className="flex flex-wrap gap-1">
+                                {Array.isArray(product.categoryName) && product.categoryName.length > 0 ? (
+                                  product.categoryName.map((cat, idx) => (
+                                    <span key={idx} className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                                      {cat}
+                                    </span>
+                                  ))
+                                ) : (
+                                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">
+                                    {typeof product.category === 'object' ? product.category?.name || 'General' : product.category || 'General'}
+                                  </span>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap gap-1">
+                                {Array.isArray(product.subcategoryName) && product.subcategoryName.length > 0 ? (
+                                  product.subcategoryName.map((sub, idx) => (
+                                    <span key={idx} className="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 uppercase tracking-tighter">
+                                      {sub}
+                                    </span>
+                                  ))
+                                ) : (
+                                  product.subcategoryName && typeof product.subcategoryName === 'string' ? (
+                                    <span className="text-[9px] font-bold text-indigo-600 bg-indigo-50 px-1.5 py-0.5 rounded border border-indigo-100 uppercase tracking-tighter">
+                                      {product.subcategoryName}
+                                    </span>
+                                  ) : (
+                                    <span className="text-[9px] font-bold text-slate-400 bg-slate-50 px-1.5 py-0.5 rounded border border-slate-100 uppercase tracking-tighter">
+                                      N/A
+                                    </span>
+                                  )
+                                )}
+                              </div>
+                            </div>
                           </td>
                           <td className="px-6 py-4">
                             <div className="text-sm font-black text-slate-900">₹{product.price?.toLocaleString()}</div>

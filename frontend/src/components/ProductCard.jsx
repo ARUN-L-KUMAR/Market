@@ -108,8 +108,8 @@ const ProductCard = ({ product, index = 0 }) => {
       <button
         onClick={handleWishlistToggle}
         className={`absolute top-3 right-3 z-20 p-2 rounded-full shadow-sm transition-all duration-200 ${isInWishlist
-            ? 'bg-red-500 text-white hover:bg-red-600'
-            : 'bg-white text-slate-400 hover:text-red-500 hover:bg-red-50'
+          ? 'bg-red-500 text-white hover:bg-red-600'
+          : 'bg-white text-slate-400 hover:text-red-500 hover:bg-red-50'
           }`}
       >
         <Heart className={`w-4 h-4 ${isInWishlist ? 'fill-current' : ''}`} />
@@ -179,7 +179,11 @@ const ProductCard = ({ product, index = 0 }) => {
 
           {/* Category */}
           <p className="text-xs text-slate-400 mb-3 capitalize">
-            {typeof product.category === 'object' ? product.category?.name : product.category}
+            {Array.isArray(product.categoryName) && product.categoryName.length > 0
+              ? (product.categoryName.length > 1
+                ? `${product.categoryName[0]} & ${product.categoryName.length - 1} more`
+                : product.categoryName[0])
+              : (typeof product.category === 'object' ? product.category?.name : product.category)}
           </p>
         </Link>
 
@@ -217,8 +221,8 @@ const ProductCard = ({ product, index = 0 }) => {
             onClick={handleAddToCart}
             disabled={!product.inStock || isAddingToCart}
             className={`flex-1 flex items-center justify-center gap-2 px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 ${product.inStock
-                ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
-                : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+              ? 'bg-indigo-600 hover:bg-indigo-700 text-white'
+              : 'bg-slate-100 text-slate-400 cursor-not-allowed'
               } disabled:opacity-50`}
           >
             {isAddingToCart ? (

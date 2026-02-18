@@ -135,15 +135,18 @@ exports.updateProduct = async (req, res, next) => {
       }
     }
 
-    const product = await Product.findByIdAndUpdate(
-      req.params.id,
-      sanitizedBody,
-      { new: true, runValidators: true }
-    );
+    const product = await Product.findById(req.params.id);
 
     if (!product) {
       return res.status(404).json({ message: 'Product not found' });
     }
+
+    // Update fields
+    Object.keys(sanitizedBody).forEach(key => {
+      product[key] = sanitizedBody[key];
+    });
+
+    await product.save();
 
     // Emit to all clients
     if (io) {

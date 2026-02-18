@@ -25,25 +25,25 @@ const productSchema = new mongoose.Schema({
     isPrimary: { type: Boolean, default: false },
     publicId: String  // For Cloudinary image deletion
   }],
-  category: {
+  category: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category',
     required: true
-  },
-  categoryName: {
+  }],
+  categoryName: [{
     type: String,
     trim: true,
     index: true
-  },
-  subcategory: {
+  }],
+  subcategory: [{
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
-  },
-  subcategoryName: {
+  }],
+  subcategoryName: [{
     type: String,
     trim: true,
     index: true
-  },
+  }],
   brand: {
     type: String,
     trim: true
@@ -127,22 +127,26 @@ productSchema.pre('save', async function (next) {
     this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   }
 
-  // Auto-populate categoryName from category ObjectId
-  if (this.isModified('category') && this.category && !this.categoryName) {
+  // Auto-populate categoryName array from category ObjectIds
+  if (this.isModified('category') && Array.isArray(this.category) && this.category.length > 0) {
     try {
       const Category = mongoose.model('Category');
-      const cat = await Category.findById(this.category).select('name');
-      if (cat) this.categoryName = cat.name;
+      const cats = await Category.find({ _id: { $in: this.category } }).select('name');
+      this.categoryName = cats.map(c => c.name);
     } catch (e) { /* ignore */ }
+  } else if (this.isModified('category') && (!this.category || this.category.length === 0)) {
+    this.categoryName = [];
   }
 
-  // Auto-populate subcategoryName from subcategory ObjectId
-  if (this.isModified('subcategory') && this.subcategory && !this.subcategoryName) {
+  // Auto-populate subcategoryName array from subcategory ObjectIds
+  if (this.isModified('subcategory') && Array.isArray(this.subcategory) && this.subcategory.length > 0) {
     try {
       const Category = mongoose.model('Category');
-      const sub = await Category.findById(this.subcategory).select('name');
-      if (sub) this.subcategoryName = sub.name;
+      const subs = await Category.find({ _id: { $in: this.subcategory } }).select('name');
+      this.subcategoryName = subs.map(s => s.name);
     } catch (e) { /* ignore */ }
+  } else if (this.isModified('subcategory') && (!this.subcategory || this.subcategory.length === 0)) {
+    this.subcategoryName = [];
   }
 
   next();

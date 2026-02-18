@@ -27,9 +27,11 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
   const currencySymbol = supportedCurrencies[currentCurrency]?.symbol || '₹';
 
   // Extract unique categories, colors, and sizes from all products
-  const categories = [...new Set((allProducts || []).map(product =>
-    typeof product.category === 'object' ? product.category?.name : product.category
-  ).filter(Boolean))];
+  const categories = [...new Set((allProducts || []).flatMap(product => {
+    if (Array.isArray(product.categoryName)) return product.categoryName;
+    const cat = typeof product.category === 'object' ? product.category?.name : product.category;
+    return cat ? [cat] : [];
+  }).filter(Boolean))];
   const colors = [...new Set((allProducts || []).flatMap(product => product.colors || []))];
   const sizes = [...new Set((allProducts || []).flatMap(product => product.sizes || []))];
 
@@ -199,8 +201,8 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                 whileTap={{ scale: 0.9 }}
                 onClick={() => handleColorChange(color)}
                 className={`w-5 h-5 rounded-full border transition-all duration-200 ${localFilters.color === color
-                    ? 'border-slate-500 ring-1 ring-slate-300'
-                    : 'border-slate-300 hover:border-slate-300'
+                  ? 'border-slate-500 ring-1 ring-slate-300'
+                  : 'border-slate-300 hover:border-slate-300'
                   }`}
                 style={{ backgroundColor: color.toLowerCase() }}
                 title={color}
@@ -239,8 +241,8 @@ const FilterSidebar = ({ filters, onFilterChange }) => {
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSizeChange(size)}
                 className={`px-1.5 py-0.5 text-xs rounded transition-all duration-200 ${localFilters.size === size
-                    ? 'bg-slate-700 text-white'
-                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
+                  ? 'bg-slate-700 text-white'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                   }`}
               >
                 {size}

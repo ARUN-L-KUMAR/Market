@@ -33,8 +33,10 @@ const AddProduct = () => {
         title: '',
         description: '',
         shortDescription: '',
-        category: '',
-        subcategory: '',
+        category: [],
+        categoryName: [],
+        subcategory: [],
+        subcategoryName: [],
         brand: '',
         sku: '',
         price: '',
@@ -86,20 +88,68 @@ const AddProduct = () => {
         });
     };
 
-    const handleCategoryChange = async (e) => {
-        const categoryId = e.target.value;
-        setProductData({ ...productData, category: categoryId, subcategory: '' });
+    const toggleCategory = async (catId, catName) => {
+        const currentCats = [...(productData.category || [])];
+        const currentCatNames = [...(productData.categoryName || [])];
 
-        if (categoryId) {
+        const exists = currentCats.includes(catId);
+        const newCats = exists
+            ? currentCats.filter(id => id !== catId)
+            : [...currentCats, catId];
+
+        const newNames = exists
+            ? currentCatNames.filter(name => name !== catName)
+            : [...currentCatNames, catName];
+
+        // Reset subcategories that don't belong to any of the remaining categories
+        // For simplicity in the first pass, we'll reset subcategories if categories change
+        // but a better UX would be to only filter out orphans.
+        // Let's go with resetting for now to ensure data integrity.
+        setProductData({
+            ...productData,
+            category: newCats,
+            categoryName: newNames,
+            subcategory: [],
+            subcategoryName: []
+        });
+
+        if (newCats.length > 0) {
             try {
-                const response = await apiClient.get(`/api/categories?parent=${categoryId}`);
-                setSubcategories(response.data);
+                // Fetch subcategories for all selected categories
+                const subPromises = newCats.map(id => apiClient.get(`/api/categories?parent=${id}`));
+                const responses = await Promise.all(subPromises);
+                const allSubs = responses.flatMap(r => r.data);
+
+                // Deduplicate subcategories (though they should be unique by parent anyway)
+                const uniqueSubs = Array.from(new Map(allSubs.map(s => [s._id, s])).values());
+                setSubcategories(uniqueSubs);
             } catch (error) {
                 console.error('Error fetching subcategories:', error);
             }
         } else {
             setSubcategories([]);
         }
+    };
+
+    const toggleSubcategory = (subId, subName) => {
+        setProductData(prev => {
+            const currentSubs = prev.subcategory || [];
+            const exists = currentSubs.includes(subId);
+            const newSubs = exists
+                ? currentSubs.filter(id => id !== subId)
+                : [...currentSubs, subId];
+
+            const currentSubNames = prev.subcategoryName || [];
+            const newSubNames = exists
+                ? currentSubNames.filter(name => name !== subName)
+                : [...currentSubNames, subName];
+
+            return {
+                ...prev,
+                subcategory: newSubs,
+                subcategoryName: newSubNames
+            };
+        });
     };
 
     const handleImageChange = async (e) => {
@@ -406,32 +456,72 @@ const AddProduct = () => {
 
                                 <div className="space-y-6">
                                     <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2.5">Global Category</label>
-                                        <select
-                                            value={productData.category}
-                                            onChange={handleCategoryChange}
-                                            required
-                                            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer"
-                                        >
-                                            <option value="">Select Category</option>
-                                            {categories.map(c => (
-                                                <option key={c._id} value={c._id}>{c.name}</option>
-                                            ))}
-                                        </select>
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Global Categories</label>
+                                        <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                            {categories.map(c => {
+                                                const isSelected = (productData.category || []).includes(c._id);
+                                                return (
+                                                    <div
+                                                        key={c._id}
+                                                        onClick={() => toggleCategory(c._id, c.name)}
+                                                        className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${isSelected
+                                                            ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
+                                                            : 'bg-white border-slate-100 text-slate-600 hover:border-slate-200'
+                                                            }`}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${isSelected
+                                                                ? 'bg-indigo-600 border-indigo-600'
+                                                                : 'bg-slate-50 border-slate-200'
+                                                                }`}>
+                                                                {isSelected && <Layers className="h-2.5 w-2.5 text-white" />}
+                                                            </div>
+                                                            <span className="text-xs font-bold uppercase">{c.name}</span>
+                                                        </div>
+                                                        {isSelected && <ChevronRight className="h-3 w-3 opacity-40" />}
+                                                    </div>
+                                                );
+                                            })}
+                                        </div>
                                     </div>
                                     <div>
-                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2.5">Specific Subcategory</label>
-                                        <select
-                                            value={productData.subcategory}
-                                            onChange={(e) => setProductData({ ...productData, subcategory: e.target.value })}
-                                            className="w-full px-4 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer disabled:opacity-50"
-                                            disabled={!productData.category || subcategories.length === 0}
-                                        >
-                                            <option value="">Select Subcategory</option>
-                                            {subcategories.map(s => (
-                                                <option key={s._id} value={s._id}>{s.name}</option>
-                                            ))}
-                                        </select>
+                                        <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-3">Sub-Infrastructure Nodes</label>
+                                        {!productData.category ? (
+                                            <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-bold text-slate-400 uppercase text-center">
+                                                Assign Global Category First
+                                            </div>
+                                        ) : subcategories.length === 0 ? (
+                                            <div className="p-4 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-bold text-slate-400 uppercase text-center">
+                                                No sub-nodes defined for this nexus
+                                            </div>
+                                        ) : (
+                                            <div className="space-y-2 max-h-[200px] overflow-y-auto pr-2 custom-scrollbar">
+                                                {subcategories.map(s => {
+                                                    const isSelected = (productData.subcategory || []).includes(s._id);
+                                                    return (
+                                                        <div
+                                                            key={s._id}
+                                                            onClick={() => toggleSubcategory(s._id, s.name)}
+                                                            className={`flex items-center justify-between p-3.5 rounded-xl border transition-all cursor-pointer ${isSelected
+                                                                ? 'bg-indigo-50 border-indigo-200 text-indigo-700'
+                                                                : 'bg-white border-slate-100 text-slate-600 hover:border-slate-200'
+                                                                }`}
+                                                        >
+                                                            <div className="flex items-center gap-3">
+                                                                <div className={`w-4 h-4 rounded border flex items-center justify-center transition-all ${isSelected
+                                                                    ? 'bg-indigo-600 border-indigo-600'
+                                                                    : 'bg-slate-50 border-slate-200'
+                                                                    }`}>
+                                                                    {isSelected && <Layers className="h-2.5 w-2.5 text-white" />}
+                                                                </div>
+                                                                <span className="text-xs font-bold uppercase">{s.name}</span>
+                                                            </div>
+                                                            {isSelected && <ChevronRight className="h-3 w-3 opacity-40" />}
+                                                        </div>
+                                                    );
+                                                })}
+                                            </div>
+                                        )}
                                     </div>
                                 </div>
                             </div>
@@ -460,8 +550,8 @@ const AddProduct = () => {
                                                                 type="button"
                                                                 onClick={() => toggleVariantValue(group._id, val)}
                                                                 className={`flex items-center gap-2 px-4 py-2.5 rounded-2xl text-xs font-bold border-2 transition-all ${isSelected
-                                                                        ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
-                                                                        : 'border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-200'
+                                                                    ? 'border-indigo-600 bg-indigo-50 text-indigo-700'
+                                                                    : 'border-slate-100 bg-slate-50 text-slate-600 hover:border-slate-200'
                                                                     }`}
                                                             >
                                                                 {group.type === 'Color' && (

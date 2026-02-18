@@ -41,27 +41,27 @@ const cleanData = (obj) => {
 
 // Keyword-to-subcategory mapping
 const subcategoryKeywords = {
-    // Electronics
-    'Mobile': ['phone', 'galaxy s', 'iphone', 'pixel', 'oneplus', 'redmi', 'poco', 'mobile', 'smartphone'],
-    'Laptops': ['laptop', 'macbook', 'xps', 'thinkpad', 'chromebook', 'notebook', 'dell xps'],
-    'Cameras': ['camera', 'nikon', 'canon', 'sony a7', 'gopro', 'fujifilm', 'mirrorless', 'dslr'],
-    'Smart Home': ['echo', 'alexa', 'google home', 'smart speaker', 'smart home', 'nest', 'ring'],
-    'Audio': ['headphone', 'earbuds', 'airpods', 'speaker', 'soundbar', 'bose', 'jbl', 'sony wh'],
-    'Gaming': ['playstation', 'xbox', 'nintendo', 'ps5', 'gaming', 'controller', 'console'],
-    'Wearables': ['watch', 'fitbit', 'apple watch', 'galaxy watch', 'band', 'tracker'],
-    'Tablets': ['ipad', 'tab s', 'tablet', 'surface'],
+    // Electronics - SPECIFIC FIRST
+    'Tablets': [/\bipads?\b/, /\btab\b/, /\btablets?\b/, /\bsurface\b/, /\bgalaxy tab\b/],
+    'Wearables': [/\bwatch(es)?\b/, /\bfitbit\b/, /\bbands?\b/, /\btrackers?\b/, /\bgalaxy watch\b/],
+    'Laptops': [/\blaptops?\b/, /\bmacbooks?\b/, /\bxps\b/, /\bthinkpad\b/, /\bchromebooks?\b/, /\bnotebooks?\b/],
+    'Mobile': [/\bphones?\b/, /\bgalaxy s22\b/, /\biphones?\b/, /\bpixel\b/, /\boneplus\b/, /\bredmi\b/, /\bpoco\b/, /\bsmartphones?\b/],
+    'Audio': [/\bheadphones?\b/, /\bearbuds?\b/, /\bairpods?\b/, /\bspeakers?\b/, /\bsoundbars?\b/, /\bbose\b/, /\bjbl\b/, /\bsony wh\b/],
+    'Cameras': [/\bcameras?\b/, /\bnikon\b/, /\bcanon\b/, /\bgopro\b/, /\bfujifilm\b/, /\bmirrorless\b/, /\bdslr\b/],
+    'Gaming': [/\bplaystations?\b/, /\bxbox\b/, /\nintendo\b/, /\bps5\b/, /\bgaming\b/, /\bcontrollers?\b/, /\bconsoles?\b/],
+    'Smart Home': [/\becho\b/, /\balexa\b/, /\bgoogle home\b/, /\bsmart speaker\b/, /\bnest\b/, /\bring\b/],
 
     // Fashion
-    'Men': ['men', 'shirt', 'pant', 'jeans', 't-shirt'], // Broad match, refine order
-    'Footwear': ['nike', 'jordan', 'sneaker', 'shoe', 'boot', 'adidas', 'footwear'],
+    'Footwear': [/\bnike\b/, /\bjordan\b/, /\bsneakers?\b/, /\bshoes?\b/, /\bboots?\b/, /\badidas\b/, /\bfootwear\b/],
+    'Men': [/\bmen\b/, /\bshirts?\b/, /\bpants?\b/, /\bjeans\b/, /\bt-shirts?\b/],
 
     // Home & Kitchen
-    'Appliances': ['coffee', 'maker', 'blender', 'vacuum', 'appliance', 'fridge'],
-    'Furniture': ['chair', 'sofa', 'table', 'desk', 'furniture'],
+    'Appliances': [/\bcoffee\b/, /\bmakers?\b/, /\bblenders?\b/, /\bvacuums?\b/, /\bappliance\b/, /\bfridge\b/, /\brefrigerators?\b/],
+    'Furniture': [/\bchairs?\b/, /\bsofas?\b/, /\btables?\b/, /\bdesks?\b/, /\bfurniture\b/],
 
     // Sports
-    'Fitness': ['yoga', 'dumbbell', 'treadmill', 'gym', 'fitness'],
-    'Outdoor': ['tent', 'camping', 'backpack', 'outdoor']
+    'Fitness': [/\byoga\b/, /\bdumbbells?\b/, /\btreadmills?\b/, /\bgym\b/, /\bfitness\b/],
+    'Outdoor': [/\btent\b/, /\bcamping\b/, /\bbackpacks?\b/, /\boutdoor\b/]
 };
 
 // Parent category mapping
@@ -84,7 +84,6 @@ const subcategoryToParent = {
     'Furniture': 'Home & Kitchen',
     'Decor': 'Home & Kitchen',
     'Kitchen': 'Home & Kitchen',
-    'Smart Home': 'Home & Kitchen',
 
     'Fitness': 'Sports',
     'Outdoor': 'Sports',
@@ -98,12 +97,19 @@ async function importAndFix() {
         await mongoose.connect(MONGO_URI);
         console.log('✅ Connected to MongoDB');
 
-
+        // 1. Load Data
+        let rawData;
+        try {
+            rawData = fs.readFileSync(DATA_FILE, 'utf8');
+        } catch (err) {
+            console.error('❌ Error reading data file:', err);
+            process.exit(1);
+        }
 
         let productsData;
         try {
             productsData = cleanData(JSON.parse(rawData));
-            console.log(`Pb Loaded ${productsData.length} products from JSON`);
+            console.log(`✅ Loaded ${productsData.length} products from JSON`);
         } catch (err) {
             console.error('❌ Error processing JSON data:', err);
             process.exit(1);
@@ -118,43 +124,71 @@ async function importAndFix() {
         });
 
         let updatedCount = 0;
+        const summary = {};
 
         for (let p of productsData) {
             // Determine correct category/subcategory
             const title = (p.title || '').toLowerCase();
             const description = (p.description || '').toLowerCase();
+
+            let matchedSubs = [];
+            let matchedParents = new Set();
+
+            // 1. Try matching only the TITLE first (more accurate)
+            if (matchedSubs.length === 0) {
+                for (const [subName, keywords] of Object.entries(subcategoryKeywords)) {
+                    if (keywords.some(kw => {
+                        if (kw instanceof RegExp) return kw.test(title);
+                        return title.includes(kw.toLowerCase());
+                    })) {
+                        if (!matchedSubs.includes(subName)) matchedSubs.push(subName);
+                    }
+                }
+            }
+
+            // 2. Try matching the DESCRIPTION for all possible matches
             const searchText = `${title} ${description}`;
-
-            let matchedSub = null;
-            let matchedParent = null;
-
-            // Find subcategory match
             for (const [subName, keywords] of Object.entries(subcategoryKeywords)) {
-                if (keywords.some(kw => searchText.includes(kw.toLowerCase()))) {
-                    matchedSub = subName;
-                    break;
+                if (keywords.some(kw => {
+                    if (kw instanceof RegExp) return kw.test(searchText);
+                    return searchText.includes(kw.toLowerCase());
+                })) {
+                    if (!matchedSubs.includes(subName)) matchedSubs.push(subName);
                 }
             }
 
             // Refine "Men" fashion match - ensure it's not actually footwear or something else
-            if (matchedSub === 'Men' && searchText.includes('shoe')) {
-                matchedSub = 'Footwear';
+            if (matchedSubs.includes('Men') && /\bshoes?\b/.test(searchText)) {
+                matchedSubs = matchedSubs.filter(s => s !== 'Men');
+                if (!matchedSubs.includes('Footwear')) matchedSubs.push('Footwear');
             }
 
             // Fallback for special cases in the JSON
-            if (!matchedSub) {
-                if (title.includes('t-shirt')) matchedSub = 'Men'; // Assume men's for now or add 'Clothing'
+            if (matchedSubs.length === 0) {
+                if (/\bt-shirts?\b/.test(title)) matchedSubs.push('Men');
             }
 
-            if (matchedSub) {
-                matchedParent = subcategoryToParent[matchedSub];
+            if (matchedSubs.length > 0) {
+                matchedSubs.forEach(sub => {
+                    const parent = subcategoryToParent[sub];
+                    if (parent) matchedParents.add(parent);
+                });
             }
 
-            // Default fallback
-            if (!matchedParent) matchedParent = 'Electronics';
+            // Smart fallback based on common keywords if no specific category matched
+            if (matchedParents.size === 0) {
+                if (/\bkitchen\b|\bcoffee\b|\bappliances?\b|\bvacuums?\b/.test(searchText)) {
+                    matchedParents.add('Home & Kitchen');
+                    if (matchedSubs.length === 0) matchedSubs.push('Appliances');
+                } else if (/\bshirts?\b|\bpants?\b|\bclothing\b/.test(searchText)) {
+                    matchedParents.add('Fashion');
+                    if (matchedSubs.length === 0) matchedSubs.push('Men');
+                } else {
+                    matchedParents.add('Electronics');
+                }
+            }
 
             // Prepare update object
-            // Remove _id from data to allow mongoose to handle or use it as criteria
             const productData = { ...p };
             delete productData._id;
             delete productData.__v;
@@ -162,15 +196,15 @@ async function importAndFix() {
             delete productData.updatedAt;
 
             // Set new category data
-            if (matchedParent && categoryMap[matchedParent]) {
-                productData.category = categoryMap[matchedParent];
-                productData.categoryName = matchedParent;
-            }
+            const parentArray = Array.from(matchedParents);
+            const parentIds = parentArray.map(name => categoryMap[name]).filter(id => id);
 
-            if (matchedSub && categoryMap[matchedSub]) {
-                productData.subcategory = categoryMap[matchedSub];
-                productData.subcategoryName = matchedSub;
-            }
+            productData.category = parentIds;
+            productData.categoryName = parentArray;
+
+            const subIds = matchedSubs.map(name => categoryMap[name]).filter(id => id);
+            productData.subcategory = subIds;
+            productData.subcategoryName = matchedSubs;
 
             // Formatting price numbers if strings in JSON
             if (typeof productData.price === 'string') productData.price = parseFloat(productData.price);
@@ -182,7 +216,7 @@ async function importAndFix() {
                     productData,
                     { upsert: true, new: true }
                 );
-                console.log(`  ✅ Processed ${p.title} -> ${matchedParent} / ${matchedSub}`);
+                console.log(`  ✅ Processed ${p.title} -> [${parentArray.join(', ')}] / [${matchedSubs.join(', ')}]`);
                 updatedCount++;
             }
         }

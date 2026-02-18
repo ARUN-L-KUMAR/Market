@@ -498,28 +498,54 @@ exports.getProducts = async (req, res, next) => {
     } else if (subcategory) {
       query.subcategory = subcategory;
     } else if (category) {
-      // Match products where category OR subcategory equals the given ID
       query.$or = [
         { category: category },
         { subcategory: category }
       ];
     }
 
-    // Search by product name or description
+    // New: Filter by Brand
+    if (req.query.brand) {
+      query.brand = req.query.brand;
+    }
+
+    // New: Filter by Stock Status
+    if (req.query.stockStatus) {
+      const status = req.query.stockStatus;
+      if (status === 'In Stock') {
+        query.stock = { $gt: 10 };
+      } else if (status === 'Low Stock') {
+        query.stock = { $gt: 0, $lte: 10 };
+      } else if (status === 'Out of Stock') {
+        query.stock = { $lte: 0 };
+      }
+    }
+
+    // Search by product name, description, SKU, or category names
     if (search) {
       const searchCondition = {
         $or: [
           { name: { $regex: search, $options: 'i' } },
           { title: { $regex: search, $options: 'i' } },
+          { sku: { $regex: search, $options: 'i' } },
+          { categoryName: { $regex: search, $options: 'i' } },
+          { subcategoryName: { $regex: search, $options: 'i' } },
           { description: { $regex: search, $options: 'i' } }
         ]
       };
-      if (query.$or) {
-        // Already have a $or from category filter, use $and to combine
-        query.$and = [{ $or: query.$or }, searchCondition];
-        delete query.$or;
+
+      if (Object.keys(query).length > 0) {
+        // If query already has filters, use $and to combine
+        if (query.$or) {
+          query.$and = [{ $or: query.$or }, searchCondition];
+          delete query.$or;
+        } else {
+          // Flatten existing query into $and if needed or just add $and
+          const existingFilters = { ...query };
+          query = { $and: [existingFilters, searchCondition] };
+        }
       } else {
-        query.$or = searchCondition.$or;
+        query = searchCondition;
       }
     }
 
