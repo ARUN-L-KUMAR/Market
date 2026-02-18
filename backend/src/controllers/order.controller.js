@@ -5,6 +5,8 @@ const { io } = require('../utils/socket');
 exports.createOrder = async (req, res, next) => {
   try {
     const { items, subtotal, tax, shipping, total, shippingAddress, paymentMethod, paymentStatus } = req.body;
+    // Generate order number
+    const orderNumber = 'ORD-' + Date.now().toString().slice(-6) + '-' + Math.floor(Math.random() * 1000);
 
     // Validate required fields
     if (!items || !items.length || !shippingAddress || !paymentMethod || !total) {
@@ -63,9 +65,6 @@ exports.createOrder = async (req, res, next) => {
         });
       }
     }
-
-    // Generate order number
-    const orderNumber = 'ORD-' + Date.now().toString().slice(-6) + '-' + Math.floor(Math.random() * 1000);
 
     const order = await Order.create({
       user: req.user._id,

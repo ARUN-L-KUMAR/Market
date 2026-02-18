@@ -187,140 +187,91 @@ const Cart = () => {
 
   if (items.length === 0) {
     return (
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="min-h-screen bg-slate-50 py-12"
-      >
-        <div className="container mx-auto px-4 text-center max-w-2xl">
+      <div className="min-h-screen bg-white flex items-center justify-center">
+        <div className="max-w-4xl mx-auto px-6 text-center">
           <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ delay: 0.2, type: "spring" }}
-            className="w-32 h-32 mx-auto mb-8 bg-slate-100 rounded-full flex items-center justify-center relative"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="space-y-12"
           >
-            <ShoppingBag className="w-16 h-16 text-slate-600" />
-            <motion.div
-              animate={{ rotate: 360 }}
-              transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-              className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full flex items-center justify-center"
-            >
-              <Sparkles className="w-4 h-4 text-white" />
-            </motion.div>
-          </motion.div>
+            <div className="relative w-40 h-40 mx-auto">
+              <div className="absolute inset-0 bg-primary-50 rounded-full animate-ping opacity-20" />
+              <div className="relative w-full h-full bg-white rounded-full shadow-premium flex items-center justify-center border border-slate-50">
+                <ShoppingBag className="w-16 h-16 text-slate-300" />
+              </div>
+            </div>
 
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="text-4xl font-semibold text-slate-900 mb-4"
-          >
-            Your Cart is Empty
-          </motion.h2>
+            <div className="space-y-4">
+              <h2 className="text-4xl md:text-5xl font-bold text-slate-900 font-outfit tracking-tight">
+                Inventory <span className="text-primary-600">Pending</span>
+              </h2>
+              <p className="text-lg text-slate-500 font-medium max-w-md mx-auto leading-relaxed">
+                Your distribution queue is currently empty. Secure your first assets from our global archive.
+              </p>
+            </div>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-            className="text-xl text-slate-600 mb-8"
-          >
-            Time to fill it with amazing products! Browse our collection and find something you'll love.
-          </motion.p>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5 }}
-            className="space-y-6"
-          >
-            <Button
-              onClick={() => navigate('/products')}
-              size="lg"
-              className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
-            >
-              <ShoppingBag className="w-5 h-5 mr-2" />
-              Start Shopping
-            </Button>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                onClick={() => navigate('/deals')}
-                className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-sm transition-all duration-300 border border-slate-200"
-              >
-                <div className="w-12 h-12 bg-red-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Sparkles className="w-6 h-6 text-red-600" />
-                </div>
-                <h3 className="font-semibold text-slate-800 mb-2">Hot Deals</h3>
-                <p className="text-sm text-slate-600">Up to 70% off</p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                onClick={() => navigate('/trending')}
-                className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-sm transition-all duration-300 border border-slate-200"
-              >
-                <div className="w-12 h-12 bg-emerald-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Clock className="w-6 h-6 text-emerald-600" />
-                </div>
-                <h3 className="font-semibold text-slate-800 mb-2">Trending</h3>
-                <p className="text-sm text-slate-600">Popular items</p>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.05 }}
+            <div className="pt-4 flex flex-col sm:flex-row items-center justify-center gap-6">
+              <button
                 onClick={() => navigate('/products')}
-                className="bg-white rounded-lg p-6 shadow-sm cursor-pointer hover:shadow-sm transition-all duration-300 border border-slate-200"
+                className="h-14 px-10 bg-slate-950 text-white rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-primary-600 transition-all shadow-xl hover:shadow-primary-600/20 flex items-center gap-3"
               >
-                <div className="w-12 h-12 bg-indigo-100 rounded-lg flex items-center justify-center mb-4 mx-auto">
-                  <Award className="w-6 h-6 text-indigo-600" />
-                </div>
-                <h3 className="font-semibold text-slate-800 mb-2">Best Sellers</h3>
-                <p className="text-sm text-slate-600">Top rated</p>
-              </motion.div>
+                <ShoppingBag className="w-4 h-4" />
+                Access Archive
+              </button>
+              <button
+                onClick={() => navigate('/deals')}
+                className="h-14 px-10 bg-white text-slate-900 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-slate-50 border border-slate-100 transition-all flex items-center gap-3"
+              >
+                <Sparkles className="w-4 h-4 text-primary-500" />
+                Priority Deals
+              </button>
             </div>
           </motion.div>
         </div>
-      </motion.div>
+      </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 py-8">
-      <div className="container mx-auto px-4 max-w-7xl">
-        {/* Header */}
+    <div className="min-h-screen bg-white">
+      <div className="max-w-7xl mx-auto px-6 pt-32 pb-24">
+        {/* Header Section */}
         <motion.div
-          initial={{ opacity: 0, y: -20 }}
+          initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex items-center justify-between mb-8"
+          className="flex flex-col md:flex-row md:items-end justify-between gap-10 mb-16 border-b border-slate-50 pb-12"
         >
-          <div className="flex items-center gap-4">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => navigate(-1)}
-              className="p-3 text-slate-600 hover:text-slate-800 hover:bg-slate-50 rounded-lg transition-all duration-200"
-            >
-              <ArrowLeft className="w-5 h-5" />
-            </motion.button>
-            <h1 className="text-4xl font-semibold text-slate-900">
-              Shopping Cart
-            </h1>
-            <Badge variant="primary" size="md">
-              {items.length} item{items.length !== 1 ? 's' : ''}
-            </Badge>
+          <div className="space-y-6">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => navigate(-1)}
+                className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-all"
+              >
+                <ArrowLeft className="w-4 h-4" />
+              </button>
+              <div className="px-3 py-1 bg-primary-50 text-primary-600 text-[10px] font-bold uppercase tracking-widest rounded-full border border-primary-100/50">
+                Nexus Queue
+              </div>
+            </div>
+            <div className="space-y-3">
+              <h1 className="text-5xl font-bold text-slate-900 font-outfit tracking-tight">
+                Shopping <span className="text-primary-600">Cart</span>
+              </h1>
+              <p className="text-slate-500 font-medium">
+                {items.length} units currently held in priority status
+              </p>
+            </div>
           </div>
 
           {items.length > 0 && (
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
+            <button
               onClick={() => setShowClearConfirm(true)}
-              className="flex items-center gap-2 px-4 py-2 text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
+              className="px-6 py-3 text-rose-500 hover:text-white hover:bg-rose-500 rounded-2xl text-[10px] font-bold uppercase tracking-widest border border-rose-100 hover:border-rose-500 transition-all flex items-center gap-2"
             >
-              <Trash2 className="w-4 h-4" />
-              Clear Cart
-            </motion.button>
+              <Trash2 className="w-3.5 h-3.5" />
+              Reset Buffer
+            </button>
           )}
         </motion.div>
 
@@ -331,117 +282,85 @@ const Cart = () => {
               {items.map((item, index) => (
                 <motion.div
                   key={item.product?._id || index}
-                  initial={{ opacity: 0, x: -50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: 50, height: 0 }}
-                  transition={{ delay: index * 0.1 }}
-                  layout
-                  className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden hover:shadow-sm transition-all duration-300 group"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, scale: 0.9 }}
+                  transition={{ delay: index * 0.05 }}
+                  className="bg-white rounded-[2.5rem] border border-slate-100 p-6 group transition-all duration-300 hover:shadow-premium-lg"
                 >
-                  <div className="p-6">
-                    <div className="flex flex-col lg:flex-row gap-6">
-                      {/* Product Image */}
-                      <motion.div
-                        whileHover={{ scale: 1.05 }}
-                        className="relative w-full lg:w-32 h-32 flex-shrink-0 rounded-lg overflow-hidden"
-                      >
-                        <img
-                          src={item.product?.images?.[0]?.url || 'https://placehold.co/400x300?text=No+Image'}
-                          alt={item.product?.title || 'Product'}
-                          className="w-full h-full object-cover"
-                        />
-                        {item.product?.discount && (
-                          <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">
+                  <div className="flex flex-col sm:flex-row gap-8">
+                    {/* Asset Preview */}
+                    <div className="relative w-full sm:w-40 aspect-square flex-shrink-0 rounded-[2rem] overflow-hidden bg-slate-50 border border-slate-100">
+                      <img
+                        src={item.product?.images?.[0]?.url || 'https://placehold.co/400x400?text=Nexus+Asset'}
+                        alt={item.product?.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                      />
+                      {item.product?.discount && (
+                        <div className="absolute top-4 left-4">
+                          <div className="px-2.5 py-1 bg-rose-500 text-white text-[9px] font-bold rounded-full shadow-lg">
                             -{item.product.discount}%
                           </div>
-                        )}
-                        <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                      </motion.div>
+                        </div>
+                      )}
+                    </div>
 
-                      {/* Product Details */}
-                      <div className="flex-grow">
-                        <div className="flex justify-between items-start mb-4">
-                          <div>
-                            <h3 className="font-semibold text-xl text-slate-800 mb-2 line-clamp-1">
-                              {item.product?.title || 'Product'}
-                            </h3>
-                            <div className="flex items-center gap-2 mb-2">
-                              <div className="w-2 h-2 bg-slate-400 rounded-full"></div>
-                              <p className="text-slate-600 text-sm capitalize">
-                                {typeof item.product?.category === 'object' ? item.product.category?.name : item.product?.category}
-                              </p>
-                            </div>
-
-                            {/* Additional product info */}
-                            <div className="flex items-center gap-2 text-sm text-slate-500">
-                              {item.size && <span>Size: {item.size}</span>}
-                              {item.color && <span>Color: {item.color}</span>}
-                            </div>
+                    {/* Meta Data */}
+                    <div className="flex-1 space-y-6">
+                      <div className="flex justify-between items-start">
+                        <div className="space-y-1.5">
+                          <span className="text-[10px] font-bold text-primary-500 uppercase tracking-widest">
+                            {typeof item.product?.category === 'object' ? item.product.category?.name : item.product?.category}
+                          </span>
+                          <h3 className="text-xl font-bold text-slate-800 font-outfit leading-tight group-hover:text-primary-600 transition-colors">
+                            {item.product?.title || 'Product'}
+                          </h3>
+                          <div className="flex items-center gap-3 text-[10px] font-medium text-slate-400 uppercase tracking-wider">
+                            {item.size && <span className="flex items-center gap-1"><div className="w-1 h-1 rounded-full bg-slate-200" /> Size {item.size}</span>}
+                            {item.color && <span className="flex items-center gap-1"><div className="w-1 h-1 rounded-full bg-slate-200" /> Color {item.color}</span>}
                           </div>
+                        </div>
+                        <button
+                          onClick={() => handleRemoveItem(item.product?._id)}
+                          className="w-10 h-10 rounded-xl bg-slate-50 border border-slate-100 flex items-center justify-center text-slate-300 hover:text-rose-500 transition-all"
+                        >
+                          <X className="w-4 h-4" />
+                        </button>
+                      </div>
 
-                          <motion.button
-                            whileHover={{ scale: 1.1 }}
-                            whileTap={{ scale: 0.9 }}
-                            onClick={() => handleRemoveItem(item.product?._id)}
-                            className="p-2 text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg transition-all duration-200"
+                      {/* Stock Warnings */}
+                      {stockWarnings[item.product?._id] && (
+                        <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-center gap-3">
+                          <AlertCircle className="w-4 h-4 text-amber-600" />
+                          <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">{stockWarnings[item.product._id]}</span>
+                        </div>
+                      )}
+
+                      <div className="flex flex-wrap items-center justify-between gap-6 pt-4 border-t border-slate-50">
+                        <div className="flex items-center bg-slate-50 border border-slate-100 rounded-xl p-0.5">
+                          <button
+                            onClick={() => handleQuantityChange(item.product?._id, Math.max(1, item.quantity - 1))}
+                            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
                           >
-                            <X className="w-5 h-5" />
-                          </motion.button>
+                            <Minus className="w-3.5 h-3.5" />
+                          </button>
+                          <span className="w-8 text-center text-xs font-bold text-slate-700">{item.quantity}</span>
+                          <button
+                            onClick={() => handleQuantityChange(item.product?._id, item.quantity + 1)}
+                            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
+                          >
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
                         </div>
 
-                        {/* Stock Warning */}
-                        {stockWarnings[item.product?._id] && (
-                          <motion.div
-                            initial={{ opacity: 0, scale: 0.9 }}
-                            animate={{ opacity: 1, scale: 1 }}
-                            className="flex items-center gap-2 mb-4 p-3 bg-orange-50 rounded-lg border border-orange-200"
-                          >
-                            <AlertCircle className="w-4 h-4 text-orange-600" />
-                            <span className="text-orange-700 text-sm font-medium">
-                              {stockWarnings[item.product._id]}
-                            </span>
-                          </motion.div>
-                        )}
-
-                        {/* Quantity and Price */}
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-4">
-                            <span className="text-sm font-medium text-slate-600">Quantity:</span>
-                            <div className="flex items-center bg-slate-100 rounded-lg">
-                              <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => handleQuantityChange(item.product?._id, Math.max(1, item.quantity - 1))}
-                                disabled={isUpdating[item.product?._id]}
-                                className="p-2 text-slate-600 hover:text-slate-800 disabled:opacity-50 transition-colors duration-200"
-                              >
-                                <Minus className="w-4 h-4" />
-                              </motion.button>
-
-                              <span className="px-4 py-2 font-semibold text-slate-800 min-w-[3rem] text-center">
-                                {isUpdating[item.product?._id] ? '...' : item.quantity}
-                              </span>
-
-                              <motion.button
-                                whileHover={{ scale: 1.1 }}
-                                whileTap={{ scale: 0.9 }}
-                                onClick={() => handleQuantityChange(item.product?._id, item.quantity + 1)}
-                                disabled={isUpdating[item.product?._id]}
-                                className="p-2 text-slate-600 hover:text-slate-800 disabled:opacity-50 transition-colors duration-200"
-                              >
-                                <Plus className="w-4 h-4" />
-                              </motion.button>
-                            </div>
-                          </div>
-
-                          <div className="text-right">
-                            <div className="text-2xl font-semibold text-slate-900">
-                              <CurrencyPrice price={(item.product?.price || 0) * item.quantity} />
-                            </div>
-                            <span className="text-sm text-slate-500">
-                              <CurrencyPrice price={item.product?.price || 0} /> each
-                            </span>
-                          </div>
+                        <div className="text-right">
+                          <CurrencyPrice
+                            price={(item.product?.price || 0) * item.quantity}
+                            variant="nexus"
+                            size="2xl"
+                            weight="bold"
+                            showDecimals={false}
+                          />
                         </div>
                       </div>
                     </div>
@@ -454,205 +373,166 @@ const Cart = () => {
           {/* Order Summary */}
           <div className="xl:col-span-1">
             <motion.div
-              initial={{ opacity: 0, x: 50 }}
+              initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="bg-white rounded-lg shadow-sm border border-slate-200 p-6 sticky top-8"
+              className="bg-white rounded-[3rem] border border-slate-100 p-10 lg:p-12 sticky top-24 space-y-10"
             >
-              <h3 className="text-2xl font-semibold text-slate-800 mb-6 flex items-center gap-2">
-                <CreditCard className="w-6 h-6 text-slate-600" />
-                Order Summary
-              </h3>
+              <div className="space-y-2">
+                <h3 className="text-3xl font-bold text-slate-900 font-outfit tracking-tight">Summary</h3>
+                <p className="text-slate-500 text-sm font-medium">Finalizing distribution tier</p>
+              </div>
 
-              <div className="space-y-4 mb-6">
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-600">Subtotal</span>
-                  <span className="font-semibold text-slate-800"><CurrencyPrice price={subtotal} /></span>
+              <div className="space-y-5">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-500 font-medium tracking-tight">Asset Subtotal</span>
+                  <CurrencyPrice price={subtotal} variant="nexus" weight="bold" />
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-2">
-                    <Truck className="w-4 h-4 text-slate-600" />
-                    <span className="text-slate-600">Shipping</span>
+                <div className="flex justify-between items-center text-sm">
+                  <div className="flex items-center gap-2 text-slate-500">
+                    <Truck className="w-4 h-4" />
+                    <span className="font-medium">Global Freight</span>
                   </div>
-                  <div className="text-right">
-                    {shipping === 0 ? (
-                      <span className="font-semibold text-emerald-600">FREE</span>
-                    ) : (
-                      <span className="font-semibold text-slate-800"><CurrencyPrice price={shipping} /></span>
-                    )}
-                  </div>
+                  {shipping === 0 ? (
+                    <span className="font-bold text-emerald-600 uppercase tracking-widest text-[10px]">Tier 1 Free</span>
+                  ) : (
+                    <span className="font-bold text-slate-900 font-outfit"><CurrencyPrice price={shipping} /></span>
+                  )}
                 </div>
 
-                <div className="flex justify-between items-center">
-                  <span className="text-slate-600">Tax</span>
-                  <span className="font-semibold text-slate-800"><CurrencyPrice price={tax} /></span>
+                <div className="flex justify-between items-center text-sm">
+                  <span className="text-slate-500 font-medium tracking-tight">Protocol Fees (Tax)</span>
+                  <CurrencyPrice price={tax} variant="nexus" weight="bold" />
                 </div>
 
                 {discount > 0 && (
-                  <div className="flex justify-between items-center">
-                    <span className="text-emerald-600">Discount</span>
-                    <span className="font-semibold text-emerald-600">-<CurrencyPrice price={discount} /></span>
+                  <div className="flex justify-between items-center text-sm p-3 bg-emerald-50 rounded-xl border border-emerald-100">
+                    <span className="text-emerald-700 font-bold text-[10px] uppercase tracking-widest">Protocol Discount</span>
+                    <span className="font-bold text-emerald-700 font-outfit">-<CurrencyPrice price={discount} /></span>
                   </div>
                 )}
 
-                <div className="border-t border-slate-200 pt-4">
-                  <div className="flex justify-between items-center">
-                    <span className="text-xl font-semibold text-slate-800">Total</span>
-                    <span className="text-2xl font-semibold text-slate-900">
-                      <CurrencyPrice price={total} />
-                    </span>
+                <div className="pt-8 border-t border-slate-100">
+                  <div className="flex justify-between items-end">
+                    <div className="space-y-1">
+                      <span className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em]">Total Valuation</span>
+                      <CurrencyPrice
+                        price={total}
+                        variant="nexus"
+                        size="4xl"
+                        weight="extrabold"
+                        showDecimals={false}
+                        className="tracking-tighter"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Promo Code */}
-              <div className="mb-6">
-                <div className="flex gap-2">
-                  <input
-                    type="text"
-                    placeholder="Promo code"
-                    value={promoCode}
-                    onChange={(e) => setPromoCode(e.target.value)}
-                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
-                  />
-                  <Button
-                    onClick={handlePromoCode}
-                    variant="outline"
-                    className="border-slate-300 text-slate-600 hover:bg-slate-50"
-                  >
-                    Apply
-                  </Button>
-                </div>
+              {/* Promo Protocol */}
+              <div className="relative group">
+                <input
+                  type="text"
+                  placeholder="PROTOCOL CODE"
+                  value={promoCode}
+                  onChange={(e) => setPromoCode(e.target.value)}
+                  className="w-full px-6 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[10px] font-bold uppercase tracking-widest outline-none focus:bg-white focus:border-primary-500 transition-all font-outfit"
+                />
+                <button
+                  onClick={handlePromoCode}
+                  className="absolute right-2 top-2 h-10 px-6 bg-slate-900 text-white rounded-xl text-[10px] font-bold uppercase tracking-widest hover:bg-primary-600 transition-all"
+                >
+                  Apply
+                </button>
               </div>
 
-              {/* Free Shipping Progress */}
+              {/* Free Freight Warning */}
               {shipping > 0 && (
-                <div className="mb-6 p-4 bg-indigo-50 rounded-lg">
-                  <div className="flex items-center gap-2 mb-2">
-                    <Truck className="w-4 h-4 text-indigo-600" />
-                    <span className="text-sm font-medium text-indigo-700">
-                      Add <CurrencyPrice price={50 - subtotal} /> more for FREE shipping!
-                    </span>
+                <div className="p-5 bg-primary-50 rounded-2xl border border-primary-100 space-y-3">
+                  <div className="flex items-center justify-between text-[11px] font-bold text-primary-700 uppercase tracking-widest">
+                    <span>Target: Free Freight</span>
+                    <span>{Math.min((subtotal / 50) * 100, 100).toFixed(0)}%</span>
                   </div>
-                  <div className="w-full bg-indigo-200 rounded-full h-2">
+                  <div className="h-1 bg-primary-100 rounded-full overflow-hidden">
                     <motion.div
                       initial={{ width: 0 }}
                       animate={{ width: `${Math.min((subtotal / 50) * 100, 100)}%` }}
-                      transition={{ duration: 1 }}
-                      className="bg-indigo-600 h-2 rounded-full"
+                      transition={{ duration: 1.5, ease: 'easeOut' }}
+                      className="h-full bg-primary-600"
                     />
                   </div>
-                </div>
-              )}
-
-              {/* Stock Warning */}
-              {Object.keys(stockWarnings).length > 0 && (
-                <div className="mb-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
-                  <div className="flex items-center gap-2 mb-2">
-                    <AlertCircle className="w-4 h-4 text-orange-600" />
-                    <span className="text-sm font-medium text-orange-700">Stock Alert</span>
-                  </div>
-                  <p className="text-sm text-orange-700">
-                    Some items in your cart have limited stock. Please adjust quantities before checkout.
+                  <p className="text-[10px] text-primary-600/70 font-medium text-center">
+                    Procure <CurrencyPrice price={50 - subtotal} variant="primary" weight="bold" /> more for Priority Freight Tier.
                   </p>
                 </div>
               )}
 
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="mb-4"
-              >
-                <Button
-                  fullWidth
-                  size="lg"
+              <div className="space-y-4 pt-4">
+                <button
                   onClick={handleCheckout}
-                  className="bg-indigo-600 hover:bg-indigo-700 text-white font-semibold shadow-sm hover:shadow-sm"
+                  className="w-full h-16 bg-slate-950 text-white rounded-[2rem] font-bold text-[11px] uppercase tracking-[0.2em] hover:bg-primary-600 transition-all shadow-xl hover:shadow-primary-600/20 flex items-center justify-center gap-3"
                 >
-                  <Lock className="w-5 h-5 mr-2" />
-                  Secure Checkout
-                </Button>
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="mb-6"
-              >
-                <Button
-                  fullWidth
-                  variant="outline"
+                  <Lock className="w-4 h-4" />
+                  Secure Protocol
+                </button>
+                <button
                   onClick={() => navigate('/products')}
-                  className="border-slate-300 text-slate-600 hover:bg-slate-50"
+                  className="w-full h-14 bg-white text-slate-500 rounded-[2rem] font-bold text-[10px] uppercase tracking-widest hover:bg-slate-50 border border-slate-100 transition-all"
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Continue Shopping
-                </Button>
-              </motion.div>
+                  Return to Archive
+                </button>
+              </div>
 
-              {/* Security Features */}
-              <div className="space-y-3">
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Shield className="w-4 h-4 text-emerald-600" />
-                  <span>256-bit SSL encryption</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Truck className="w-4 h-4 text-indigo-600" />
-                  <span>Free returns within 30 days</span>
-                </div>
-                <div className="flex items-center gap-3 text-sm text-slate-600">
-                  <Gift className="w-4 h-4 text-slate-600" />
-                  <span>Gift wrapping available</span>
-                </div>
+              {/* Security Badges */}
+              <div className="flex items-center justify-center gap-6 pt-6 opacity-30 group-hover:opacity-50 transition-opacity">
+                <Shield className="w-5 h-5" />
+                <Truck className="w-5 h-5" />
+                <CreditCard className="w-5 h-5" />
               </div>
             </motion.div>
           </div>
         </div>
       </div>
 
-      {/* Clear Cart Confirmation Modal */}
       <AnimatePresence>
         {showClearConfirm && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4"
+            className="fixed inset-0 bg-slate-950/40 backdrop-blur-sm flex items-center justify-center z-50 p-6"
             onClick={() => setShowClearConfirm(false)}
           >
             <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.9, opacity: 0 }}
-              className="bg-white rounded-lg p-8 max-w-md w-full shadow-sm"
+              initial={{ scale: 0.95, opacity: 0, y: 20 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 20 }}
+              className="bg-white rounded-[2.5rem] p-10 max-w-md w-full shadow-premium-lg border border-slate-100"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="text-center mb-6">
-                <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Trash2 className="w-8 h-8 text-red-600" />
+              <div className="text-center mb-10">
+                <div className="w-16 h-16 bg-rose-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                  <Trash2 className="w-6 h-6 text-rose-500" />
                 </div>
-                <h3 className="text-2xl font-semibold text-slate-800 mb-2">Clear Cart?</h3>
-                <p className="text-slate-600">
-                  Are you sure you want to remove all items from your cart? This action cannot be undone.
+                <h3 className="text-2xl font-bold text-slate-900 font-outfit mb-3">Reset Buffer?</h3>
+                <p className="text-slate-500 font-medium">
+                  This protocol will clear your current distribution queue. This action is final.
                 </p>
               </div>
 
               <div className="flex gap-4">
-                <Button
-                  fullWidth
-                  variant="outline"
+                <button
                   onClick={() => setShowClearConfirm(false)}
-                  className="border-slate-300 text-slate-700 hover:bg-slate-50"
+                  className="flex-1 h-12 bg-slate-50 text-slate-500 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-slate-100 transition-all"
                 >
                   Cancel
-                </Button>
-                <Button
-                  fullWidth
+                </button>
+                <button
                   onClick={handleClearCart}
-                  className="bg-red-600 hover:bg-red-700 text-white"
+                  className="flex-1 h-12 bg-rose-500 text-white rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-rose-600 transition-all shadow-lg shadow-rose-500/20"
                 >
-                  Clear Cart
-                </Button>
+                  Confirm Reset
+                </button>
               </div>
             </motion.div>
           </motion.div>

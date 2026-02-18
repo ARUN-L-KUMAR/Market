@@ -217,15 +217,28 @@ const ProductDetails = () => {
           </div>
 
           {/* Price */}
-          <div className="flex items-end mb-6">
-            <span className="text-2xl font-semibold text-indigo-700"><CurrencyPrice price={product.price} /></span>
+          <div className="flex items-center gap-6 mb-8">
+            <CurrencyPrice
+              price={product.price}
+              variant="nexus"
+              size="4xl"
+              weight="bold"
+              showDecimals={false}
+            />
             {product.comparePrice && product.comparePrice > product.price && (
-              <>
-                <span className="text-slate-400 line-through ml-2 text-lg"><CurrencyPrice price={product.comparePrice} /></span>
-                <Badge color="warning" className="ml-3">
-                  {Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}% OFF
+              <div className="flex items-center gap-3">
+                <CurrencyPrice
+                  price={product.comparePrice}
+                  size="xl"
+                  color="text-slate-400"
+                  weight="medium"
+                  className="line-through"
+                  showDecimals={false}
+                />
+                <Badge variant="danger" className="bg-rose-50 text-rose-600 border-rose-100 uppercase tracking-widest text-[10px] py-1 px-3">
+                  {Math.round(((product.comparePrice - product.price) / product.comparePrice) * 100)}% Protocol Offset
                 </Badge>
-              </>
+              </div>
             )}
           </div>
 

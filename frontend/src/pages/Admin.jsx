@@ -696,9 +696,12 @@ const Admin = () => {
                               </div>
                             </td>
                             <td className="py-5 px-6">
-                              <span className="inline-flex items-center px-3 py-1 bg-emerald-50 text-emerald-700 rounded-lg text-sm font-bold border border-emerald-100">
-                                <CurrencyPrice price={parseFloat(product.price)} />
-                              </span>
+                              <CurrencyPrice
+                                price={parseFloat(product.price)}
+                                variant="nexus"
+                                weight="bold"
+                                showDecimals={false}
+                              />
                             </td>
                             <td className="py-5 px-6">
                               <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-bold border border-indigo-100">
@@ -790,7 +793,14 @@ const Admin = () => {
                           <td className="py-3 px-4">{order._id.substring(0, 8)}...</td>
                           <td className="py-3 px-4">{new Date(order.createdAt).toLocaleDateString()}</td>
                           <td className="py-3 px-4">{order.user?.name || 'Unknown'}</td>
-                          <td className="py-3 px-4"><CurrencyPrice price={parseFloat(order.totalPrice)} /></td>
+                          <td className="py-3 px-4">
+                            <CurrencyPrice
+                              price={parseFloat(order.totalPrice)}
+                              variant="nexus"
+                              weight="bold"
+                              showDecimals={false}
+                            />
+                          </td>
                           <td className="py-3 px-4">
                             <span className={`px-3 py-1 rounded-full text-xs font-medium
                               ${order.status === 'pending' ? 'bg-amber-100 text-amber-700' :

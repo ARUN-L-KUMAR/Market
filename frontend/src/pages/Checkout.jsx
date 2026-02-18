@@ -17,6 +17,8 @@ const Checkout = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
   // Order summary state
   const [subtotal, setSubtotal] = useState(0);
   const [tax, setTax] = useState(0);
@@ -28,6 +30,7 @@ const Checkout = () => {
   const [savedAddresses, setSavedAddresses] = useState([]);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isAddingNewAddress, setIsAddingNewAddress] = useState(false);
+  const [isAddressLoading, setIsAddressLoading] = useState(true);
   const [isProcessingOrder, setIsProcessingOrder] = useState(false);
 
   // Modal state
@@ -59,26 +62,45 @@ const Checkout = () => {
     }
     // Calculate order totals
     const newSubtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
-    const newTax = newSubtotal * 0.08;
+    const newTax = Math.round(newSubtotal * 0.08 * 100) / 100;
     const newShipping = newSubtotal > 100 ? 0 : 10;
     setSubtotal(newSubtotal);
     setTax(newTax);
     setShipping(newShipping);
-    setTotal(newSubtotal + newTax + newShipping);
+    const newTotal = Math.round((newSubtotal + newTax + newShipping) * 100) / 100;
+    setTotal(newTotal);
     // Fetch user's addresses
     const fetchAddresses = async () => {
+      setIsAddressLoading(true);
       try {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         const response = await axios.get(`${apiUrl}/api/users/addresses`, {
           headers: { Authorization: `Bearer ${token}` }
         });
-        setSavedAddresses(response.data || []);
-        const defaultAddress = response.data.find(addr => addr.isDefault);
-        if (defaultAddress) setSelectedAddress(defaultAddress);
-        else if (response.data.length > 0) setSelectedAddress(response.data[0]);
-        else setIsAddingNewAddress(true);
+        const addresses = response.data || [];
+        console.log('Fetched addresses:', addresses); // Debug log
+        setSavedAddresses(addresses);
+
+        if (addresses.length > 0) {
+          const defaultAddress = addresses.find(addr => addr.isDefault);
+          const addressToSelect = defaultAddress || addresses[0];
+          setSelectedAddress(addressToSelect);
+          console.log('Selected address:', addressToSelect); // Debug log
+          setIsAddingNewAddress(false);
+        } else {
+          console.log('No saved addresses found, showing add form'); // Debug log
+          setIsAddingNewAddress(true);
+        }
       } catch (error) {
         console.error('Error fetching addresses:', error);
+        window.dispatchEvent(new CustomEvent('show-toast', { 
+          detail: { 
+            message: 'Failed to load saved addresses. Please add a new address.', 
+            type: 'error' 
+          } 
+        }));
+        setIsAddingNewAddress(true); // Fallback to add form on error
+      } finally {
+        setIsAddressLoading(false);
       }
     };
     fetchAddresses();
@@ -105,18 +127,47 @@ const Checkout = () => {
   const handleSaveAddress = async () => {
     if (!validateAddressForm()) return;
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
       const response = await axios.post(
         `${apiUrl}/api/users/addresses`,
         addressForm,
         { headers: { Authorization: `Bearer ${token}` } }
       );
-      setSavedAddresses([...savedAddresses, response.data]);
-      setSelectedAddress(response.data);
+
+      const responseData = response.data;
+      const newAddress = Array.isArray(responseData)
+        ? responseData[responseData.length - 1]
+        : responseData;
+
+      const updatedAddresses = Array.isArray(responseData)
+        ? responseData
+        : [...savedAddresses, responseData];
+
+      console.log('Address saved successfully:', newAddress); // Debug log
+      setSavedAddresses(updatedAddresses);
+      setSelectedAddress(newAddress);
       setIsAddingNewAddress(false);
-      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Address saved successfully', type: 'success' } }));
+      
+      // Reset form
+      setAddressForm({
+        fullName: '',
+        address: '',
+        city: '',
+        state: '',
+        zipCode: '',
+        country: '',
+        phone: '',
+        isDefault: false
+      });
+      
+      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Address saved successfully!', type: 'success' } }));
     } catch (error) {
-      window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Failed to save address', type: 'error' } }));
+      console.error('Error saving address:', error);
+      window.dispatchEvent(new CustomEvent('show-toast', { 
+        detail: { 
+          message: error.response?.data?.message || 'Failed to save address. Please try again.', 
+          type: 'error' 
+        } 
+      }));
     }
   };
 
@@ -131,10 +182,12 @@ const Checkout = () => {
       return;
     }
     if (!selectedAddress) {
+      setShowConfirmModal(false);
       window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Please select or add a shipping address', type: 'error' } }));
       return;
     }
     if (!paymentMethod) {
+      setShowConfirmModal(false);
       window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Please select a payment method', type: 'error' } }));
       return;
     }
@@ -153,7 +206,6 @@ const Checkout = () => {
     }
     try {
       if (paymentMethod === 'payu') {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         const orderData = {
           user: userId,
           items: items.map(item => ({
@@ -180,7 +232,6 @@ const Checkout = () => {
         navigate('/payu-payment', { state: response.data });
         return;
       } else if (paymentMethod === 'cash_on_delivery') {
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
         const orderData = {
           user: userId,
           items: items.map(item => ({
@@ -250,60 +301,99 @@ const Checkout = () => {
           <div className="lg:col-span-2 space-y-8">
             {/* Shipping address */}
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="bg-white rounded-lg shadow-sm border border-slate-200 p-6">
-              <div className="flex items-center mb-6">
-                <div className="bg-slate-700 text-white p-3 rounded-full mr-4">
-                  <MapPin className="w-6 h-6" />
+              <div className="flex items-center justify-between mb-6">
+                <div className="flex items-center">
+                  <div className="bg-slate-700 text-white p-3 rounded-full mr-4">
+                    <MapPin className="w-6 h-6" />
+                  </div>
+                  <div>
+                    <h2 className="text-2xl font-semibold text-slate-800">Shipping Address</h2>
+                    <p className="text-slate-600">Where should we deliver your order?</p>
+                  </div>
                 </div>
-                <div>
-                  <h2 className="text-2xl font-semibold text-slate-800">Shipping Address</h2>
-                  <p className="text-slate-600">Where should we deliver your order?</p>
-                </div>
+                {!isAddressLoading && savedAddresses.length > 0 && selectedAddress && (
+                  <div className="hidden md:block text-right">
+                    <p className="text-xs text-slate-500 uppercase tracking-wide">Currently Selected</p>
+                    <p className="text-sm font-semibold text-indigo-600">{selectedAddress.fullName}</p>
+                  </div>
+                )}
               </div>
               {/* Saved addresses */}
-              {!isAddingNewAddress && savedAddresses.length > 0 && (
-                <div className="space-y-4 mb-6">
-                  {savedAddresses.map((address, index) => (
-                    <div key={index} className={`border rounded-lg p-4 cursor-pointer transition ${selectedAddress === address ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setSelectedAddress(address)}>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <p className="font-semibold">{address.fullName}</p>
-                          <p className="text-slate-600 text-sm">{address.address}</p>
-                          <p className="text-slate-600 text-sm">{address.city}, {address.state} {address.zipCode}</p>
-                          <p className="text-slate-600 text-sm">{address.country}</p>
-                          {address.phone && (<p className="text-slate-600 text-sm mt-1">{address.phone}</p>)}
+              {isAddressLoading ? (
+                <div className="flex flex-col justify-center items-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mb-3"></div>
+                  <p className="text-sm text-slate-600">Loading your saved addresses...</p>
+                </div>
+              ) : (
+                <>
+                  {!isAddingNewAddress && savedAddresses.length > 0 && (
+                    <div className="space-y-4 mb-6">
+                      {savedAddresses.map((address, index) => (
+                        <div 
+key={address._id || index} 
+                          className={`border rounded-lg p-4 cursor-pointer transition ${
+                            selectedAddress && selectedAddress._id === address._id 
+                              ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' 
+                              : 'border-slate-200 hover:border-slate-300'
+                          }`} 
+                          onClick={() => setSelectedAddress(address)}
+                        >
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-2 mb-1">
+                                <p className="font-semibold text-slate-900">{address.fullName}</p>
+                                {selectedAddress && selectedAddress._id === address._id && (
+                                  <span className="bg-indigo-600 text-white text-xs px-2 py-0.5 rounded-full">Selected</span>
+                                )}
+                              </div>
+                              <p className="text-slate-600 text-sm">{address.address}</p>
+                              <p className="text-slate-600 text-sm">{address.city}, {address.state} {address.zipCode}</p>
+                              <p className="text-slate-600 text-sm">{address.country}</p>
+                              {address.phone && (<p className="text-slate-600 text-sm mt-1">📱 {address.phone}</p>)}
+                            </div>
+                            {address.isDefault && (<span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded ml-2">Default</span>)}
+                          </div>
                         </div>
-                        {address.isDefault && (<span className="bg-indigo-100 text-indigo-700 text-xs px-2 py-1 rounded">Default</span>)}
+                      ))}
+                      <Button variant="outline" onClick={() => setIsAddingNewAddress(true)}>Add New Address</Button>
+                    </div>
+                  )}
+
+                  {/* Add new address form */}
+                  {isAddingNewAddress && (
+                    <div className="space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input label="Full Name" name="fullName" value={addressForm.fullName} onChange={handleAddressChange} error={addressErrors.fullName} required />
+                        <Input label="Phone Number" name="phone" value={addressForm.phone} onChange={handleAddressChange} error={addressErrors.phone} />
+                      </div>
+                      <Input label="Address" name="address" value={addressForm.address} onChange={handleAddressChange} error={addressErrors.address} required />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input label="City" name="city" value={addressForm.city} onChange={handleAddressChange} error={addressErrors.city} required />
+                        <Input label="State/Province" name="state" value={addressForm.state} onChange={handleAddressChange} error={addressErrors.state} required />
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <Input label="ZIP/Postal Code" name="zipCode" value={addressForm.zipCode} onChange={handleAddressChange} error={addressErrors.zipCode} required />
+                        <Input label="Country" name="country" value={addressForm.country} onChange={handleAddressChange} error={addressErrors.country} required />
+                      </div>
+                      <div className="flex items-center">
+                        <input type="checkbox" id="isDefault" name="isDefault" checked={addressForm.isDefault} onChange={handleAddressChange} className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" />
+                        <label htmlFor="isDefault" className="ml-2 text-sm text-slate-700">Set as default address</label>
+                      </div>
+                      <div className="flex space-x-4 pt-4">
+                        {savedAddresses.length > 0 && (<Button variant="outline" onClick={() => setIsAddingNewAddress(false)}>Cancel</Button>)}
+                        <Button onClick={handleSaveAddress}>Save Address</Button>
                       </div>
                     </div>
-                  ))}
-                  <Button variant="outline" onClick={() => setIsAddingNewAddress(true)}>Add New Address</Button>
-                </div>
-              )}
-              {/* Add new address form */}
-              {isAddingNewAddress && (
-                <div className="space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input label="Full Name" name="fullName" value={addressForm.fullName} onChange={handleAddressChange} error={addressErrors.fullName} required />
-                    <Input label="Phone Number" name="phone" value={addressForm.phone} onChange={handleAddressChange} error={addressErrors.phone} />
-                  </div>
-                  <Input label="Address" name="address" value={addressForm.address} onChange={handleAddressChange} error={addressErrors.address} required />
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input label="City" name="city" value={addressForm.city} onChange={handleAddressChange} error={addressErrors.city} required />
-                    <Input label="State/Province" name="state" value={addressForm.state} onChange={handleAddressChange} error={addressErrors.state} required />
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <Input label="ZIP/Postal Code" name="zipCode" value={addressForm.zipCode} onChange={handleAddressChange} error={addressErrors.zipCode} required />
-                    <Input label="Country" name="country" value={addressForm.country} onChange={handleAddressChange} error={addressErrors.country} required />
-                  </div>
-                  <div className="flex items-center">
-                    <input type="checkbox" id="isDefault" name="isDefault" checked={addressForm.isDefault} onChange={handleAddressChange} className="h-4 w-4 text-indigo-600 border-slate-300 rounded focus:ring-indigo-500" />
-                    <label htmlFor="isDefault" className="ml-2 text-sm text-slate-700">Set as default address</label>
-                  </div>
-                  <div className="flex space-x-4 pt-4">
-                    {savedAddresses.length > 0 && (<Button variant="outline" onClick={() => setIsAddingNewAddress(false)}>Cancel</Button>)}
-                    <Button onClick={handleSaveAddress}>Save Address</Button>
-                  </div>
-                </div>
+                  )}
+
+                  {/* Empty state fallback */}
+                  {!isAddingNewAddress && savedAddresses.length === 0 && (
+                    <div className="text-center py-8">
+                      <p className="text-slate-500 mb-4">No shipping addresses found.</p>
+                      <Button onClick={() => setIsAddingNewAddress(true)}>Add Shipping Address</Button>
+                    </div>
+                  )}
+                </>
               )}
             </motion.div>
             {/* Payment method */}
@@ -415,7 +505,7 @@ const Checkout = () => {
                       <p className="text-xs text-slate-500">{item.color && `Color: ${item.color}`}{item.color && item.size && ' | '}{item.size && `Size: ${item.size}`}</p>
                       <div className="flex justify-between mt-1">
                         <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
-                        <div className="text-sm font-medium text-slate-800"><CurrencyPrice price={item.product.price * item.quantity} /></div>
+                        <div className="text-sm font-bold text-slate-900"><CurrencyPrice price={item.product.price * item.quantity} variant="nexus" showDecimals={false} /></div>
                       </div>
                     </div>
                   </div>
@@ -439,8 +529,14 @@ const Checkout = () => {
               </div>
               <div className="border-t border-slate-200 pt-4">
                 <div className="flex justify-between">
-                  <span className="text-lg font-semibold text-slate-800">Total</span>
-                  <span className="text-lg font-semibold text-indigo-700"><CurrencyPrice price={total} /></span>
+                  <span className="text-xl font-bold text-slate-900 uppercase tracking-tighter">Total Valuation</span>
+                  <CurrencyPrice
+                    price={total}
+                    variant="nexus"
+                    size="xl"
+                    weight="bold"
+                    showDecimals={false}
+                  />
                 </div>
                 <div className="mt-6">
                   <Button variant="primary" size="lg" className="w-full" onClick={() => setShowConfirmModal(true)} loading={isProcessingOrder} disabled={isProcessingOrder || !paymentMethod}>Place Order</Button>

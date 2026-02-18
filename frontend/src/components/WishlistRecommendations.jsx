@@ -1,18 +1,28 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import axios from 'axios';
-import Card from './ui/Card';
-import Button from './ui/Button';
-import Badge from './ui/Badge';
-import WishlistIcon from './WishlistIcon';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ShoppingBag,
+  Sparkles,
+  TrendingUp,
+  Tag,
+  Search,
+  Eye,
+  Plus,
+  ArrowLeft
+} from 'lucide-react';
 import { addToCart } from '../store/cartSlice';
 import { toast } from 'react-toastify';
 import CurrencyPrice from './CurrencyPrice';
+import Badge from './ui/Badge';
+import { useNavigate } from 'react-router-dom';
 
 const WishlistRecommendations = ({ wishlistItems = [] }) => {
   const { token, user } = useSelector(state => state.user);
   const isAuthenticated = user && token;
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const [recommendations, setRecommendations] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('similar');
@@ -27,20 +37,20 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
     try {
       setLoading(true);
       const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
-      
-      // Get product IDs from wishlist
+
       const productIds = wishlistItems
         .filter(item => item && item.product && item.product._id)
         .map(item => item.product._id);
+
       if (!productIds.length && selectedCategory !== 'trending' && selectedCategory !== 'price-drop') {
         setRecommendations([]);
         setLoading(false);
         return;
       }
-      
+
       let endpoint = '';
       let params = {};
-      
+
       switch (selectedCategory) {
         case 'similar':
           endpoint = '/api/products/recommendations/similar';
@@ -69,7 +79,6 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
       setRecommendations(response.data.products || []);
     } catch (error) {
       console.error('Error fetching recommendations:', error);
-      // Fallback to general products if recommendation API fails
       try {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3001';
         const response = await axios.get(`${apiUrl}/api/products?limit=8&sortBy=rating&sortOrder=desc`);
@@ -84,14 +93,11 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
 
   const handleAddToCart = (product) => {
     if (!product.inStock) {
-      toast.error('This product is out of stock');
+      toast.error('Inventory depleted');
       return;
     }
-    dispatch(addToCart({
-      product,
-      quantity: 1
-    }));
-    toast.success(`${product.title} added to cart`);
+    dispatch(addToCart({ product, quantity: 1 }));
+    toast.success(`${product.title} archived to cart`);
   };
 
   if (!isAuthenticated || wishlistItems.length === 0) {
@@ -99,159 +105,121 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
   }
 
   const categories = [
-    { id: 'similar', label: 'Similar Products', icon: '🔍' },
-    { id: 'frequently-bought', label: 'Frequently Bought Together', icon: '🛒' },
-    { id: 'trending', label: 'Trending Now', icon: '🔥' },
-    { id: 'price-drop', label: 'Price Drops', icon: '💰' }
+    { id: 'similar', label: 'Similar Assets', icon: <Search className="w-3.5 h-3.5" /> },
+    { id: 'frequently-bought', label: 'Bundled', icon: <ShoppingBag className="w-3.5 h-3.5" /> },
+    { id: 'trending', label: 'Trending', icon: <TrendingUp className="w-3.5 h-3.5" /> },
+    { id: 'price-drop', label: 'Valuation Drop', icon: <Tag className="w-3.5 h-3.5" /> }
   ];
 
   return (
-    <div className="bg-white rounded-lg shadow-card p-6">
-      <div className="flex items-center justify-between mb-6">
-        <h3 className="text-xl font-semibold text-slate-800">Recommended for You</h3>
-        <div className="flex gap-2">
+    <div className="mt-24 space-y-12">
+      <div className="flex flex-col items-center space-y-8">
+        <div className="text-center space-y-3">
+          <div className="flex items-center justify-center gap-2 text-primary-600 font-bold text-[10px] uppercase tracking-[0.2em]">
+            <Sparkles className="w-4 h-4 fill-current" />
+            Intelligence Protocol
+          </div>
+          <h3 className="text-3xl font-bold text-slate-900 font-outfit tracking-tight">Tailored Recommendations</h3>
+        </div>
+
+        <div className="flex flex-wrap items-center justify-center gap-2 bg-slate-50 p-1.5 rounded-2xl border border-slate-100">
           {categories.map(category => (
             <button
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
-              className={`px-3 py-1 rounded-full text-xs font-medium transition-colors ${
-                selectedCategory === category.id
-                  ? 'bg-indigo-500 text-white'
-                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-              }`}
+              className={`flex items-center gap-2.5 px-6 py-2.5 rounded-xl text-[10px] font-bold uppercase tracking-widest transition-all ${selectedCategory === category.id
+                ? 'bg-white text-primary-600 shadow-premium border border-slate-100'
+                : 'text-slate-400 hover:text-slate-600'
+                }`}
             >
-              <span className="mr-1">{category.icon}</span>
+              {category.icon}
               {category.label}
             </button>
           ))}
         </div>
       </div>
 
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {[...Array(4)].map((_, i) => (
-            <div key={i} className="animate-pulse">
-              <div className="bg-slate-200 aspect-square rounded-lg mb-3"></div>
-              <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
-              <div className="h-3 bg-slate-200 rounded w-1/2"></div>
-            </div>
-          ))}
-        </div>
-      ) : recommendations.length === 0 ? (
-        <div className="text-center py-8">
-          <p className="text-slate-500">No recommendations available at the moment.</p>
-        </div>
-      ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {recommendations.slice(0, 8).filter(product => product && product._id).map(product => (
-            <Card key={product._id} hover padding="none" className="relative group">
-              {/* Discount Badge */}
-              {product.discount > 0 && (
-                <div className="absolute top-2 left-2 z-10">
-                  <Badge color="danger" size="sm">
-                    {product.discount}% OFF
-                  </Badge>
-                </div>
-              )}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        {loading ? (
+          [...Array(4)].map((_, i) => (
+            <div key={i} className="aspect-[4/5] bg-slate-50 rounded-[2.5rem] animate-pulse" />
+          ))
+        ) : recommendations.length === 0 ? (
+          <div className="col-span-full py-20 text-center">
+            <p className="text-slate-400 font-medium font-outfit">Recalibrating intelligence matrix...</p>
+          </div>
+        ) : (
+          <AnimatePresence mode="popLayout">
+            {recommendations.slice(0, 4).map((product, index) => (
+              <motion.div
+                key={product._id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.1 }}
+                className="group relative bg-white rounded-[2.5rem] border border-slate-100 overflow-hidden hover:shadow-premium-lg transition-all duration-500"
+              >
+                <div className="relative aspect-[4/5] bg-slate-50 overflow-hidden">
+                  <img
+                    src={product.images?.[0]?.url || 'https://placehold.co/600x800?text=Nexus+Asset'}
+                    alt={product.title}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
-              {/* Wishlist Icon */}
-              <div className="absolute top-2 right-2 z-10">
-                <div className="bg-white/90 p-1 rounded-full shadow-sm">
-                  <WishlistIcon product={product} size="sm" />
-                </div>
-              </div>
-
-              {/* Product Image */}
-              <div className="aspect-square overflow-hidden rounded-t-xl">
-                <img
-                  src={product.images?.[0]?.url || 'https://placehold.co/300x300?text=No+Image'}
-                  alt={product.title}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                  onError={e => { e.target.src = 'https://placehold.co/300x300?text=No+Image'; }}
-                />
-              </div>
-
-              {/* Product Info */}
-              <div className="p-3">
-                <h4 className="text-sm font-semibold text-slate-900 line-clamp-2 mb-1">
-                  {product.title}
-                </h4>
-                
-                <div className="flex items-center justify-between mb-2">
-                  <div className="flex items-center gap-1">
-                    {[...Array(5)].map((_, i) => (
-                      <svg
-                        key={i}
-                        className={`w-3 h-3 ${
-                          i < (product.rating || 0) ? 'text-yellow-400 fill-current' : 'text-slate-300'
-                        }`}
-                        viewBox="0 0 24 24"
-                      >
-                        <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                      </svg>
-                    ))}
-                    <span className="text-xs text-slate-500 ml-1">
-                      ({product.reviews?.length || 0})
-                    </span>
+                  {/* Action Overlays */}
+                  <div className="absolute top-4 right-4 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-500">
+                    <button
+                      onClick={() => navigate(`/products/${product._id}`)}
+                      className="w-9 h-9 bg-white/90 backdrop-blur-md rounded-xl shadow-premium flex items-center justify-center text-slate-400 hover:text-primary-600 transition-all"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </button>
                   </div>
-                  
-                  {!product.inStock && (
-                    <Badge color="danger" size="xs">
-                      Out of Stock
-                    </Badge>
+
+                  {product.discount > 0 && (
+                    <div className="absolute top-4 left-4">
+                      <Badge className="bg-rose-500/90 backdrop-blur-md text-white border-none py-1 px-2.5 text-[8px] font-bold">-{product.discount}% VAL</Badge>
+                    </div>
                   )}
                 </div>
 
-                <div className="flex items-center justify-between mb-3">
-                  <div>
-                    {product.discount > 0 ? (
-                      <div className="flex items-center gap-1">
-                        <span className="text-sm font-semibold text-indigo-600">
-                          <CurrencyPrice price={product.price * (1 - product.discount / 100)} />
-                        </span>
-                        <span className="text-xs text-slate-400 line-through">
-                          <CurrencyPrice price={product.price} />
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="text-sm font-semibold text-indigo-600">
-                        <CurrencyPrice price={product.price} />
-                      </span>
-                    )}
+                <div className="p-6 space-y-4">
+                  <div className="space-y-1.5">
+                    <h4 className="text-base font-bold text-slate-800 font-outfit line-clamp-1 group-hover:text-primary-600 transition-colors">
+                      {product.title}
+                    </h4>
+                    <CurrencyPrice
+                      price={product.price}
+                      variant="nexus"
+                      weight="bold"
+                      showDecimals={false}
+                    />
                   </div>
-                </div>
 
-                <div className="flex gap-1">
-                  <Button
-                    size="xs"
-                    variant="primary"
-                    fullWidth
+                  <button
                     onClick={() => handleAddToCart(product)}
                     disabled={!product.inStock}
-                    className="flex items-center justify-center gap-1"
+                    className="w-full h-10 bg-slate-950 text-white rounded-lg text-[9px] font-bold uppercase tracking-widest hover:bg-primary-600 transition-all flex items-center justify-center gap-2"
                   >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                    </svg>
-                    {product.inStock ? 'Add' : 'Unavailable'}
-                  </Button>
-                  <Button
-                    size="xs"
-                    variant="outline"
-                    onClick={() => window.location.href = `/products/${product._id}`}
-                    className="px-2"
-                  >
-                    <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
-                    </svg>
-                  </Button>
+                    <Plus className="w-3 h-3" />
+                    Archive
+                  </button>
                 </div>
-              </div>
-            </Card>
-          ))}
-        </div>
-      )}
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        )}
+      </div>
+
+      <div className="pt-12 text-center">
+        <button
+          onClick={() => navigate('/products')}
+          className="text-[10px] font-bold text-slate-400 uppercase tracking-[0.2em] hover:text-primary-600 transition-all flex items-center justify-center gap-3 mx-auto group"
+        >
+          Explore All Archives
+          <ArrowLeft className="w-3.5 h-3.5 rotate-180 group-hover:translate-x-1 transition-transform" />
+        </button>
+      </div>
     </div>
   );
 };

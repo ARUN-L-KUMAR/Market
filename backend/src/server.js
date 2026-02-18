@@ -1,8 +1,8 @@
+require('dotenv').config();
 const http = require('http');
 const app = require('./app');
 const { initSocket } = require('./utils/socket');
 const mongoose = require('mongoose');
-require('dotenv').config();
 
 // Print diagnostic info (masking secrets)
 console.log('\n--- Environment Diagnostics ---');

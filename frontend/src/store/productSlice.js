@@ -16,10 +16,15 @@ export const fetchProducts = createAsyncThunk(
       if (params.search) queryParams.append('search', params.search);
       if (params.sortBy) queryParams.append('sortBy', params.sortBy);
       if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
-      
+      if (params.minRating) queryParams.append('minRating', params.minRating);
+      if (params.onSale) queryParams.append('onSale', params.onSale);
+
       const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
       const response = await axios.get(`${apiUrl}/api/products?${queryParams.toString()}`);
-      return response.data;
+      return {
+        ...response.data,
+        isLoadMore: params.isLoadMore || false
+      };
     } catch (error) {
       return rejectWithValue(error.response?.data?.message || 'Failed to fetch products');
     }
@@ -39,7 +44,8 @@ const productSlice = createSlice({
       maxPrice: '',
       search: '',
       sortBy: 'createdAt',
-      sortOrder: 'desc'
+      sortOrder: 'desc',
+      quickFilter: 'primary'
     }
   },
   reducers: {
@@ -53,7 +59,8 @@ const productSlice = createSlice({
         maxPrice: '',
         search: '',
         sortBy: 'createdAt',
-        sortOrder: 'desc'
+        sortOrder: 'desc',
+        quickFilter: 'primary'
       };
     }
   },
@@ -65,8 +72,20 @@ const productSlice = createSlice({
       })
       .addCase(fetchProducts.fulfilled, (state, action) => {
         state.loading = false;
-        state.products = action.payload.products;
-        state.totalProducts = action.payload.totalCount;
+        const products = action.payload?.products || [];
+        const total = action.payload?.total || 0;
+
+        if (action.payload?.isLoadMore) {
+          // Append products for infinite scroll
+          const newProducts = products.filter(
+            newP => !state.products.some(oldP => oldP._id === newP._id)
+          );
+          state.products = [...state.products, ...newProducts];
+        } else {
+          // Replace products for new search/filter
+          state.products = products;
+        }
+        state.totalProducts = total;
       })
       .addCase(fetchProducts.rejected, (state, action) => {
         state.loading = false;

@@ -11,7 +11,7 @@ const OrderDetails = () => {
   const { id } = useParams();
   const { token } = useSelector(state => state.user);
   const navigate = useNavigate();
-  
+
   const [order, setOrder] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +46,7 @@ const OrderDetails = () => {
         headers: { Authorization: `Bearer ${token}` },
         responseType: 'blob'
       });
-      
+
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -57,7 +57,7 @@ const OrderDetails = () => {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading invoice:', error);
-      const event = new CustomEvent('show-toast', { 
+      const event = new CustomEvent('show-toast', {
         detail: { message: 'Failed to download invoice', type: 'error' }
       });
       window.dispatchEvent(event);
@@ -130,8 +130,8 @@ const OrderDetails = () => {
     <div className="container mx-auto px-4 py-12 max-w-7xl">
       {/* Header */}
       <div className="mb-8">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           onClick={() => navigate('/orders')}
           className="mb-4"
         >
@@ -167,19 +167,17 @@ const OrderDetails = () => {
               <div className="space-y-6">
                 {trackingSteps.map((step, index) => (
                   <div key={step.key} className="flex items-center">
-                    <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${
-                      step.completed 
-                        ? 'bg-emerald-100 text-emerald-700' 
-                        : step.active 
-                        ? 'bg-indigo-100 text-indigo-700' 
-                        : 'bg-slate-100 text-slate-400'
-                    }`}>
+                    <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${step.completed
+                        ? 'bg-emerald-100 text-emerald-700'
+                        : step.active
+                          ? 'bg-indigo-100 text-indigo-700'
+                          : 'bg-slate-100 text-slate-400'
+                      }`}>
                       {step.completed ? '✓' : step.icon}
                     </div>
                     <div className="ml-4 flex-1">
-                      <p className={`text-sm font-medium ${
-                        step.completed || step.active ? 'text-slate-900' : 'text-slate-400'
-                      }`}>
+                      <p className={`text-sm font-medium ${step.completed || step.active ? 'text-slate-900' : 'text-slate-400'
+                        }`}>
                         {step.label}
                       </p>
                       {step.active && (
@@ -187,9 +185,8 @@ const OrderDetails = () => {
                       )}
                     </div>
                     {index < trackingSteps.length - 1 && (
-                      <div className={`absolute left-5 mt-10 w-0.5 h-6 ${
-                        step.completed ? 'bg-green-300' : 'bg-slate-200'
-                      }`} />
+                      <div className={`absolute left-5 mt-10 w-0.5 h-6 ${step.completed ? 'bg-green-300' : 'bg-slate-200'
+                        }`} />
                     )}
                   </div>
                 ))}
@@ -225,9 +222,12 @@ const OrderDetails = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="font-semibold text-slate-800">
-                      <CurrencyPrice price={item.quantity * item.price} />
-                    </p>
+                    <CurrencyPrice
+                      price={item.quantity * item.price}
+                      variant="nexus"
+                      weight="bold"
+                      showDecimals={false}
+                    />
                   </div>
                 </div>
               ))}
@@ -242,21 +242,27 @@ const OrderDetails = () => {
             <h2 className="text-xl font-semibold mb-4">Order Summary</h2>
             <div className="space-y-3">
               <div className="flex justify-between">
-                <span className="text-slate-600">Subtotal</span>
-                <span>₹{order.subtotal?.toFixed(2) || '0.00'}</span>
+                <span className="text-slate-600 font-medium">Subtotal</span>
+                <CurrencyPrice price={order.subtotal || 0} weight="semibold" variant="nexus" />
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">Tax</span>
-                <span>₹{order.tax?.toFixed(2) || '0.00'}</span>
+                <span className="text-slate-600 font-medium">Protocol Tax</span>
+                <CurrencyPrice price={order.tax || 0} weight="semibold" variant="nexus" />
               </div>
               <div className="flex justify-between">
-                <span className="text-slate-600">Shipping</span>
-                <span>₹{order.shipping?.toFixed(2) || '0.00'}</span>
+                <span className="text-slate-600 font-medium">Shipping Tier</span>
+                <CurrencyPrice price={order.shipping || 0} weight="semibold" variant="nexus" />
               </div>
               <div className="border-t border-slate-200 pt-3">
                 <div className="flex justify-between text-lg font-semibold">
-                  <span>Total</span>
-                  <span className="text-indigo-700">₹{order.total?.toFixed(2) || '0.00'}</span>
+                  <span className="font-bold text-slate-900">Total Valuation</span>
+                  <CurrencyPrice
+                    price={order.total || 0}
+                    variant="nexus"
+                    size="xl"
+                    weight="bold"
+                    showDecimals={false}
+                  />
                 </div>
               </div>
             </div>
@@ -299,9 +305,9 @@ const OrderDetails = () => {
             <p className="text-sm text-indigo-700 mb-4">
               If you have questions about your order, our customer support team is here to help.
             </p>
-            <Button 
-              variant="outline" 
-              size="sm" 
+            <Button
+              variant="outline"
+              size="sm"
               onClick={() => navigate('/contact')}
               className="w-full"
             >

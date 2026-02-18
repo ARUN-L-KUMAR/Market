@@ -3,8 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { fetchProducts } from '../store/productSlice';
 import { addToCart } from '../store/cartSlice';
 import socket from '../utils/socket';
-import { productsAPI } from '../services/api';
-import { API_CONFIG } from '../config/appConfig';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+  ShoppingBag,
+  Heart,
+  Eye,
+  Star,
+  AlertCircle,
+  Search,
+  Zap,
+  ZapOff,
+  CheckCircle2,
+  ArrowRight
+} from 'lucide-react';
 import Card from './ui/Card';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
@@ -13,24 +24,17 @@ import { toast } from 'react-toastify';
 import CurrencyPrice from './CurrencyPrice';
 
 const ProductSkeleton = () => (
-  <div className="animate-pulse">
-    <div className="h-48 bg-slate-200 rounded-t-xl mb-4"></div>
-    <div className="px-4 pb-4">
-      <div className="h-4 bg-slate-200 rounded w-3/4 mb-2"></div>
-      <div className="h-4 bg-slate-200 rounded w-1/2 mb-4"></div>
-      <div className="h-3 bg-slate-200 rounded w-full mb-2"></div>
-      <div className="h-3 bg-slate-200 rounded w-full mb-4"></div>
-      <div className="h-5 bg-slate-200 rounded w-1/4 mb-4"></div>
-      <div className="flex gap-2">
-        <div className="h-8 bg-slate-200 rounded w-full"></div>
-        <div className="h-8 bg-slate-200 rounded w-12"></div>
-      </div>
+  <div className="space-y-6">
+    <div className="aspect-[4/5] bg-slate-100 rounded-[2.5rem] animate-pulse" />
+    <div className="space-y-3 px-4">
+      <div className="h-4 bg-slate-100 rounded-full w-2/3 animate-pulse" />
+      <div className="h-3 bg-slate-100 rounded-full w-1/3 animate-pulse" />
     </div>
   </div>
 );
 
-const ProductList = ({ 
-  category = 'all', 
+const ProductList = ({
+  category = 'all',
   searchQuery = '',
   sortBy = 'newest',
   priceRange = { min: '', max: '' }
@@ -38,6 +42,9 @@ const ProductList = ({
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { products, loading, error } = useSelector(state => state.products);
+  const { user } = useSelector(state => state.user);
+
+  const [addingId, setAddingId] = useState(null);
   const [filteredProducts, setFilteredProducts] = useState([]);
 
   const loadProducts = useCallback(async () => {
@@ -48,14 +55,12 @@ const ProductList = ({
         sortBy: sortBy === 'newest' ? 'createdAt' : sortBy,
         sortOrder: sortBy === 'newest' ? 'desc' : 'asc'
       };
-      
-      // Add price range filters
+
       if (priceRange.min) params.minPrice = priceRange.min;
       if (priceRange.max) params.maxPrice = priceRange.max;
-      
-      // Remove undefined values
+
       Object.keys(params).forEach(key => params[key] === undefined && delete params[key]);
-      
+
       dispatch(fetchProducts(params));
     } catch (err) {
       console.error('Error fetching products:', err);
@@ -65,50 +70,40 @@ const ProductList = ({
   useEffect(() => {
     loadProducts();
   }, [loadProducts]);
-  
-  // Debounce function for socket events to prevent excessive API calls
+
   const [shouldRefresh, setShouldRefresh] = useState(false);
-  
-  // Setup socket listeners separately with an empty dependency array
-  // so they're only established once
+
   useEffect(() => {
-    // Instead of directly calling fetchProducts, set a refresh flag
     const handleProductChange = () => setShouldRefresh(true);
-    
-    // Listen for real-time product updates
     socket.on('productCreated', handleProductChange);
     socket.on('productUpdated', handleProductChange);
     socket.on('productDeleted', handleProductChange);
-    
+
     return () => {
       socket.off('productCreated', handleProductChange);
       socket.off('productUpdated', handleProductChange);
       socket.off('productDeleted', handleProductChange);
     };
   }, []);
-  
-  // Handle the refresh flag with a 2 second debounce
+
   useEffect(() => {
     if (shouldRefresh) {
       const timer = setTimeout(() => {
         loadProducts();
         setShouldRefresh(false);
       }, 2000);
-      
       return () => clearTimeout(timer);
     }
   }, [shouldRefresh, loadProducts]);
 
-  // Apply client-side sorting
   useEffect(() => {
-    if (!products?.length) return;
-
-    console.log('Products received:', products);
-    console.log('First product images:', products[0]?.images);
+    if (!products?.length) {
+      setFilteredProducts([]);
+      return;
+    }
 
     let sorted = [...products];
-    
-    switch(sortBy) {
+    switch (sortBy) {
       case 'newest':
         sorted = sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         break;
@@ -130,139 +125,173 @@ const ProductList = ({
       default:
         break;
     }
-    
     setFilteredProducts(sorted);
   }, [products, sortBy]);
 
-  const handleViewDetails = (productId) => {
-    navigate(`/products/${productId}`);
-  };
-
-  const handleAddToCart = (product) => {
+  const handleAddToCart = (e, product) => {
+    e.stopPropagation();
     if (!product.inStock || product.stock <= 0) {
-      toast.error('This product is out of stock');
+      toast.error('Asset currently unavailable in local nodes');
       return;
     }
-    dispatch(addToCart({
-      product,
-      quantity: 1
-    }));
-    toast.success(`${product.title} added to cart`);
+    if (!user) {
+      toast.warning('Authentication required for collection');
+      navigate('/login');
+      return;
+    }
+
+    setAddingId(product._id);
+    dispatch(addToCart({ product, quantity: 1 }));
+
+    setTimeout(() => {
+      setAddingId(null);
+      toast.success(`${product.title} archived in cart`, {
+        icon: <ShoppingBag className="text-emerald-500 w-5 h-5" />
+      });
+    }, 600);
   };
 
-  // Render loading skeletons
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: { staggerChildren: 0.1 }
+    }
+  };
+
+  const item = {
+    hidden: { opacity: 0, y: 30 },
+    show: { opacity: 1, y: 0, transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] } }
+  };
+
   if (loading) return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {[...Array(8)].map((_, i) => (
-        <Card key={i} hover={false} padding="none" className="flex flex-col h-full">
-          <ProductSkeleton />
-        </Card>
+        <ProductSkeleton key={i} />
       ))}
     </div>
   );
 
-  // Render error state
   if (error) return (
-    <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md my-4">
-      <div className="flex">
-        <div className="flex-shrink-0">
-          <svg className="h-5 w-5 text-red-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-          </svg>
-        </div>
-        <div className="ml-3">
-          <p className="text-red-700">{error}</p>
-          <p className="mt-2 text-sm text-red-600">Please try again later or contact support if the problem persists.</p>
-        </div>
+    <div className="flex flex-col items-center justify-center py-20 px-4 text-center space-y-6 bg-slate-50 rounded-[3rem] border border-slate-100 border-dashed">
+      <div className="p-6 bg-rose-50 rounded-full">
+        <AlertCircle className="w-12 h-12 text-rose-500" />
       </div>
+      <div className="space-y-2">
+        <h3 className="text-xl font-black text-slate-950 font-outfit uppercase tracking-tight">System Interruption</h3>
+        <p className="text-sm font-medium text-slate-500 max-w-xs mx-auto uppercase tracking-widest leading-relaxed">
+          Error code: {error}. The procurement node is currently unreachable.
+        </p>
+      </div>
+      <Button onClick={() => loadProducts()} variant="primary" className="rounded-2xl px-8 bg-slate-950 font-black uppercase tracking-widest text-xs">
+        Reset Connection
+      </Button>
     </div>
   );
 
-  // Render empty state
-  if (!filteredProducts || filteredProducts.length === 0) return (
-    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-md">
-      <div className="flex">
-        <div className="flex-shrink-0">
-          <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
-            <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-          </svg>
+  if (filteredProducts.length === 0) return (
+    <div className="flex flex-col items-center justify-center py-32 px-4 text-center space-y-8 bg-white rounded-[3rem] shadow-premium">
+      <div className="relative">
+        <div className="p-10 bg-slate-50 rounded-full">
+          <Search className="w-16 h-16 text-slate-200" />
         </div>
-        <div className="ml-3">
-          <p className="text-amber-700">No products available</p>
-          <p className="mt-2 text-sm text-amber-600">Try adjusting your filters or check back later.</p>
+        <div className="absolute -top-2 -right-2 p-3 bg-slate-950 rounded-2xl shadow-xl">
+          <Zap className="w-5 h-5 text-primary-500" />
         </div>
       </div>
+      <div className="space-y-3">
+        <h3 className="text-2xl font-black text-slate-950 font-outfit uppercase tracking-tighter">Zero Match Found</h3>
+        <p className="text-sm font-medium text-slate-500 max-w-sm mx-auto uppercase tracking-widest leading-relaxed">
+          No assets matched your current search parameters. Broaden your search or check again later.
+        </p>
+      </div>
+      <Button onClick={() => window.location.reload()} variant="outline" className="rounded-2xl border-slate-200 font-black uppercase tracking-widest text-xs px-10">
+        Clear Parameters
+      </Button>
     </div>
   );
 
-  // Render product grid
   return (
-    <div className="space-y-6">
-      {/* Products grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        {filteredProducts.map(product => (
-          <Card 
-            key={product._id} 
-            hover={true}
-            padding="none"
-            className="flex flex-col h-full"
-          >
-            <Card.Image 
-              src={product.images && product.images[0] ? product.images[0].url : 'https://placehold.co/400x300?text=No+Image'} 
-              alt={product.title} 
-              aspect="aspect-[4/3]"
-              onError={(e) => {
-                console.error('Image failed to load:', e.target.src);
-                e.target.src = 'https://placehold.co/400x300?text=No+Image';
-              }}
+    <motion.div
+      variants={container}
+      initial="hidden"
+      animate="show"
+      className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8"
+    >
+      {filteredProducts.map(product => (
+        <motion.div
+          key={product._id}
+          variants={item}
+          className="group relative cursor-pointer"
+          onClick={() => navigate(`/products/${product._id}`)}
+        >
+          {/* Action Hub */}
+          <div className="absolute top-6 right-6 z-20 flex flex-col gap-2 opacity-0 group-hover:opacity-100 translate-x-4 group-hover:translate-x-0 transition-all duration-300">
+            <button className="p-3 bg-white/90 backdrop-blur-xl border border-white rounded-2xl shadow-xl text-slate-400 hover:text-rose-500 hover:scale-110 transition-all" onClick={(e) => e.stopPropagation()}>
+              <Heart className="w-5 h-5" />
+            </button>
+            <button className="p-3 bg-white/90 backdrop-blur-xl border border-white rounded-2xl shadow-xl text-slate-400 hover:text-primary-600 hover:scale-110 transition-all" onClick={(e) => e.stopPropagation()}>
+              <Eye className="w-5 h-5" />
+            </button>
+          </div>
+
+          {/* Visual Container */}
+          <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-slate-50 shadow-premium border border-slate-100 transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">
+            <img
+              src={product.images && product.images[0] ? product.images[0].url : 'https://placehold.co/400x500?text=No+Image'}
+              alt={product.title}
+              className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />
-            <div className="p-4 flex-1 flex flex-col">
-              <div className="flex justify-between items-start mb-2">
-                <Card.Title>{product.title}</Card.Title>
-                {product.inStock ? (
-                  <Badge variant="success" size="sm">In Stock</Badge>
-                ) : (
-                  <Badge variant="danger" size="sm">Out of Stock</Badge>
-                )}
+            <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+            {product.stock <= 5 && product.stock > 0 && (
+              <div className="absolute bottom-6 left-6 right-6">
+                <div className="px-4 py-2 bg-rose-500 text-white text-[9px] font-black uppercase tracking-widest rounded-xl shadow-lg flex items-center gap-2">
+                  <ZapOff className="w-3 h-3" /> Critical Stock: {product.stock} Left
+                </div>
               </div>
-              <div className="text-sm text-slate-600 mb-2 flex-1">
-                {product.description ? (
-                  <p className="line-clamp-2">{product.description}</p>
-                ) : (
-                  <p className="italic text-slate-400">No description available</p>
-                )}
+            )}
+          </div>
+
+          {/* Meta Data */}
+          <div className="mt-8 px-2 space-y-4">
+            <div className="flex justify-between items-start">
+              <div className="space-y-1">
+                <span className="text-[10px] font-black text-primary-600 uppercase tracking-widest">{product.category && (typeof product.category === 'object' ? product.category.name : product.category)}</span>
+                <h3 className="text-xl font-black text-slate-950 font-outfit uppercase tracking-tighter leading-none group-hover:text-primary-600 transition-colors line-clamp-1">{product.title}</h3>
               </div>
-              <div className="mt-2 flex items-baseline justify-between">
-                <CurrencyPrice price={product.price} className="text-lg font-semibold text-indigo-600" />
-                {product.oldPrice && (
-                  <CurrencyPrice price={product.oldPrice} className="text-sm text-slate-400 line-through" />
-                )}
-              </div>
-              <div className="mt-4 flex space-x-2">
-                <Button
-                  variant="primary"
-                  fullWidth
-                  onClick={() => handleViewDetails(product._id)}
-                >
-                  View Details
-                </Button>
-                <Button
-                  variant="outline"
-                  className="flex-shrink-0"
-                  onClick={() => handleAddToCart(product)}
-                  disabled={!product.inStock || product.stock <= 0}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
-                  </svg>
-                </Button>
+              <div className="flex flex-col items-end">
+                <CurrencyPrice
+                  price={product.price}
+                  variant="nexus"
+                  size="xl"
+                  weight="extrabold"
+                  showDecimals={false}
+                  className="font-outfit tracking-tighter"
+                />
+                <div className="flex items-center gap-1">
+                  <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
+                  <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">4.8</span>
+                </div>
               </div>
             </div>
-          </Card>
-        ))}
-      </div>
-    </div>
+
+            <Button
+              onClick={(e) => handleAddToCart(e, product)}
+              loading={addingId === product._id}
+              className={`w-full h-14 rounded-[1.5rem] font-black uppercase tracking-widest text-[11px] font-outfit transition-all duration-300 ${addingId === product._id
+                ? 'bg-emerald-500 text-white'
+                : 'bg-slate-950 text-white group-hover:bg-primary-600 group-hover:shadow-xl group-hover:shadow-primary-600/20'
+                }`}
+            >
+              {addingId === product._id ? 'Archiving...' : 'Add to Collection'}
+            </Button>
+          </div>
+        </motion.div>
+      ))}
+    </motion.div>
   );
 };
+
 
 export default ProductList;

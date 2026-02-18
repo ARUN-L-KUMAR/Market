@@ -92,7 +92,7 @@ const validateCreateOrder = [
         .notEmpty().withMessage('Shipping address is required'),
     body('paymentMethod')
         .notEmpty().withMessage('Payment method is required')
-        .isIn(['cod', 'online', 'payu']).withMessage('Invalid payment method'),
+        .isIn(['cod', 'online', 'payu', 'cash_on_delivery']).withMessage('Invalid payment method'),
     handleValidationErrors
 ];
 

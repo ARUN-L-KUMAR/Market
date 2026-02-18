@@ -16,7 +16,7 @@ function App() {
   const { user, token } = useSelector(state => state.user);
   const dispatch = useDispatch();
   const location = useLocation();
-  
+
   // Check if current route is admin
   const isAdminRoute = location.pathname.startsWith('/admin');
 
@@ -36,25 +36,25 @@ function App() {
   useEffect(() => {
     const onConnect = () => setIsConnected(true);
     const onDisconnect = () => setIsConnected(false);
-    
+
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
-    
+
     return () => {
       socket.off('connect', onConnect);
       socket.off('disconnect', onDisconnect);
     };
   }, []);
-  
+
   // Also monitor test socket connection
   useEffect(() => {
     const onTestConnect = () => {
       console.log('✅ Test socket connection successful!');
       setIsConnected(true);
     };
-    
+
     testSocket.on('connect', onTestConnect);
-    
+
     return () => {
       testSocket.off('connect', onTestConnect);
     };
@@ -64,8 +64,8 @@ function App() {
     <div className="min-h-screen bg-slate-50 font-sans">
       {!isAdminRoute && <Navbar isConnected={isConnected} />}
       <Outlet />
-      {!isAdminRoute && <Footer />}
-      <ToastContainer 
+      {!isAdminRoute && location.pathname !== '/products' && <Footer />}
+      <ToastContainer
         position="top-right"
         autoClose={3000}
         hideProgressBar={false}

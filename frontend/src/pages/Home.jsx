@@ -15,536 +15,365 @@ import {
   Award,
   Globe,
   Clock,
-  CheckCircle
+  CheckCircle,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  Sparkles,
+  Layers,
+  ZapOff,
+  Cpu,
+  Activity
 } from 'lucide-react';
 import RealTimeStock from '../components/RealTimeStock';
 import ProductList from '../components/ProductList';
 import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
 
 const Home = () => {
   const navigate = useNavigate();
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [hoveredCard, setHoveredCard] = useState(null);
 
   const heroSlides = [
     {
-      title: "Premium Collection 2024",
-      subtitle: "Discover the latest trends",
-      description: "Explore our curated selection of premium products with unbeatable quality and style.",
-      image: "🏆"
+      title: "The Nexus Evolution",
+      highlight: "Excellence",
+      subtitle: "Tier-1 Procurement",
+      description: "Harness the power of global logistics and certified authenticity. Curated for those who define the standard.",
+      image: "https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&q=80&w=1200",
+      accent: "from-primary-600 to-indigo-600",
+      stats: { label: "System Latency", value: "< 12ms" }
     },
     {
-      title: "Flash Sale Today",
-      subtitle: "Up to 70% Off",
-      description: "Limited time offers on your favorite brands. Don't miss out on these incredible deals!",
-      image: "⚡"
+      title: "Quantum Technology",
+      highlight: "Innovation",
+      subtitle: "Next-Gen Protocol",
+      description: "Architecting the future of consumer tech. Experience performance that transcends boundaries.",
+      image: "https://images.unsplash.com/photo-1519389950473-47ba0277781c?auto=format&fit=crop&q=80&w=1200",
+      accent: "from-emerald-600 to-teal-600",
+      stats: { label: "Active Nodes", value: "1,204" }
     },
     {
-      title: "Global Shipping",
-      subtitle: "Worldwide delivery",
-      description: "Fast, secure, and reliable shipping to over 150 countries. Your order, delivered with care.",
-      image: "🌍"
+      title: "Global Distribution",
+      highlight: "Reach",
+      subtitle: "Synchronized Logistics",
+      description: "A seamless worldwide network ensuring your flagship orders arrive with mathematical precision.",
+      image: "https://images.unsplash.com/photo-1580674285054-bed31e145f59?auto=format&fit=crop&q=80&w=1200",
+      accent: "from-slate-700 to-slate-900",
+      stats: { label: "Uptime Status", value: "99.98%" }
     }
   ];
 
-  const features = [
+  const categories = [
     {
-      icon: <Zap className="w-8 h-8" />,
-      title: "Lightning Fast",
-      description: "Real-time inventory updates and instant order processing",
-      color: "text-amber-600",
-      bg: "bg-amber-50",
-      border: "border-amber-200"
+      name: 'Hardware',
+      items: '2.4k Items',
+      color: 'bg-primary-500',
+      size: 'lg',
+      icon: <Cpu className="w-8 h-8" />,
+      image: 'https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&q=80&w=1200'
     },
     {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Secure & Safe",
-      description: "Bank-level security for all your transactions and data",
-      color: "text-emerald-600",
-      bg: "bg-emerald-50",
-      border: "border-emerald-200"
+      name: 'Wearables',
+      items: '840 Items',
+      color: 'bg-rose-500',
+      size: 'sm',
+      icon: <Activity className="w-5 h-5" />,
+      image: 'https://images.unsplash.com/photo-1544117518-30df578096a4?auto=format&fit=crop&q=80&w=800'
     },
     {
-      icon: <Truck className="w-8 h-8" />,
-      title: "Free Shipping",
-      description: "Complimentary shipping on orders over ₹4000 worldwide",
-      color: "text-sky-600",
-      bg: "bg-sky-50",
-      border: "border-sky-200"
+      name: 'Systems',
+      items: '1.1k Items',
+      color: 'bg-emerald-500',
+      size: 'sm',
+      icon: <Layers className="w-5 h-5" />,
+      image: 'https://images.unsplash.com/photo-1603302576837-37561b2e2302?auto=format&fit=crop&q=80&w=800'
     },
     {
-      icon: <Award className="w-8 h-8" />,
-      title: "Best Quality",
-      description: "Premium products with lifetime warranty and support",
-      color: "text-slate-600",
-      bg: "bg-slate-50",
-      border: "border-slate-200"
-    }
-  ];
-
-  const stats = [
-    { label: "Happy Customers", value: "50K+", icon: <Users className="w-6 h-6" /> },
-    { label: "Products Sold", value: "2M+", icon: <ShoppingBag className="w-6 h-6" /> },
-    { label: "Countries Served", value: "150+", icon: <Globe className="w-6 h-6" /> },
-    { label: "Success Rate", value: "99.9%", icon: <TrendingUp className="w-6 h-6" /> }
-  ];
-
-  const testimonials = [
-    {
-      name: "Sarah Johnson",
-      role: "Fashion Designer",
-      comment: "Amazing quality and lightning-fast delivery! Best shopping experience ever.",
-      rating: 5,
-      avatar: "SJ"
-    },
-    {
-      name: "Mike Chen",
-      role: "Tech Entrepreneur",
-      comment: "The real-time inventory system is incredible. Never had stock issues!",
-      rating: 5,
-      avatar: "MC"
-    },
-    {
-      name: "Emma Davis",
-      role: "Interior Designer",
-      comment: "Premium products at competitive prices. My go-to marketplace!",
-      rating: 5,
-      avatar: "ED"
+      name: 'Peripherals',
+      items: '3k Items',
+      color: 'bg-indigo-500',
+      size: 'md',
+      icon: <ShoppingBag className="w-6 h-6" />,
+      image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?auto=format&fit=crop&q=80&w=1200'
     }
   ];
 
   useEffect(() => {
     const timer = setInterval(() => {
       setCurrentSlide((prev) => (prev + 1) % heroSlides.length);
-    }, 5000);
+    }, 8000);
     return () => clearInterval(timer);
   }, []);
 
   return (
     <div className="min-h-screen bg-white">
-      {/* Hero Section */}
-      <section className="relative overflow-hidden">
-        <div className="container mx-auto px-4 py-16 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-            {/* Hero Content */}
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8 }}
-              className="space-y-8"
-            >
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6 }}
-                className="space-y-6"
-              >
+      {/* Nexus Hero Section */}
+      <section className="relative h-screen flex items-center overflow-hidden bg-slate-950 pt-20">
+        <div className="absolute inset-0 opacity-40">
+          <div className="absolute top-0 right-0 w-[800px] h-[800px] bg-primary-600/20 blur-[150px] rounded-full -translate-y-1/2 translate-x-1/4" />
+          <div className="absolute bottom-0 left-0 w-[600px] h-[600px] bg-indigo-600/10 blur-[120px] rounded-full translate-y-1/2 -translate-x-1/4" />
+        </div>
+
+        <div className="container mx-auto px-6 max-w-7xl relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-20 items-center">
+
+            {/* Intel Context */}
+            <div className="lg:col-span-7 space-y-12">
+              <AnimatePresence mode="wait">
                 <motion.div
-                  initial={{ scale: 0 }}
-                  animate={{ scale: 1 }}
-                  transition={{ delay: 0.2, type: "spring" }}
-                  className="inline-flex items-center px-4 py-2 bg-indigo-50 rounded-full text-indigo-700 font-medium"
+                  key={currentSlide}
+                  initial={{ opacity: 0, y: 30 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -30 }}
+                  transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                  className="space-y-8"
                 >
-                  <Star className="w-4 h-4 mr-2" />
-                  {heroSlides[currentSlide].subtitle}
-                </motion.div>
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-px bg-primary-500" />
+                    <span className="text-[10px] font-black uppercase tracking-[0.4em] text-primary-400">
+                      {heroSlides[currentSlide].subtitle}
+                    </span>
+                  </div>
 
-                <h1 className="text-5xl lg:text-7xl font-black leading-tight text-slate-900">
-                  {heroSlides[currentSlide].title}
-                </h1>
+                  <h1 className="text-7xl lg:text-[100px] font-black leading-[0.9] text-white tracking-tighter font-outfit">
+                    {heroSlides[currentSlide].title.split(' ').map((word, i) => (
+                      <span key={i} className="block last:text-primary-500 last:premium-gradient-text">
+                        {word}
+                      </span>
+                    ))}
+                  </h1>
 
-                <p className="text-xl text-slate-500 leading-relaxed max-w-lg">
-                  {heroSlides[currentSlide].description}
-                </p>
+                  <p className="text-xl text-slate-400 leading-relaxed max-w-xl font-medium">
+                    {heroSlides[currentSlide].description}
+                  </p>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                  >
-                    <Button
+                  <div className="flex flex-wrap gap-6 pt-6">
+                    <button
                       onClick={() => navigate('/products')}
-                      className="bg-indigo-600 hover:bg-indigo-700 text-white px-8 py-4 text-lg font-semibold shadow-sm transform transition-all duration-200"
+                      className="inline-flex items-center justify-center rounded-2xl px-12 py-5 bg-white text-slate-950 font-black font-outfit uppercase tracking-widest text-lg hover:scale-105 hover:bg-primary-50 transition-all duration-300 shadow-xl"
                     >
-                      Shop Now
-                      <ArrowRight className="w-5 h-5 ml-2" />
-                    </Button>
-                  </motion.div>
+                      Initialize Catalog
+                    </button>
+                    <div className="flex items-center gap-6 px-6 border-l border-white/10">
+                      <div className="space-y-1">
+                        <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">{heroSlides[currentSlide].stats.label}</p>
+                        <p className="text-sm font-black text-white font-outfit uppercase">{heroSlides[currentSlide].stats.value}</p>
+                      </div>
+                      <div className="w-10 h-10 rounded-full border border-white/10 flex items-center justify-center">
+                        <Activity className="w-4 h-4 text-primary-500 animate-pulse" />
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              </AnimatePresence>
 
-                  <motion.button
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate('/about')}
-                    className="flex items-center px-8 py-4 border-2 border-slate-300 text-slate-700 rounded-lg hover:border-slate-500 hover:text-slate-800 transition-all duration-200 font-semibold"
-                  >
-                    <PlayCircle className="w-5 h-5 mr-2" />
-                    Learn More
-                  </motion.button>
-                </div>
-              </motion.div>
-
-              {/* Slide Indicators */}
-              <div className="flex space-x-2">
+              {/* Progress Indicators */}
+              <div className="flex items-center gap-4 pt-10">
                 {heroSlides.map((_, index) => (
-                  <motion.button
+                  <button
                     key={index}
                     onClick={() => setCurrentSlide(index)}
-                    className={`w-3 h-3 rounded-full transition-all duration-300 ${index === currentSlide
-                      ? 'bg-indigo-600 w-8'
-                      : 'bg-slate-200 hover:bg-slate-400'
-                      }`}
-                    whileHover={{ scale: 1.2 }}
-                  />
+                    className="group relative h-12 w-1 flex items-center"
+                  >
+                    <div className={`w-full transition-all duration-700 rounded-full ${index === currentSlide ? 'bg-primary-500 h-full' : 'bg-white/10 h-4 group-hover:bg-white/30'
+                      }`} />
+                  </button>
                 ))}
               </div>
-            </motion.div>
+            </div>
 
-            {/* Hero Visual */}
-            <motion.div
-              initial={{ opacity: 0, x: 50 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.8, delay: 0.2 }}
-              className="relative"
-            >
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.6 }}
-                className="relative bg-indigo-600 rounded-lg p-16 shadow-sm"
-              >
-                <div className="text-9xl text-center text-white/90">
-                  {heroSlides[currentSlide].image}
-                </div>
-
-                {/* Floating Elements */}
+            {/* Visual Manifest */}
+            <div className="lg:col-span-5 relative hidden lg:block">
+              <AnimatePresence mode="wait">
                 <motion.div
-                  animate={{ y: [-10, 10, -10] }}
-                  transition={{ duration: 3, repeat: Infinity }}
-                  className="absolute -top-4 -right-4 w-16 h-16 bg-white/10 rounded-lg flex items-center justify-center"
+                  key={currentSlide}
+                  initial={{ opacity: 0, scale: 0.8, rotate: -5 }}
+                  animate={{ opacity: 1, scale: 1, rotate: 0 }}
+                  exit={{ opacity: 0, scale: 1.1, rotate: 5 }}
+                  transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
+                  className="relative aspect-[4/5] rounded-[3rem] overflow-hidden shadow-[0_0_100px_rgba(0,0,0,0.5)] border border-white/5"
                 >
-                  <Star className="w-8 h-8 text-white" />
-                </motion.div>
+                  <img
+                    src={heroSlides[currentSlide].image}
+                    alt=""
+                    className="w-full h-full object-cover transition-transform duration-[8s] scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-60" />
 
-                <motion.div
-                  animate={{ y: [10, -10, 10] }}
-                  transition={{ duration: 4, repeat: Infinity }}
-                  className="absolute -bottom-4 -left-4 w-12 h-12 bg-white/10 rounded-lg flex items-center justify-center"
-                >
-                  <Heart className="w-6 h-6 text-white" />
+                  <div className="absolute bottom-12 left-12 right-12 glass-morphism p-8 rounded-[2rem] border border-white/10 shadow-2xl">
+                    <div className="flex items-center gap-4 mb-3">
+                      <div className="w-10 h-10 bg-primary-600 rounded-xl flex items-center justify-center">
+                        <Sparkles className="w-5 h-5 text-white" />
+                      </div>
+                      <h4 className="text-sm font-black text-white font-outfit uppercase tracking-wider">Certified Asset</h4>
+                    </div>
+                    <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest leading-relaxed">
+                      Every item undergoes multi-stage verification before listing.
+                    </p>
+                  </div>
                 </motion.div>
-              </motion.div>
-            </motion.div>
+              </AnimatePresence>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Stats Section */}
-      <section className="py-16 bg-slate-50">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="grid grid-cols-2 lg:grid-cols-4 gap-8"
-          >
-            {stats.map((stat, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, scale: 0.5 }}
-                whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                whileHover={{ y: -5 }}
-                className="text-center bg-white rounded-lg p-6 shadow-sm border border-slate-200"
-              >
-                <div className="flex justify-center mb-4 text-slate-700">
-                  {stat.icon}
-                </div>
-                <div className="text-3xl font-semibold text-slate-900 mb-2">{stat.value}</div>
-                <div className="text-slate-500 font-medium">{stat.label}</div>
-              </motion.div>
-            ))}
-          </motion.div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-20">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
-              Why Choose Our Platform?
-            </h2>
-            <p className="text-xl text-slate-500 max-w-3xl mx-auto">
-              Experience the future of online shopping with our cutting-edge features designed for your convenience
+      {/* Category Bento Section */}
+      <section className="py-32 bg-white">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-10 mb-20">
+            <div className="space-y-6">
+              <Badge variant="neutral" className="bg-slate-50 text-slate-400 font-black border-none uppercase tracking-widest px-4">Sector Analysis</Badge>
+              <h2 className="text-5xl lg:text-6xl font-black text-slate-950 tracking-tight font-outfit">
+                Strategic <span className="premium-gradient-text">Verticals</span>
+              </h2>
+            </div>
+            <p className="text-slate-500 font-medium max-w-sm">
+              Systematic categorization for high-efficiency procurement across entire product ecosystems.
             </p>
-          </motion.div>
+          </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 min-h-[600px]">
+            {categories.map((cat, i) => (
               <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
+                key={i}
+                initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.1 }}
-                whileHover={{ y: -10 }}
-                onHoverStart={() => setHoveredCard(index)}
-                onHoverEnd={() => setHoveredCard(null)}
-                className={`${feature.bg} ${feature.border} border-2 rounded-lg p-8 text-center transition-all duration-300 ${hoveredCard === index ? 'shadow-sm' : 'shadow-sm'
+                transition={{ delay: i * 0.1 }}
+                whileHover={{ y: -5 }}
+                onClick={() => navigate(`/products?category=${cat.name.toLowerCase()}`)}
+                className={`relative rounded-[2.5rem] overflow-hidden group cursor-pointer shadow-premium ${cat.size === 'lg' ? 'md:col-span-2 md:row-span-2' :
+                  cat.size === 'md' ? 'md:col-span-2' : ''
                   }`}
               >
-                <div className={`${feature.color} mb-6 flex justify-center`}>
-                  {feature.icon}
+                {/* Background Image */}
+                <div className="absolute inset-0">
+                  <img
+                    src={cat.image}
+                    alt={cat.name}
+                    className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  />
+                  <div className={`absolute inset-0 ${cat.color} opacity-20 group-hover:opacity-10 transition-opacity`} />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent opacity-80" />
                 </div>
-                <h3 className="text-xl font-semibold text-slate-800 mb-4">{feature.title}</h3>
-                <p className="text-slate-600 leading-relaxed">{feature.description}</p>
 
-                <AnimatePresence>
-                  {hoveredCard === index && (
-                    <motion.div
-                      initial={{ opacity: 0, scale: 0 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      exit={{ opacity: 0, scale: 0 }}
-                      className="mt-4"
-                    >
-                      <CheckCircle className="w-6 h-6 text-emerald-500 mx-auto" />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </motion.div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Main Content Grid */}
-      <section className="py-16">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-            {/* Sidebar */}
-            <motion.aside
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="lg:col-span-3 space-y-8"
-            >
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="bg-white rounded-lg shadow-sm border border-slate-200 overflow-hidden"
-              >
-                <RealTimeStock />
-              </motion.div>
-
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="bg-slate-50 rounded-lg shadow-sm border border-slate-200 p-6"
-              >
-                <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 bg-indigo-600 rounded-lg flex items-center justify-center mr-4">
-                    <Clock className="w-6 h-6 text-white" />
-                  </div>
-                  <h3 className="text-xl font-semibold text-slate-800">About Market App</h3>
-                </div>
-                <p className="text-slate-600 leading-relaxed mb-6">
-                  Welcome to our real-time market platform where innovation meets convenience.
-                  Experience lightning-fast inventory updates and seamless shopping like never before.
-                </p>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-3 py-1 bg-slate-200 text-slate-700 rounded-full text-sm font-medium">Real-time</span>
-                  <span className="px-3 py-1 bg-slate-200 text-slate-700 rounded-full text-sm font-medium">Secure</span>
-                  <span className="px-3 py-1 bg-slate-200 text-slate-700 rounded-full text-sm font-medium">Global</span>
-                </div>
-              </motion.div>
-
-              {/* Quick Links */}
-              <motion.div
-                whileHover={{ scale: 1.02 }}
-                className="bg-white rounded-lg shadow-sm border border-slate-200 p-6"
-              >
-                <h3 className="text-lg font-semibold text-slate-800 mb-4">Quick Links</h3>
-                <div className="space-y-3">
-                  <motion.button
-                    whileHover={{ x: 5 }}
-                    onClick={() => navigate('/about')}
-                    className="flex items-center text-slate-600 hover:text-indigo-600 transition-colors duration-200 w-full text-left"
-                  >
-                    <ArrowRight className="w-4 h-4 mr-3" />
-                    About Us
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ x: 5 }}
-                    onClick={() => navigate('/contact')}
-                    className="flex items-center text-slate-600 hover:text-indigo-600 transition-colors duration-200 w-full text-left"
-                  >
-                    <ArrowRight className="w-4 h-4 mr-3" />
-                    Contact Us
-                  </motion.button>
-                  <motion.button
-                    whileHover={{ x: 5 }}
-                    onClick={() => navigate('/faq')}
-                    className="flex items-center text-slate-600 hover:text-indigo-600 transition-colors duration-200 w-full text-left"
-                  >
-                    <ArrowRight className="w-4 h-4 mr-3" />
-                    FAQ
-                  </motion.button>
-                </div>
-              </motion.div>
-            </motion.aside>
-
-            {/* Main Content */}
-            <motion.main
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="lg:col-span-9"
-            >
-              <motion.div
-                className="bg-indigo-600 rounded-lg shadow-sm p-8 mb-12 text-white relative overflow-hidden"
-              >
-                <div className="relative z-10">
-                  <motion.h1
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.3 }}
-                    className="text-4xl lg:text-5xl font-semibold mb-4"
-                  >
-                    Featured Products
-                  </motion.h1>
-                  <motion.p
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4 }}
-                    className="text-xl opacity-80 mb-6"
-                  >
-                    Discover our handpicked collection of premium items crafted for excellence
-                  </motion.p>
-                  <motion.button
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 }}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate('/products')}
-                    className="bg-white text-slate-800 px-6 py-3 rounded-lg font-semibold hover:shadow-sm transition-all duration-200"
-                  >
-                    View All Products
-                  </motion.button>
-                </div>
-              </motion.div>
-
-              <ProductList />
-            </motion.main>
-          </div>
-        </div>
-      </section>
-
-      {/* Testimonials Section */}
-      <section className="py-20 bg-slate-50">
-        <div className="container mx-auto px-4 max-w-7xl">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center mb-16"
-          >
-            <h2 className="text-4xl lg:text-5xl font-semibold text-slate-900 mb-6">
-              What Our Customers Say
-            </h2>
-            <p className="text-xl text-slate-500 max-w-3xl mx-auto">
-              Join thousands of satisfied customers who trust our platform for their shopping needs
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {testimonials.map((testimonial, index) => (
-              <motion.div
-                key={index}
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.6, delay: index * 0.2 }}
-                whileHover={{ y: -10 }}
-                className="bg-white rounded-lg p-8 shadow-sm border border-slate-200"
-              >
-                <div className="flex items-center mb-6">
-                  <div className="w-12 h-12 bg-indigo-600 rounded-full flex items-center justify-center text-white font-semibold mr-4">
-                    {testimonial.avatar}
+                <div className="absolute inset-x-8 bottom-8 z-10 space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="w-12 h-12 bg-white/10 backdrop-blur-md border border-white/20 rounded-2xl flex items-center justify-center group-hover:bg-primary-500 group-hover:border-primary-400 transition-all duration-500">
+                      <div className="text-white group-hover:scale-110 transition-transform">
+                        {cat.icon}
+                      </div>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-white/10 backdrop-blur-md border border-white/10 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-4 group-hover:translate-x-0">
+                      <ArrowRight className="w-4 h-4 text-white" />
+                    </div>
                   </div>
                   <div>
-                    <h4 className="font-semibold text-slate-800">{testimonial.name}</h4>
-                    <p className="text-slate-500 text-sm">{testimonial.role}</p>
+                    <h3 className="text-3xl font-black font-outfit uppercase tracking-tighter text-white group-hover:text-primary-400 transition-colors">
+                      {cat.name}
+                    </h3>
+                    <div className="flex items-center gap-3">
+                      <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white/60">
+                        {cat.items}
+                      </span>
+                      <div className="h-px w-8 bg-white/20" />
+                    </div>
                   </div>
                 </div>
-
-                <div className="flex mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-amber-400 fill-current" />
-                  ))}
-                </div>
-
-                <p className="text-slate-600 italic leading-relaxed">
-                  "{testimonial.comment}"
-                </p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* CTA Section */}
-      <section className="py-20 bg-slate-900 text-white relative overflow-hidden">
-        <div className="container mx-auto px-4 max-w-7xl relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 50 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="text-center"
-          >
-            <h2 className="text-4xl lg:text-6xl font-semibold mb-6">
-              Ready to Start Shopping?
-            </h2>
-            <p className="text-xl text-slate-300 mb-8 max-w-2xl mx-auto">
-              Join millions of happy customers and discover why we're the #1 choice for online shopping
-            </p>
-
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  onClick={() => navigate('/products')}
-                  className="bg-white text-slate-900 hover:bg-slate-100 px-8 py-4 text-lg font-semibold shadow-sm hover:shadow-sm"
-                >
-                  Start Shopping Now
-                  <ArrowRight className="w-5 h-5 ml-2" />
+      {/* Product Display + Pulse Section */}
+      <section className="py-32 bg-slate-50 relative overflow-hidden">
+        <div className="container mx-auto px-6 max-w-7xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-16">
+            {/* Pulse Feed Sidebar */}
+            <aside className="lg:col-span-3 space-y-8 h-fit lg:sticky lg:top-32">
+              <div className="space-y-2 mb-8">
+                <h3 className="text-xl font-black font-outfit text-slate-950 uppercase tracking-tight">System Pulse</h3>
+                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Real-time Node Status</p>
+              </div>
+              <Card className="border-none shadow-premium bg-white p-0 rounded-[2.5rem] overflow-hidden">
+                <RealTimeStock />
+              </Card>
+              <div className="p-8 bg-slate-950 rounded-[2.5rem] space-y-6 shadow-2xl relative overflow-hidden">
+                <div className="absolute top-0 right-0 w-24 h-24 bg-primary-600/30 blur-3xl rounded-full" />
+                <h4 className="text-xs font-black text-white uppercase tracking-widest flex items-center gap-2">
+                  <Layers className="w-4 h-4 text-primary-400" /> Member Insights
+                </h4>
+                <p className="text-[10px] font-medium text-slate-400 leading-relaxed uppercase tracking-widest">
+                  Access deep analytics and tiered procurement options for registered nodes.
+                </p>
+                <Button variant="link" className="text-primary-400 p-0 h-auto font-black uppercase tracking-widest text-[9px]">
+                  Access Interface <ArrowRight className="ml-2 w-3 h-3" />
                 </Button>
-              </motion.div>
+              </div>
+            </aside>
 
-              <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                onClick={() => navigate('/contact')}
-                className="border-2 border-white/30 text-white hover:bg-white hover:text-slate-900 px-8 py-4 rounded-lg text-lg font-semibold transition-all duration-200"
-              >
-                Contact Support
-              </motion.button>
-            </div>
+            {/* Master Collection Feed */}
+            <main className="lg:col-span-9 space-y-16">
+              <div className="flex items-end justify-between border-b border-slate-200 pb-10">
+                <div className="space-y-4">
+                  <h2 className="text-4xl lg:text-5xl font-black text-slate-950 font-outfit tracking-tighter uppercase">
+                    Master <span className="premium-gradient-text">Intelligence</span>
+                  </h2>
+                  <div className="flex items-center gap-3">
+                    <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+                    <span className="text-[9px] font-black text-slate-400 uppercase tracking-[0.2em]">Active Inventory Sync</span>
+                  </div>
+                </div>
+                <Button variant="outline" className="rounded-2xl border-slate-200 font-black uppercase tracking-widest text-[10px] h-12">
+                  Expand Archives
+                </Button>
+              </div>
+              <ProductList />
+            </main>
+          </div>
+        </div>
+      </section>
+
+      {/* Elite CTA */}
+      <section className="py-40 bg-slate-950 relative overflow-hidden text-center">
+        <div className="absolute inset-0 bg-grid-white opacity-[0.03] pointer-events-none" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[1000px] h-[1000px] bg-primary-600/10 blur-[150px] rounded-full" />
+
+        <div className="container mx-auto px-6 max-w-4xl relative z-10 space-y-12">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            className="space-y-8"
+          >
+            <Badge variant="primary" className="bg-primary-500/10 text-primary-400 border-primary-500/20 font-black tracking-[0.4em] px-6">Mission Critical</Badge>
+            <h2 className="text-6xl lg:text-[110px] font-black text-white tracking-tighter leading-[0.85] font-outfit uppercase">
+              Secure Your <br />
+              <span className="premium-gradient-text">Succession.</span>
+            </h2>
+            <p className="text-xl lg:text-2xl text-slate-400 font-medium max-w-2xl mx-auto leading-relaxed text-balance">
+              The most sophisticated procurement framework for the modern technical elite.
+            </p>
           </motion.div>
+
+          <div className="flex flex-col sm:flex-row gap-8 justify-center pt-8">
+            <button
+              onClick={() => navigate('/products')}
+              className="inline-flex items-center justify-center lg:min-w-[300px] px-10 py-5 rounded-[2rem] bg-white text-slate-950 font-black font-outfit uppercase tracking-widest text-lg shadow-[0_20px_50px_rgba(255,255,255,0.1)] hover:scale-105 hover:bg-primary-50 transition-all duration-300"
+            >
+              Join the Circle
+            </button>
+            <button
+              onClick={() => navigate('/contact')}
+              className="inline-flex items-center justify-center lg:min-w-[240px] px-10 py-5 rounded-[2rem] bg-slate-900 text-white border border-white/10 font-black font-outfit uppercase tracking-widest text-lg hover:bg-slate-800 transition-colors"
+            >
+              Support Node
+            </button>
+          </div>
         </div>
       </section>
     </div>

@@ -6,13 +6,15 @@ const { deleteImage } = require('../utils/cloudinary');
 exports.getUserStats = async (req, res, next) => {
   try {
     const orders = await Order.find({ user: req.user.id });
+    const Wishlist = require('../models/wishlist.model');
+    const wishlist = await Wishlist.findOne({ user: req.user.id });
 
     const totalOrders = orders.length;
     const totalSpent = orders
       .filter(o => o.status !== 'cancelled')
       .reduce((sum, o) => sum + (o.total || 0), 0);
     const totalSaved = 0; // Placeholder — no discount tracking yet
-    const wishlistItems = 0; // Could be populated from a wishlist model later
+    const wishlistItems = wishlist ? wishlist.products.length : 0;
     const loyaltyPoints = Math.floor(totalSpent / 10); // Simple: 1 point per ₹10 spent
 
     res.status(200).json({
@@ -43,10 +45,16 @@ exports.getProfile = async (req, res, next) => {
 // Update user profile
 exports.updateProfile = async (req, res, next) => {
   try {
+    const { name, phone, avatar } = req.body;
     const oldUser = await User.findById(req.user.id);
     if (!oldUser) {
       return res.status(404).json({ message: 'User not found' });
     }
+
+    const updateData = {};
+    if (name) updateData.name = name;
+    if (phone) updateData.phone = phone;
+    if (avatar) updateData.avatar = avatar;
 
     // If a new avatar is provided, clean up the old one from Cloudinary if it exists
     if (avatar !== undefined && oldUser.avatar && oldUser.avatar !== avatar) {
@@ -112,7 +120,7 @@ exports.addAddress = async (req, res, next) => {
     user.addresses.push(newAddress);
     await user.save();
 
-    res.status(201).json(user.addresses);
+    res.status(201).json(user.addresses[user.addresses.length - 1]);
   } catch (err) {
     next(err);
   }

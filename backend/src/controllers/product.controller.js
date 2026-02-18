@@ -26,7 +26,21 @@ function sanitizeUpdateBody(body) {
 // Get products with filters, pagination
 exports.getProducts = async (req, res, next) => {
   try {
-    const { category, size, color, minPrice, maxPrice, page = 1, limit = 20, search } = req.query;
+    const {
+      category,
+      size,
+      color,
+      minPrice,
+      maxPrice,
+      minRating,
+      onSale,
+      page = 1,
+      limit = 20,
+      search,
+      sortBy = 'createdAt',
+      sortOrder = 'desc'
+    } = req.query;
+
     const filter = {};
 
     if (category && category !== 'all') {
@@ -47,16 +61,26 @@ exports.getProducts = async (req, res, next) => {
       }
     }
 
-    if (size) filter.sizes = size;
-    if (color) filter.colors = color;
+    if (size) filter.sizes = { $elemMatch: { name: size } };
+    if (color) filter.colors = { $elemMatch: { name: color } };
+
     if (minPrice || maxPrice) filter.price = {};
     if (minPrice) filter.price.$gte = Number(minPrice);
     if (maxPrice) filter.price.$lte = Number(maxPrice);
+
+    if (minRating) filter['rating.average'] = { $gte: Number(minRating) };
+
+    if (onSale === 'true') {
+      filter.$expr = { $gt: ["$comparePrice", "$price"] };
+    }
+
     if (search) {
-      // Escape special regex characters to prevent ReDoS
       const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
       filter.title = { $regex: escapedSearch, $options: 'i' };
     }
+
+    const sort = {};
+    sort[sortBy] = sortOrder === 'desc' ? -1 : 1;
 
     const products = await Product.find(filter)
       .populate('category')
@@ -65,8 +89,10 @@ exports.getProducts = async (req, res, next) => {
         select: 'rating comment user createdAt',
         options: { limit: 2 }
       })
-      .skip((page - 1) * limit)
+      .sort(sort)
+      .skip((Number(page) - 1) * Number(limit))
       .limit(Number(limit));
+
     const total = await Product.countDocuments(filter);
 
     res.json({ products, total });
@@ -201,6 +227,69 @@ exports.deleteProduct = async (req, res, next) => {
     }
 
     res.json({ message: 'Product deleted' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get trending products — sorted by order count + rating (real data)
+exports.getTrendingProducts = async (req, res, next) => {
+  try {
+    const { limit = 24 } = req.query;
+    const Order = require('../models/order.model');
+
+    // Aggregate order counts per product
+    const orderCounts = await Order.aggregate([
+      { $unwind: '$items' },
+      { $group: { _id: '$items.product', orderCount: { $sum: '$items.quantity' } } },
+      { $sort: { orderCount: -1 } }
+    ]);
+
+    // Build a map of productId -> orderCount
+    const orderCountMap = {};
+    orderCounts.forEach(item => {
+      orderCountMap[item._id.toString()] = item.orderCount;
+    });
+
+    // Fetch all active products
+    const products = await Product.find({ isActive: true })
+      .populate('category', 'name')
+      .select('title images price comparePrice stock rating isFeatured categoryName brand createdAt discountPercentage')
+      .limit(200);
+
+    // Attach order counts and compute trending score
+    const scored = products.map(p => {
+      const orders = orderCountMap[p._id.toString()] || 0;
+      const ratingScore = (p.rating?.average || 0) * (p.rating?.count || 0);
+      const featuredBonus = p.isFeatured ? 50 : 0;
+      const trendingScore = (orders * 10) + ratingScore + featuredBonus;
+      return { ...p.toJSON(), orderCount: orders, trendingScore };
+    });
+
+    // Sort by trending score descending
+    scored.sort((a, b) => b.trendingScore - a.trendingScore);
+
+    res.json({
+      products: scored.slice(0, Number(limit)),
+      total: scored.length,
+      totalOrders: orderCounts.reduce((sum, i) => sum + i.orderCount, 0)
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get new arrivals — sorted by createdAt descending
+exports.getNewArrivals = async (req, res, next) => {
+  try {
+    const { limit = 16 } = req.query;
+    const products = await Product.find({ isActive: true })
+      .populate('category', 'name')
+      .select('title images price comparePrice stock rating isFeatured categoryName brand createdAt discountPercentage')
+      .sort({ createdAt: -1 })
+      .limit(Number(limit));
+
+    res.json({ products, total: products.length });
   } catch (err) {
     next(err);
   }

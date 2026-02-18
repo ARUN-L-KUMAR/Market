@@ -35,9 +35,9 @@ const Input = ({
   };
 
   const sizeClasses = {
-    sm: 'h-8 text-sm',
-    md: 'h-10 text-sm',
-    lg: 'h-12 text-base',
+    sm: 'h-10 text-sm px-3 rounded-lg',
+    md: 'h-12 text-sm px-4 rounded-xl',
+    lg: 'h-14 text-base px-5 rounded-2xl',
   };
 
   return (
@@ -45,17 +45,17 @@ const Input = ({
       {label && (
         <label
           htmlFor={id}
-          className={`block text-sm font-medium mb-1.5 ${error ? 'text-red-600' : 'text-slate-700'
+          className={`block text-sm font-semibold mb-2 transition-colors duration-200 ${error ? 'text-red-500' : isFocused ? 'text-primary-600' : 'text-slate-700'
             } ${labelClassName}`}
         >
           {label}
-          {required && <span className="text-red-500 ml-0.5">*</span>}
+          {required && <span className="text-red-500 ml-1">*</span>}
         </label>
       )}
 
-      <div className="relative">
+      <div className="relative group">
         {startIcon && (
-          <div className={`absolute inset-y-0 left-0 flex items-center pl-3 ${error ? 'text-red-400' : 'text-slate-400'
+          <div className={`absolute inset-y-0 left-0 flex items-center pl-4 transition-colors duration-200 ${error ? 'text-red-400' : isFocused ? 'text-primary-500' : 'text-slate-400'
             }`}>
             {startIcon}
           </div>
@@ -73,15 +73,15 @@ const Input = ({
           disabled={disabled}
           required={required}
           className={`
-            w-full rounded-md border transition-all duration-200 text-slate-900
+            w-full border-2 transition-all duration-300 text-slate-900 font-medium
             ${sizeClasses[size]}
             ${error
-              ? 'border-red-300 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'
-              : 'border-slate-300 focus:border-indigo-500 focus:ring-4 focus:ring-indigo-500/10'}
-            ${startIcon ? 'pl-10' : 'pl-3'}
-            ${endIcon ? 'pr-10' : 'pr-3'}
-            ${disabled ? 'cursor-not-allowed opacity-50 bg-slate-50' : 'bg-white'}
-            placeholder:text-slate-400
+              ? 'border-red-100 bg-red-50/30 focus:border-red-500 focus:ring-4 focus:ring-red-500/5'
+              : 'border-slate-100 bg-slate-50 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10'}
+            ${startIcon ? 'pl-12' : ''}
+            ${endIcon ? 'pr-12' : ''}
+            ${disabled ? 'cursor-not-allowed opacity-50 bg-slate-100' : ''}
+            placeholder:text-slate-400 placeholder:font-normal
             focus:outline-none
             ${inputClassName}
           `}
@@ -89,7 +89,7 @@ const Input = ({
         />
 
         {endIcon && (
-          <div className={`absolute inset-y-0 right-0 flex items-center pr-3 ${error ? 'text-red-400' : 'text-slate-400'
+          <div className={`absolute inset-y-0 right-0 flex items-center pr-4 transition-colors duration-200 ${error ? 'text-red-400' : isFocused ? 'text-primary-500' : 'text-slate-400'
             }`}>
             {endIcon}
           </div>
@@ -97,7 +97,7 @@ const Input = ({
       </div>
 
       {(error || helperText) && (
-        <p className={`text-xs mt-1.5 ${error ? 'text-red-600' : 'text-slate-500'}`}>
+        <p className={`text-xs mt-2 px-1 font-medium ${error ? 'text-red-500' : 'text-slate-500'}`}>
           {error || helperText}
         </p>
       )}
