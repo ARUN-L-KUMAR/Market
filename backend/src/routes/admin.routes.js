@@ -14,6 +14,12 @@ router.get('/collection/:collection/:id', adminController.getDocumentById);
 
 // Dashboard statistics
 router.get('/stats', adminController.getStats);
+router.get('/activities', adminController.getActivities);
+router.get('/low-stock', adminController.getLowStock);
+router.get('/out-of-stock', adminController.getOutOfStock);
+router.get('/inventory-movements', adminController.getMovements);
+router.get('/restock-history', adminController.getRestockHistory);
+router.get('/traffic-stats', adminController.getTrafficStats);
 
 // Orders management
 router.get('/orders', adminController.getOrders);
@@ -42,5 +48,17 @@ router.delete('/users/:userId', adminController.deleteUser);
 // Settings management
 router.get('/settings', adminController.getSettings);
 router.put('/settings', adminController.updateSettings);
+
+// Brands management
+router.get('/brands', adminController.getBrands);
+router.post('/brands', adminController.createBrand);
+router.put('/brands/:id', adminController.updateBrand);
+router.delete('/brands/:id', adminController.deleteBrand);
+
+// Variants management
+router.get('/variants', adminController.getVariants);
+router.post('/variants', adminController.createVariant);
+router.put('/variants/:id', adminController.updateVariant);
+router.delete('/variants/:id', adminController.deleteVariant);
 
 module.exports = router;

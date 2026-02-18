@@ -6,7 +6,7 @@ const { uploadImage, deleteImages } = require('../utils/cloudinary');
 
 // Whitelist of fields allowed for product updates
 const ALLOWED_UPDATE_FIELDS = [
-  'title', 'description', 'shortDescription', 'images', 'category', 'subcategory',
+  'title', 'description', 'shortDescription', 'images', 'category', 'categoryName', 'subcategory', 'subcategoryName',
   'brand', 'sku', 'sizes', 'colors', 'price', 'comparePrice', 'costPrice',
   'stock', 'lowStockThreshold', 'weight', 'dimensions', 'tags',
   'isActive', 'isFeatured', 'seoTitle', 'seoDescription', 'seoKeywords'
@@ -115,6 +115,25 @@ exports.createProduct = async (req, res, next) => {
 exports.updateProduct = async (req, res, next) => {
   try {
     const sanitizedBody = sanitizeUpdateBody(req.body);
+
+    // If stock is being updated, log the movement
+    if (sanitizedBody.stock !== undefined) {
+      const Movement = require('../models/movement.model');
+      const oldProduct = await Product.findById(req.params.id);
+      if (oldProduct && oldProduct.stock !== sanitizedBody.stock) {
+        const diff = sanitizedBody.stock - oldProduct.stock;
+        await Movement.create({
+          product: oldProduct._id,
+          type: diff > 0 ? 'in' : 'out',
+          quantity: Math.abs(diff),
+          reason: diff > 0 ? 'restock' : 'adjustment',
+          previousStock: oldProduct.stock,
+          currentStock: sanitizedBody.stock,
+          performedBy: req.user?._id,
+          notes: 'Manual update from Admin Panel'
+        });
+      }
+    }
 
     const product = await Product.findByIdAndUpdate(
       req.params.id,

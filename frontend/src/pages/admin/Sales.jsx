@@ -8,12 +8,13 @@ import CurrencyPrice from '../../components/CurrencyPrice';
 const Sales = () => {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [period, setPeriod] = useState('30days');
 
     useEffect(() => {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                const response = await getStats();
+                const response = await getStats(period);
                 setStats(response.data.data);
             } catch (error) {
                 console.error('Error fetching sales stats:', error);
@@ -23,7 +24,39 @@ const Sales = () => {
         };
 
         fetchStats();
-    }, []);
+    }, [period]);
+
+    const handleExport = () => {
+        if (!stats) return;
+
+        // Create CSV content
+        let csv = 'Sales Performance Report\n';
+        csv += `Period: ${period === 'all' ? 'All Time' : period}\n`;
+        csv += `Generated: ${new Date().toLocaleString()}\n\n`;
+
+        // Sales Table
+        csv += 'Date,Sales (₹),Orders\n';
+        stats.salesData.forEach(item => {
+            csv += `${item.date},${item.sales},${item.orders}\n`;
+        });
+
+        csv += '\nTop Selling Products\n';
+        csv += 'Product,Price,Quantity Sold,Total Revenue\n';
+        stats.topSellingProducts.forEach(p => {
+            csv += `"${p.name}",${p.price},${p.totalSold},${p.price * p.totalSold}\n`;
+        });
+
+        // Download
+        const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+        const link = document.createElement('a');
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', `sales_report_${period}_${new Date().toISOString().split('T')[0]}.csv`);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+    };
 
     if (loading) {
         return (
@@ -38,15 +71,31 @@ const Sales = () => {
     return (
         <AdminLayout>
             <div className="p-6">
-                <div className="flex justify-between items-center mb-8">
+                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
                     <div>
                         <h1 className="text-2xl font-bold text-slate-900">Sales Reports</h1>
                         <p className="text-sm text-slate-500 mt-1">Monitor sales volume, product performance and growth trends.</p>
                     </div>
-                    <button className="flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-md shadow-indigo-500/20 transition-all">
-                        <BarChart3 className="h-4 w-4 mr-2" />
-                        Export Report
-                    </button>
+                    <div className="flex items-center gap-3">
+                        <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
+                            {['7days', '30days', '90days', 'all'].map((p) => (
+                                <button
+                                    key={p}
+                                    onClick={() => setPeriod(p)}
+                                    className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${period === p ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-900'}`}
+                                >
+                                    {p === '7days' ? 'Past 7 Days' : p === '30days' ? 'Last Month' : p === '90days' ? 'Last Quarter' : 'Full'}
+                                </button>
+                            ))}
+                        </div>
+                        <button
+                            onClick={handleExport}
+                            className="flex items-center px-4 py-2 bg-indigo-600 text-white text-sm font-bold rounded-xl hover:bg-indigo-700 shadow-md shadow-indigo-500/20 transition-all active:scale-95"
+                        >
+                            <BarChart3 className="h-4 w-4 mr-2" />
+                            Export
+                        </button>
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
@@ -61,7 +110,9 @@ const Sales = () => {
                         <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                             <div className="p-6 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                                 <h2 className="text-lg font-bold text-slate-900">Top Selling Products</h2>
-                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg">Last 30 Days</span>
+                                <span className="text-xs font-bold text-indigo-600 bg-indigo-50 px-2 py-1 rounded-lg">
+                                    {period === '7days' ? 'Past 7 Days' : period === '30days' ? 'Last Month' : period === '90days' ? 'Last Quarter' : 'All Time'}
+                                </span>
                             </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full">
@@ -79,8 +130,8 @@ const Sales = () => {
                                                 <td className="px-6 py-4">
                                                     <div className="flex items-center gap-3">
                                                         <div className="w-10 h-10 rounded-lg bg-slate-100 border border-slate-200 flex-shrink-0 overflow-hidden">
-                                                            {p.image && p.image[0] ? (
-                                                                <img src={p.image[0]} alt={p.name} className="w-full h-full object-cover" />
+                                                            {p.image ? (
+                                                                <img src={p.image} alt={p.name} className="w-full h-full object-cover" />
                                                             ) : (
                                                                 <div className="w-full h-full flex items-center justify-center text-slate-400">
                                                                     <Package className="h-5 w-5" />
@@ -116,7 +167,12 @@ const Sales = () => {
                                 {[
                                     { label: 'Total Orders', value: stats?.totalOrders || 0, icon: <ShoppingBag className="h-5 w-5" />, color: 'indigo' },
                                     { label: 'Active Customers', value: stats?.totalUsers || 0, icon: <Users className="h-5 w-5" />, color: 'emerald' },
-                                    { label: 'Growth', value: '+18.5%', icon: <TrendingUp className="h-5 w-5" />, color: 'amber' }
+                                    {
+                                        label: 'Growth',
+                                        value: `${stats?.ordersGrowth > 0 ? '+' : ''}${stats?.ordersGrowth?.toFixed(1) || 0}%`,
+                                        icon: <TrendingUp className="h-5 w-5" />,
+                                        color: 'amber'
+                                    }
                                 ].map((s, i) => (
                                     <div key={i} className="flex items-center p-4 bg-slate-50 rounded-xl border border-slate-100">
                                         <div className={`w-10 h-10 rounded-lg flex items-center justify-center mr-4 ${s.color === 'indigo' ? 'bg-indigo-100 text-indigo-600' : s.color === 'emerald' ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'}`}>

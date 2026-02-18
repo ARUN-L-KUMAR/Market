@@ -4,6 +4,9 @@ const Product = require('../models/product.model');
 const Order = require('../models/order.model');
 const User = require('../models/user.model');
 const Setting = require('../models/setting.model');
+const Visit = require('../models/visit.model');
+const Brand = require('../models/brand.model');
+const Variant = require('../models/variant.model');
 
 // Data administration endpoints - Only for development purposes
 // Do not use these in production without proper authentication!
@@ -135,21 +138,109 @@ exports.getDatabaseStats = async (req, res, next) => {
 // Dashboard Statistics
 exports.getStats = async (req, res, next) => {
   try {
-    // Get total revenue
+    const period = req.query.period || '30days';
+    let days = 30;
+    let startDate = null;
+
+    if (period !== 'all') {
+      if (period === '7days') days = 7;
+      else if (period === '30days') days = 30;
+      else if (period === '90days') days = 90;
+      else if (period === '365days') days = 365;
+
+      startDate = new Date();
+      startDate.setDate(startDate.getDate() - days);
+      startDate.setHours(0, 0, 0, 0);
+    }
+
+    const dateFilter = startDate ? { createdAt: { $gte: startDate } } : {};
+    const statusList = ['completed', 'delivered', 'shipped', 'paid', 'success', 'Delivered', 'Success', 'Paid', 'Completed', 'Processing'];
+
+    // Previous period for growth calculation
+    let prevStartDate = null;
+    let prevEndDate = null;
+    if (startDate) {
+      prevEndDate = new Date(startDate);
+      prevStartDate = new Date(prevEndDate);
+      prevStartDate.setDate(prevStartDate.getDate() - days);
+    }
+    const prevDateFilter = prevStartDate ? { createdAt: { $gte: prevStartDate, $lt: prevEndDate } } : null;
+
+    // Get total revenue for the period
     const revenueData = await Order.aggregate([
-      { $match: { status: { $in: ['completed', 'delivered'] } } },
-      { $group: { _id: null, total: { $sum: '$totalAmount' } } }
+      {
+        $match: {
+          status: { $in: statusList },
+          ...dateFilter
+        }
+      },
+      { $group: { _id: null, total: { $sum: '$total' } } }
     ]);
     const totalRevenue = revenueData.length > 0 ? revenueData[0].total : 0;
 
-    // Get total orders
-    const totalOrders = await Order.countDocuments();
+    // Get previous revenue for growth
+    let prevRevenue = 0;
+    if (prevDateFilter) {
+      const prevRevData = await Order.aggregate([
+        { $match: { status: { $in: statusList }, ...prevDateFilter } },
+        { $group: { _id: null, total: { $sum: '$total' } } }
+      ]);
+      prevRevenue = prevRevData.length > 0 ? prevRevData[0].total : 0;
+    }
+    const revenueGrowth = prevRevenue > 0 ? ((totalRevenue - prevRevenue) / prevRevenue) * 100 : 0;
 
-    // Get total products
-    const totalProducts = await Product.countDocuments();
+    // Get total orders for the period
+    const totalOrders = await Order.countDocuments(dateFilter);
+    let prevOrders = 0;
+    if (prevDateFilter) prevOrders = await Order.countDocuments(prevDateFilter);
+    const ordersGrowth = prevOrders > 0 ? ((totalOrders - prevOrders) / prevOrders) * 100 : 0;
 
-    // Get total users
+    // Get total users (absolute)
     const totalUsers = await User.countDocuments();
+    let prevTotalUsers = 0;
+    if (prevDateFilter) prevTotalUsers = await User.countDocuments({ createdAt: { $lt: prevEndDate } });
+    const usersGrowth = prevTotalUsers > 0 ? ((totalUsers - prevTotalUsers) / prevTotalUsers) * 100 : 0;
+
+    // Conversion Rate calculation
+    const visits = await Visit.countDocuments(dateFilter);
+    const conversionRate = visits > 0 ? (totalOrders / visits) * 100 : 0;
+
+    // Revenue by Category
+    const revenueByCategory = await Order.aggregate([
+      { $match: { status: { $in: statusList }, ...dateFilter } },
+      { $unwind: '$items' },
+      {
+        $lookup: {
+          from: 'products',
+          localField: 'items.product',
+          foreignField: '_id',
+          as: 'productInfo'
+        }
+      },
+      { $unwind: '$productInfo' },
+      {
+        $lookup: {
+          from: 'categories',
+          localField: 'productInfo.category',
+          foreignField: '_id',
+          as: 'categoryInfo'
+        }
+      },
+      { $unwind: '$categoryInfo' },
+      {
+        $group: {
+          _id: '$categoryInfo.name',
+          amount: { $sum: { $multiply: ['$items.quantity', '$items.price'] } }
+        }
+      },
+      { $sort: { amount: -1 } }
+    ]);
+
+    // Get total products (absolute)
+    const totalProducts = await Product.countDocuments();
+    let prevTotalProducts = 0;
+    if (prevDateFilter) prevTotalProducts = await Product.countDocuments({ createdAt: { $lt: prevEndDate } });
+    const productsGrowth = prevTotalProducts > 0 ? ((totalProducts - prevTotalProducts) / prevTotalProducts) * 100 : 0;
 
     // Get recent orders
     const recentOrders = await Order.find()
@@ -157,26 +248,67 @@ exports.getStats = async (req, res, next) => {
       .limit(5)
       .populate('user', 'name email');
 
-    // Get sales data for chart (last 7 days)
-    const today = new Date();
-    const last7Days = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-    const salesData = await Order.aggregate([
+    // Get sales data for chart
+    const dateFormat = period === 'all' ? '%Y-%m' : '%Y-%m-%d';
+    const rawSalesData = await Order.aggregate([
       {
         $match: {
-          createdAt: { $gte: last7Days },
-          status: { $in: ['completed', 'delivered', 'processing'] }
+          ...dateFilter,
+          status: { $in: statusList }
         }
       },
       {
         $group: {
-          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } },
-          sales: { $sum: '$totalAmount' },
-          count: { $sum: 1 }
+          _id: { $dateToString: { format: dateFormat, date: '$createdAt' } },
+          sales: { $sum: '$total' },
+          orders: { $sum: 1 }
         }
       },
-      { $sort: { _id: 1 } }
+      {
+        $project: {
+          _id: 0,
+          date: '$_id',
+          sales: 1,
+          orders: 1
+        }
+      },
+      { $sort: { date: 1 } }
     ]);
+
+    // Fill missing dates with 0 for a continuous chart
+    const salesData = [];
+    let current = startDate ? new Date(startDate) : null;
+
+    if (period === 'all') {
+      const firstOrder = await Order.findOne().sort({ createdAt: 1 });
+      current = firstOrder ? new Date(firstOrder.createdAt) : new Date();
+      current.setDate(1); // Start of month
+    }
+
+    if (current) {
+      const end = new Date();
+      const dataMap = rawSalesData.reduce((acc, item) => {
+        acc[item.date] = item;
+        return acc;
+      }, {});
+
+      while (current <= end) {
+        const key = current.toISOString().split('T')[0].substring(0, period === 'all' ? 7 : 10);
+        if (!salesData.find(d => d.date === key)) {
+          salesData.push({
+            date: key,
+            sales: dataMap[key]?.sales || 0,
+            orders: dataMap[key]?.orders || 0
+          });
+        }
+
+        if (period === 'all') current.setMonth(current.getMonth() + 1);
+        else current.setDate(current.getDate() + 1);
+      }
+    } else {
+      // Fallback to raw data if no start date could be determined
+      salesData.push(...rawSalesData);
+    }
 
     // Get low stock products
     const lowStockProducts = await Product.find({ stock: { $lt: 10 } })
@@ -186,6 +318,7 @@ exports.getStats = async (req, res, next) => {
     // Get top selling products
     const topSellingProducts = await Order.aggregate([
       { $unwind: '$items' },
+      { $match: dateFilter },
       {
         $group: {
           _id: '$items.product',
@@ -206,9 +339,9 @@ exports.getStats = async (req, res, next) => {
       {
         $project: {
           _id: 1,
-          name: '$productInfo.name',
+          name: '$productInfo.title',
           price: '$productInfo.price',
-          image: '$productInfo.images',
+          image: { $arrayElemAt: ['$productInfo.images.url', 0] },
           totalSold: 1
         }
       }
@@ -218,9 +351,15 @@ exports.getStats = async (req, res, next) => {
       success: true,
       data: {
         totalRevenue,
+        revenueGrowth,
         totalOrders,
+        ordersGrowth,
         totalProducts,
+        productsGrowth,
         totalUsers,
+        usersGrowth,
+        conversionRate,
+        revenueByCategory,
         recentOrders,
         salesData,
         lowStockProducts,
@@ -342,21 +481,46 @@ exports.getProducts = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 100; // Increased to show all products
     const skip = (page - 1) * limit;
     const category = req.query.category;
+    const subcategory = req.query.subcategory;
+    const categoryName = req.query.categoryName;
+    const subcategoryName = req.query.subcategoryName;
     const search = req.query.search;
 
     let query = {};
 
-    // Filter by category if provided
-    if (category) {
+    // Filter by category or subcategory (ID or Name)
+    if (categoryName || subcategoryName) {
+      if (categoryName) query.categoryName = categoryName;
+      if (subcategoryName) query.subcategoryName = subcategoryName;
+    } else if (category && subcategory) {
       query.category = category;
+      query.subcategory = subcategory;
+    } else if (subcategory) {
+      query.subcategory = subcategory;
+    } else if (category) {
+      // Match products where category OR subcategory equals the given ID
+      query.$or = [
+        { category: category },
+        { subcategory: category }
+      ];
     }
 
     // Search by product name or description
     if (search) {
-      query.$or = [
-        { name: { $regex: search, $options: 'i' } },
-        { description: { $regex: search, $options: 'i' } }
-      ];
+      const searchCondition = {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { title: { $regex: search, $options: 'i' } },
+          { description: { $regex: search, $options: 'i' } }
+        ]
+      };
+      if (query.$or) {
+        // Already have a $or from category filter, use $and to combine
+        query.$and = [{ $or: query.$or }, searchCondition];
+        delete query.$or;
+      } else {
+        query.$or = searchCondition.$or;
+      }
     }
 
     const total = await Product.countDocuments(query);
@@ -364,7 +528,8 @@ exports.getProducts = async (req, res, next) => {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit)
-      .populate('category', 'name');
+      .populate('category', 'name')
+      .populate('subcategory', 'name');
 
     res.status(200).json({
       success: true,
@@ -723,6 +888,13 @@ exports.getSettings = async (req, res, next) => {
           facebook: 'https://facebook.com/mystore',
           twitter: 'https://twitter.com/mystore',
           instagram: 'https://instagram.com/mystore'
+        },
+        inventoryAutomation: {
+          enabled: false,
+          threshold: 10,
+          autoRestockAmount: 50,
+          supplierEmail: '',
+          notifySupplier: false
         }
       });
     }
@@ -749,7 +921,8 @@ exports.updateSettings = async (req, res, next) => {
       freeShippingThreshold,
       features,
       appearance,
-      socialLinks
+      socialLinks,
+      inventoryAutomation
     } = req.body;
 
     let settings = await Setting.findOne();
@@ -790,6 +963,15 @@ exports.updateSettings = async (req, res, next) => {
       };
     }
 
+    if (inventoryAutomation) {
+      settings.inventoryAutomation = {
+        ...settings.inventoryAutomation,
+        ...inventoryAutomation
+      };
+    }
+
+    settings.updatedAt = Date.now();
+
     await settings.save();
 
     res.status(200).json({
@@ -825,6 +1007,405 @@ exports.getRolesStats = async (req, res, next) => {
       success: true,
       data: stats
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get recent activities combined feed
+exports.getActivities = async (req, res, next) => {
+  try {
+    const limit = parseInt(req.query.limit) || 20;
+
+    const [recentOrders, recentUsers, lowStockProducts] = await Promise.all([
+      Order.find()
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .populate('user', 'name email'),
+      User.find()
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .select('name email createdAt'),
+      Product.find({ stock: { $lt: 10 } })
+        .sort({ stock: 1 })
+        .limit(5)
+    ]);
+
+    const activities = [
+      ...recentOrders.map(order => ({
+        _id: order._id,
+        type: 'order',
+        title: `New Order #${order.orderNumber}`,
+        description: `Order placed by ${order.user?.name || 'Guest'} for ₹${order.total}`,
+        createdAt: order.createdAt,
+        time: order.createdAt,
+        user: order.user,
+        status: order.status
+      })),
+      ...recentUsers.map(user => ({
+        _id: user._id,
+        type: 'user',
+        title: 'New User Registered',
+        description: `${user.name} signed up with ${user.email}`,
+        createdAt: user.createdAt,
+        time: user.createdAt,
+        user: { _id: user._id, name: user.name, email: user.email }
+      })),
+      ...lowStockProducts.map(product => ({
+        _id: product._id,
+        type: 'low_stock',
+        title: 'Low Stock Alert',
+        description: `${product.title} has only ${product.stock} units left`,
+        createdAt: product.updatedAt,
+        time: product.updatedAt,
+        data: { _id: product._id }
+      }))
+    ].sort((a, b) => b.createdAt - a.createdAt).slice(0, limit);
+
+    res.status(200).json({
+      success: true,
+      data: activities
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get low stock products alert
+exports.getLowStock = async (req, res, next) => {
+  try {
+    const products = await Product.find({
+      $or: [
+        { stock: { $lte: 10 } },
+        { $expr: { $lte: ["$stock", "$lowStockThreshold"] } }
+      ]
+    }).sort({ stock: 1 }).populate('category', 'name');
+
+    res.status(200).json({
+      success: true,
+      data: products
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get traffic statistics - Aggregated from real Visit model
+exports.getTrafficStats = async (req, res, next) => {
+  try {
+    const period = req.query.period || '30days';
+    let days = 30;
+    let startDate = null;
+
+    // For the chart, we still want a manageable amount of days even if 'all' is selected
+    let chartDays = 30;
+
+    if (period === '7days') {
+      days = 7;
+      chartDays = 7;
+    } else if (period === '30days') {
+      days = 30;
+      chartDays = 30;
+    } else if (period === '90days') {
+      days = 90;
+      chartDays = 90;
+    } else if (period === 'all') {
+      days = 180; // Show last 6 months on chart
+      chartDays = 180;
+      startDate = null; // No limit for summary
+    }
+
+    const summaryStartDate = startDate || (period === 'all' ? new Date(0) : new Date(new Date().setDate(new Date().getDate() - days)));
+    const chartStartDate = new Date();
+    chartStartDate.setDate(chartStartDate.getDate() - chartDays);
+    chartStartDate.setHours(0, 0, 0, 0);
+
+    const dateFilter = period === 'all' ? {} : { createdAt: { $gte: chartStartDate } };
+
+    // Aggregate visits by day for chart
+    const trafficData = await Visit.aggregate([
+      {
+        $match: dateFilter
+      },
+      {
+        $group: {
+          _id: {
+            $dateToString: { format: "%Y-%m-%d", date: "$createdAt" }
+          },
+          visits: { $sum: 1 },
+          uniqueUsers: { $addToSet: "$ip" }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          date: "$_id",
+          visits: 1,
+          uniqueUsers: { $size: "$uniqueUsers" }
+        }
+      },
+      { $sort: { date: 1 } }
+    ]);
+
+    // Fill in gaps with zero values for days with no traffic
+    const filledData = [];
+    for (let i = chartDays; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const dateStr = d.toISOString().split('T')[0];
+
+      const existingDay = trafficData.find(item => item.date === dateStr);
+      if (existingDay) {
+        filledData.push(existingDay);
+      } else {
+        filledData.push({
+          date: dateStr,
+          visits: 0,
+          uniqueUsers: 0
+        });
+      }
+    }
+
+    // Summary calculations
+    const totalVisitsCount = await Visit.countDocuments(period === 'all' ? {} : { createdAt: { $gte: chartStartDate } });
+    const totalUniqueUsers = (await Visit.distinct('ip', (period === 'all' ? {} : { createdAt: { $gte: chartStartDate } }))).length;
+
+    // Previous period for growth
+    let prevTrafficStartDate = null;
+    let prevTrafficEndDate = chartStartDate;
+    if (period !== 'all') {
+      prevTrafficStartDate = new Date(chartStartDate);
+      prevTrafficStartDate.setDate(prevTrafficStartDate.getDate() - chartDays);
+    }
+    const prevTrafficFilter = prevTrafficStartDate ? { createdAt: { $gte: prevTrafficStartDate, $lt: prevTrafficEndDate } } : null;
+
+    let prevVisits = 0;
+    if (prevTrafficFilter) prevVisits = await Visit.countDocuments(prevTrafficFilter);
+    const visitsGrowth = prevVisits > 0 ? ((totalVisitsCount - prevVisits) / prevVisits) * 100 : 0;
+
+    // Active Now - Visits in last 5 minutes
+    const fiveMinsAgo = new Date(Date.now() - 5 * 60 * 1000);
+    const activeNow = (await Visit.distinct('ip', { createdAt: { $gte: fiveMinsAgo } })).length;
+
+    // Bounce Rate Estimation - Percentage of users with only 1 visit in the period
+    const bounceData = await Visit.aggregate([
+      { $match: period === 'all' ? {} : { createdAt: { $gte: chartStartDate } } },
+      { $group: { _id: "$ip", count: { $sum: 1 } } },
+      { $group: { _id: null, singleVisits: { $sum: { $cond: [{ $eq: ["$count", 1] }, 1, 0] } }, totalUsers: { $sum: 1 } } }
+    ]);
+    const bounceRate = bounceData.length > 0 ? ((bounceData[0].singleVisits / bounceData[0].totalUsers) * 100).toFixed(1) + "%" : "0%";
+
+    // Additional insights
+    const insightsFilter = period === 'all' ? {} : { createdAt: { $gte: chartStartDate } };
+    const topSources = await Visit.aggregate([
+      { $match: insightsFilter },
+      { $group: { _id: "$referrer", count: { $sum: 1 } } },
+      { $sort: { count: -1 } },
+      { $limit: 5 }
+    ]);
+
+    const deviceStats = await Visit.aggregate([
+      { $match: insightsFilter },
+      { $group: { _id: "$deviceType", count: { $sum: 1 } } },
+      { $sort: { count: -1 } }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        summary: {
+          totalVisits: totalVisitsCount,
+          visitsGrowth,
+          totalUniqueUsers,
+          avgBounceRate: bounceRate,
+          activeNow
+        },
+        chartData: filledData,
+        insights: {
+          topSources,
+          deviceStats
+        }
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// --- Inventory Management Controllers ---
+
+exports.getOutOfStock = async (req, res, next) => {
+  try {
+    const Product = require('../models/product.model');
+    const products = await Product.find({ stock: 0 }).populate('category');
+    res.status(200).json({
+      success: true,
+      data: products
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getMovements = async (req, res, next) => {
+  try {
+    const Movement = require('../models/movement.model');
+    const { page = 1, limit = 20, type, reason } = req.query;
+    const query = {};
+    if (type) query.type = type;
+    if (reason) query.reason = reason;
+
+    const skip = (page - 1) * limit;
+
+    const movements = await Movement.find(query)
+      .populate('product', 'title sku images price')
+      .populate('performedBy', 'name email')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Movement.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        movements,
+        pagination: {
+          total,
+          page: Number(page),
+          pages: Math.ceil(total / limit)
+        }
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getRestockHistory = async (req, res, next) => {
+  try {
+    const Movement = require('../models/movement.model');
+    const { page = 1, limit = 20 } = req.query;
+    const query = { reason: 'restock' };
+
+    const skip = (page - 1) * limit;
+
+    const history = await Movement.find(query)
+      .populate('product', 'title sku images price')
+      .populate('performedBy', 'name email')
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(Number(limit));
+
+    const total = await Movement.countDocuments(query);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        history,
+        pagination: {
+          total,
+          page: Number(page),
+          pages: Math.ceil(total / limit)
+        }
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ========================
+// BRANDS CRUD
+// ========================
+
+exports.getBrands = async (req, res, next) => {
+  try {
+    const brands = await Brand.find({}).sort({ createdAt: -1 });
+    // Enrich with product counts
+    const Product = require('../models/product.model');
+    const enriched = await Promise.all(brands.map(async (brand) => {
+      const productCount = await Product.countDocuments({ brand: brand.name });
+      const products = await Product.find({ brand: brand.name }).select('price stock');
+      const totalStock = products.reduce((sum, p) => sum + (p.stock || 0), 0);
+      const avgPrice = products.length > 0 ? products.reduce((sum, p) => sum + p.price, 0) / products.length : 0;
+      return { ...brand.toObject(), productCount, totalStock, avgPrice };
+    }));
+    res.json({ success: true, brands: enriched });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createBrand = async (req, res, next) => {
+  try {
+    const brand = await Brand.create(req.body);
+    res.status(201).json({ success: true, brand });
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ success: false, message: 'Brand with this name already exists' });
+    }
+    next(err);
+  }
+};
+
+exports.updateBrand = async (req, res, next) => {
+  try {
+    const brand = await Brand.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!brand) return res.status(404).json({ success: false, message: 'Brand not found' });
+    res.json({ success: true, brand });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteBrand = async (req, res, next) => {
+  try {
+    const brand = await Brand.findByIdAndDelete(req.params.id);
+    if (!brand) return res.status(404).json({ success: false, message: 'Brand not found' });
+    res.json({ success: true, message: 'Brand deleted' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// ========================
+// VARIANTS CRUD
+// ========================
+
+exports.getVariants = async (req, res, next) => {
+  try {
+    const variants = await Variant.find({}).sort({ createdAt: -1 });
+    res.json({ success: true, variants });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createVariant = async (req, res, next) => {
+  try {
+    const variant = await Variant.create(req.body);
+    res.status(201).json({ success: true, variant });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateVariant = async (req, res, next) => {
+  try {
+    const variant = await Variant.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!variant) return res.status(404).json({ success: false, message: 'Variant not found' });
+    res.json({ success: true, variant });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteVariant = async (req, res, next) => {
+  try {
+    const variant = await Variant.findByIdAndDelete(req.params.id);
+    if (!variant) return res.status(404).json({ success: false, message: 'Variant not found' });
+    res.json({ success: true, message: 'Variant deleted' });
   } catch (err) {
     next(err);
   }

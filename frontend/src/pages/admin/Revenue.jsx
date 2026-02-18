@@ -14,7 +14,7 @@ const Revenue = () => {
         const fetchStats = async () => {
             try {
                 setLoading(true);
-                const response = await getStats();
+                const response = await getStats(period);
                 setStats(response.data.data);
             } catch (error) {
                 console.error('Error fetching revenue stats:', error);
@@ -24,7 +24,7 @@ const Revenue = () => {
         };
 
         fetchStats();
-    }, []);
+    }, [period]);
 
     if (loading) {
         return (
@@ -40,31 +40,31 @@ const Revenue = () => {
         {
             title: 'Total Revenue',
             value: stats?.totalRevenue || 0,
-            change: '+12.5%',
-            isPositive: true,
+            change: `${stats?.revenueGrowth?.toFixed(1)}%`,
+            isPositive: stats?.revenueGrowth >= 0,
             icon: <DollarSign className="h-6 w-6" />,
             color: 'indigo'
         },
         {
             title: 'Average Order Value',
             value: stats?.totalOrders ? (stats.totalRevenue / stats.totalOrders) : 0,
-            change: '+3.2%',
-            isPositive: true,
+            change: `${stats?.ordersGrowth?.toFixed(1)}%`,
+            isPositive: stats?.ordersGrowth >= 0,
             icon: <CreditCard className="h-6 w-6" />,
             color: 'emerald'
         },
         {
-            title: 'Net Profit',
-            value: (stats?.totalRevenue || 0) * 0.7, // Simulated net profit
-            change: '-1.5%',
-            isPositive: false,
+            title: 'Store Orders',
+            value: stats?.totalOrders || 0,
+            change: `${stats?.ordersGrowth?.toFixed(1)}%`,
+            isPositive: stats?.ordersGrowth >= 0,
             icon: <Wallet className="h-6 w-6" />,
             color: 'emerald'
         },
         {
             title: 'Conversion Rate',
-            value: '3.4%',
-            change: '+0.5%',
+            value: `${stats?.conversionRate?.toFixed(1)}%`,
+            change: `vs last period`,
             isPositive: true,
             icon: <TrendingUp className="h-6 w-6" />,
             color: 'amber'
@@ -80,13 +80,13 @@ const Revenue = () => {
                         <p className="text-sm text-slate-500 mt-1">Detailed breakdown of your store's financial performance.</p>
                     </div>
                     <div className="flex bg-white border border-slate-200 rounded-xl p-1 shadow-sm">
-                        {['7days', '30days', '90days'].map((p) => (
+                        {['7days', '30days', '90days', 'all'].map((p) => (
                             <button
                                 key={p}
                                 onClick={() => setPeriod(p)}
                                 className={`px-4 py-2 text-xs font-bold rounded-lg transition-all ${period === p ? 'bg-indigo-600 text-white shadow-md' : 'text-slate-500 hover:text-slate-900'}`}
                             >
-                                {p === '7days' ? 'Past 7 Days' : p === '30days' ? 'Last Month' : 'Last Quarter'}
+                                {p === '7days' ? 'Past 7 Days' : p === '30days' ? 'Last Month' : p === '90days' ? 'Last Quarter' : 'Full'}
                             </button>
                         ))}
                     </div>
@@ -118,7 +118,9 @@ const Revenue = () => {
                             <h2 className="text-lg font-bold text-slate-900">Revenue Growth</h2>
                             <div className="flex items-center text-xs font-bold text-slate-500 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
                                 <Calendar className="h-3.5 w-3.5 mr-2 text-indigo-500" />
-                                Growth: <span className="text-emerald-600 ml-1">+15.4%</span>
+                                Growth: <span className={`${stats?.revenueGrowth >= 0 ? 'text-emerald-600' : 'text-red-600'} ml-1`}>
+                                    {stats?.revenueGrowth >= 0 ? '+' : ''}{stats?.revenueGrowth?.toFixed(1)}%
+                                </span>
                             </div>
                         </div>
                         <div className="h-[400px]">
@@ -129,34 +131,34 @@ const Revenue = () => {
                     <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm">
                         <h2 className="text-lg font-bold text-slate-900 mb-8">Earnings by Category</h2>
                         <div className="space-y-6">
-                            {[
-                                { name: 'Electronics', amount: (stats?.totalRevenue || 0) * 0.45, color: '#6366F1' },
-                                { name: 'Fashion', amount: (stats?.totalRevenue || 0) * 0.3, color: '#10B981' },
-                                { name: 'Home & Living', amount: (stats?.totalRevenue || 0) * 0.15, color: '#F59E0B' },
-                                { name: 'Beauty', amount: (stats?.totalRevenue || 0) * 0.1, color: '#EC4899' }
-                            ].map((cat, i) => (
-                                <div key={i} className="space-y-2">
-                                    <div className="flex justify-between text-sm font-bold">
-                                        <span className="text-slate-700">{cat.name}</span>
-                                        <span className="text-slate-900"><CurrencyPrice price={cat.amount} /></span>
+                            {(stats?.revenueByCategory || []).length > 0 ? (
+                                stats.revenueByCategory.map((cat, i) => (
+                                    <div key={i} className="space-y-2">
+                                        <div className="flex justify-between text-sm font-bold">
+                                            <span className="text-slate-700">{cat._id}</span>
+                                            <span className="text-slate-900"><CurrencyPrice price={cat.amount} /></span>
+                                        </div>
+                                        <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full rounded-full bg-indigo-500"
+                                                style={{
+                                                    width: `${(cat.amount / (stats?.totalRevenue || 1)) * 100}%`
+                                                }}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
-                                        <div
-                                            className="h-full rounded-full"
-                                            style={{
-                                                width: `${(cat.amount / (stats?.totalRevenue || 1)) * 100}%`,
-                                                backgroundColor: cat.color
-                                            }}
-                                        />
-                                    </div>
-                                </div>
-                            ))}
+                                ))
+                            ) : (
+                                <p className="text-sm text-slate-500 italic text-center py-10">No category data available for this period.</p>
+                            )}
                         </div>
-                        <div className="mt-10 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
-                            <p className="text-xs font-bold text-indigo-700 leading-relaxed text-center">
-                                Top category "Electronics" is performing 15% better than last month.
-                            </p>
-                        </div>
+                        {stats?.revenueByCategory?.[0] && (
+                            <div className="mt-10 p-4 bg-indigo-50 rounded-xl border border-indigo-100">
+                                <p className="text-xs font-bold text-indigo-700 leading-relaxed text-center">
+                                    Top category "{stats.revenueByCategory[0]._id}" is leading your sales this period.
+                                </p>
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

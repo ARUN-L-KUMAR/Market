@@ -17,24 +17,36 @@ const SalesChart = ({ data = [] }) => {
 
     const ctx = chartRef.current.getContext('2d');
 
-    // Prepare data for the chart
-    const labels = data.map(item => item.date);
+    const labels = data.map(item => {
+      // Format label for better readability
+      if (item.date.length === 7) { // YYYY-MM
+        const [year, month] = item.date.split('-');
+        return new Date(year, month - 1).toLocaleDateString(undefined, { month: 'short', year: '2-digit' });
+      }
+      return item.date;
+    });
     const salesData = data.map(item => item.sales);
     const ordersData = data.map(item => item.orders);
 
-    // Create new chart with enhanced styling
+    // Create Gradient for Sales Area
+    const salesGradient = ctx.createLinearGradient(0, 0, 0, 400);
+    salesGradient.addColorStop(0, 'rgba(99, 102, 241, 0.2)');
+    salesGradient.addColorStop(1, 'rgba(99, 102, 241, 0)');
+
+    // Create new chart with enhanced Bar/Area styling
     chartInstance.current = new Chart(ctx, {
-      type: 'line',
+      type: 'bar', // Base type
       data: {
         labels,
         datasets: [
           {
-            label: 'Sales ($)',
+            type: 'line', // Sales as Area Line
+            label: 'Sales (₹)',
             data: salesData,
             borderColor: '#6366F1',
-            backgroundColor: 'transparent',
+            backgroundColor: salesGradient,
             borderWidth: 3,
-            fill: false,
+            fill: true,
             tension: 0.4,
             pointBackgroundColor: '#ffffff',
             pointBorderColor: '#6366F1',
@@ -44,18 +56,14 @@ const SalesChart = ({ data = [] }) => {
             yAxisID: 'y'
           },
           {
+            type: 'bar', // Orders as Bar
             label: 'Orders',
             data: ordersData,
-            borderColor: '#10B981',
-            backgroundColor: 'transparent',
-            borderWidth: 3,
-            tension: 0.4,
-            pointBackgroundColor: '#ffffff',
-            pointBorderColor: '#10B981',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            yAxisID: 'y1'
+            backgroundColor: 'rgba(16, 185, 129, 0.6)',
+            hoverBackgroundColor: '#10B981',
+            borderRadius: 6,
+            yAxisID: 'y1',
+            barThickness: labels.length > 20 ? 'flex' : 24
           }
         ]
       },
@@ -81,7 +89,7 @@ const SalesChart = ({ data = [] }) => {
                   label += ': ';
                 }
                 if (context.datasetIndex === 0) {
-                  label += new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(context.raw);
+                  label += new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(context.raw);
                 } else {
                   label += context.raw;
                 }
@@ -121,7 +129,7 @@ const SalesChart = ({ data = [] }) => {
             position: 'left',
             title: {
               display: true,
-              text: 'Sales ($)',
+              text: 'Sales (₹)',
               color: '#374151',
               font: {
                 weight: '600'
@@ -134,7 +142,7 @@ const SalesChart = ({ data = [] }) => {
             ticks: {
               color: '#6B7280',
               callback: function (value) {
-                return '$' + value.toLocaleString();
+                return '₹' + value.toLocaleString();
               }
             }
           },

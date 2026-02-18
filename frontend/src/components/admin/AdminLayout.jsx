@@ -40,7 +40,6 @@ const navItems = [
       { name: 'Revenue Analytics', path: '/admin/revenue' },
       { name: 'Sales Reports', path: '/admin/sales' },
       { name: 'Traffic Insights', path: '/admin/traffic' },
-      { name: 'Low Stock Alerts', path: '/admin/low-stock' },
       { name: 'Recent Activity', path: '/admin/activity' },
     ]
   },
@@ -51,9 +50,7 @@ const navItems = [
       { name: 'All Products', path: '/admin/products' },
       { name: 'Add Product', path: '/admin/products/add' },
       { name: 'Categories', path: '/admin/products/categories' },
-      { name: 'Subcategories', path: '/admin/products/subcategories' },
       { name: 'Brands', path: '/admin/products/brands' },
-      { name: 'Inventory', path: '/admin/products/inventory' },
       { name: 'Variants', path: '/admin/products/variants' },
       { name: 'Bulk Upload', path: '/admin/products/bulk' },
       { name: 'Draft Products', path: '/admin/products/drafts' },
@@ -120,6 +117,7 @@ const navItems = [
     name: 'Inventory Alerts',
     icon: <AlertTriangle className="h-5 w-5" />,
     subItems: [
+      { name: 'Master Inventory', path: '/admin/inventory/master' },
       { name: 'Low Stock', path: '/admin/inventory/low' },
       { name: 'Out of Stock', path: '/admin/inventory/out' },
       { name: 'Restock History', path: '/admin/inventory/history' },

@@ -24,6 +24,13 @@ const Settings = () => {
       twitter: '',
       instagram: '',
       youtube: ''
+    },
+    inventoryAutomation: {
+      enabled: false,
+      threshold: 10,
+      autoRestockAmount: 50,
+      supplierEmail: '',
+      notifySupplier: false
     }
   });
 
@@ -48,6 +55,12 @@ const Settings = () => {
     };
 
     fetchSettings();
+
+    // Check for tab in URL hash
+    const hash = window.location.hash.replace('#', '');
+    if (hash && ['general', 'shipping', 'features', 'appearance', 'social', 'automation'].includes(hash)) {
+      setActiveTab(hash);
+    }
   }, []);
 
   const handleChange = (e) => {
@@ -105,7 +118,8 @@ const Settings = () => {
     { id: 'shipping', label: 'Shipping & Tax' },
     { id: 'features', label: 'Features' },
     { id: 'appearance', label: 'Appearance' },
-    { id: 'social', label: 'Social Media' }
+    { id: 'social', label: 'Social Media' },
+    { id: 'automation', label: 'Automation' }
   ];
 
   if (loading) {
@@ -582,6 +596,102 @@ const Settings = () => {
                           className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"
                           placeholder="https://youtube.com/c/yourstorename"
                         />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Automation Settings */}
+          {activeTab === 'automation' && (
+            <div className="space-y-6">
+              <div className="bg-white shadow px-4 py-5 sm:rounded-lg sm:p-6">
+                <div className="md:grid md:grid-cols-3 md:gap-6">
+                  <div className="md:col-span-1">
+                    <h3 className="text-lg font-medium leading-6 text-slate-900">Procurement Automation</h3>
+                    <p className="mt-1 text-sm text-slate-500">
+                      Configure automated restocking rules for your inventory.
+                    </p>
+                  </div>
+                  <div className="mt-5 md:mt-0 md:col-span-2">
+                    <div className="space-y-6">
+                      <div className="flex items-start">
+                        <div className="flex items-center h-5">
+                          <input
+                            id="inventoryAutomation.enabled"
+                            name="inventoryAutomation.enabled"
+                            type="checkbox"
+                            checked={settings.inventoryAutomation?.enabled}
+                            onChange={handleChange}
+                            className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-slate-300 rounded"
+                          />
+                        </div>
+                        <div className="ml-3 text-sm">
+                          <label htmlFor="inventoryAutomation.enabled" className="font-medium text-slate-700">Enable Automation</label>
+                          <p className="text-slate-500">Automatically trigger restocking processes when items hit low levels.</p>
+                        </div>
+                      </div>
+
+                      <div className="grid grid-cols-6 gap-6">
+                        <div className="col-span-6 sm:col-span-3">
+                          <label htmlFor="inventoryAutomation.threshold" className="block text-sm font-medium text-slate-700">Stock Threshold</label>
+                          <input
+                            type="number"
+                            name="inventoryAutomation.threshold"
+                            id="inventoryAutomation.threshold"
+                            value={settings.inventoryAutomation?.threshold}
+                            onChange={handleNumberChange}
+                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"
+                          />
+                          <p className="mt-1 text-xs text-slate-400">Restock will trigger when stock falls below this number.</p>
+                        </div>
+
+                        <div className="col-span-6 sm:col-span-3">
+                          <label htmlFor="inventoryAutomation.autoRestockAmount" className="block text-sm font-medium text-slate-700">Auto-Restock Amount</label>
+                          <input
+                            type="number"
+                            name="inventoryAutomation.autoRestockAmount"
+                            id="inventoryAutomation.autoRestockAmount"
+                            value={settings.inventoryAutomation?.autoRestockAmount}
+                            onChange={handleNumberChange}
+                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"
+                          />
+                          <p className="mt-1 text-xs text-slate-400">Number of units to order/add during automation.</p>
+                        </div>
+
+                        <div className="col-span-6 sm:col-span-4">
+                          <label htmlFor="inventoryAutomation.supplierEmail" className="block text-sm font-medium text-slate-700">Supplier Email</label>
+                          <input
+                            type="email"
+                            name="inventoryAutomation.supplierEmail"
+                            id="inventoryAutomation.supplierEmail"
+                            value={settings.inventoryAutomation?.supplierEmail}
+                            onChange={handleChange}
+                            className="mt-1 focus:ring-indigo-500 focus:border-indigo-500 block w-full shadow-sm sm:text-sm border-slate-300 rounded-md"
+                            placeholder="supplier@example.com"
+                          />
+                        </div>
+
+                        <div className="col-span-6">
+                          <div className="flex items-start">
+                            <div className="flex items-center h-5">
+                              <input
+                                id="inventoryAutomation.notifySupplier"
+                                name="inventoryAutomation.notifySupplier"
+                                type="checkbox"
+                                checked={settings.inventoryAutomation?.notifySupplier}
+                                onChange={handleChange}
+                                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-slate-300 rounded"
+                              />
+                            </div>
+                            <div className="ml-3 text-sm">
+                              <label htmlFor="inventoryAutomation.notifySupplier" className="font-medium text-slate-700">Notify Supplier Automatically</label>
+                              <p className="text-slate-500">Send an automated email to the supplier when restock is triggered.</p>
+                            </div>
+                          </div>
+                        </div>
                       </div>
                     </div>
                   </div>

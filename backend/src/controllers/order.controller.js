@@ -33,18 +33,32 @@ exports.createOrder = async (req, res, next) => {
     }
 
     // Deduct stock for all items
+    const Movement = require('../models/movement.model');
     for (const update of stockUpdates) {
+      const prevStock = update.product.stock;
+      const currentStock = prevStock - update.quantity;
+
       await Product.findByIdAndUpdate(
         update.productId,
         { $inc: { stock: -update.quantity } }
       );
 
+      // Log movement
+      await Movement.create({
+        product: update.productId,
+        type: 'out',
+        quantity: update.quantity,
+        reason: 'sale',
+        previousStock: prevStock,
+        currentStock: currentStock,
+        notes: `Order #${orderNumber}`
+      });
+
       // Emit real-time stock update
       if (io) {
-        const updatedProduct = await Product.findById(update.productId);
         io.to(`product-${update.productId}`).emit('stockUpdate', {
           productId: update.productId,
-          stock: updatedProduct.stock,
+          stock: currentStock,
           timestamp: new Date()
         });
       }
@@ -173,11 +187,38 @@ exports.cancelOrder = async (req, res, next) => {
     }
 
     // Restore stock for each item
+    const Movement = require('../models/movement.model');
     for (const item of order.items) {
-      await Product.findByIdAndUpdate(
-        item.product,
-        { $inc: { stock: item.quantity } }
-      );
+      const product = await Product.findById(item.product);
+      if (product) {
+        const prevStock = product.stock;
+        const currentStock = prevStock + item.quantity;
+
+        await Product.findByIdAndUpdate(
+          item.product,
+          { $inc: { stock: item.quantity } }
+        );
+
+        // Log movement
+        await Movement.create({
+          product: item.product,
+          type: 'in',
+          quantity: item.quantity,
+          reason: 'cancellation',
+          previousStock: prevStock,
+          currentStock: currentStock,
+          notes: `Order #${order.orderNumber} cancelled`
+        });
+
+        // Emit real-time stock update
+        if (io) {
+          io.to(`product-${item.product}`).emit('stockUpdate', {
+            productId: item.product,
+            stock: currentStock,
+            timestamp: new Date()
+          });
+        }
+      }
     }
 
     order.status = 'cancelled';

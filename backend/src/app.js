@@ -11,14 +11,17 @@ const adminRoutes = require('./routes/admin.routes');
 const wishlistRoutes = require('./routes/wishlist.routes');
 const paymentRoutes = require('./routes/payment.routes');
 const errorMiddleware = require('./middleware/error.middleware');
+const { trackTraffic } = require('./middleware/traffic.middleware');
 
 const app = express();
 
-// Simple request logger for debugging
 app.use((req, res, next) => {
   console.log(`[${new Date().toLocaleTimeString()}] ${req.method} ${req.url}`);
   next();
 });
+
+// Track real traffic
+app.use(trackTraffic);
 
 // Trust proxy — required for rate limiting and HTTPS behind Render/Vercel reverse proxy
 app.set('trust proxy', 1);

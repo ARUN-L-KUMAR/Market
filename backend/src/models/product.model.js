@@ -30,9 +30,19 @@ const productSchema = new mongoose.Schema({
     ref: 'Category',
     required: true
   },
+  categoryName: {
+    type: String,
+    trim: true,
+    index: true
+  },
   subcategory: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Category'
+  },
+  subcategoryName: {
+    type: String,
+    trim: true,
+    index: true
   },
   brand: {
     type: String,
@@ -111,26 +121,45 @@ const productSchema = new mongoose.Schema({
 productSchema.set('toJSON', { virtuals: true });
 productSchema.set('toObject', { virtuals: true });
 
-// Generate slug from title before saving
-productSchema.pre('save', function(next) {
+// Generate slug from title and auto-populate category names before saving
+productSchema.pre('save', async function (next) {
   if (this.isModified('title')) {
     this.slug = this.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
   }
+
+  // Auto-populate categoryName from category ObjectId
+  if (this.isModified('category') && this.category && !this.categoryName) {
+    try {
+      const Category = mongoose.model('Category');
+      const cat = await Category.findById(this.category).select('name');
+      if (cat) this.categoryName = cat.name;
+    } catch (e) { /* ignore */ }
+  }
+
+  // Auto-populate subcategoryName from subcategory ObjectId
+  if (this.isModified('subcategory') && this.subcategory && !this.subcategoryName) {
+    try {
+      const Category = mongoose.model('Category');
+      const sub = await Category.findById(this.subcategory).select('name');
+      if (sub) this.subcategoryName = sub.name;
+    } catch (e) { /* ignore */ }
+  }
+
   next();
 });
 
 // Virtual for checking if product is in stock
-productSchema.virtual('inStock').get(function() {
+productSchema.virtual('inStock').get(function () {
   return this.stock > 0;
 });
 
 // Virtual for checking if product is low stock
-productSchema.virtual('isLowStock').get(function() {
+productSchema.virtual('isLowStock').get(function () {
   return this.stock <= this.lowStockThreshold && this.stock > 0;
 });
 
 // Virtual for discount percentage
-productSchema.virtual('discountPercentage').get(function() {
+productSchema.virtual('discountPercentage').get(function () {
   if (this.comparePrice && this.comparePrice > this.price) {
     return Math.round(((this.comparePrice - this.price) / this.comparePrice) * 100);
   }

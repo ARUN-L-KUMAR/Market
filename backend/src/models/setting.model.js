@@ -97,6 +97,28 @@ const settingSchema = new mongoose.Schema({
       default: ''
     }
   },
+  inventoryAutomation: {
+    enabled: {
+      type: Boolean,
+      default: false
+    },
+    threshold: {
+      type: Number,
+      default: 10
+    },
+    autoRestockAmount: {
+      type: Number,
+      default: 50
+    },
+    supplierEmail: {
+      type: String,
+      default: ''
+    },
+    notifySupplier: {
+      type: Boolean,
+      default: false
+    }
+  },
   updatedAt: {
     type: Date,
     default: Date.now

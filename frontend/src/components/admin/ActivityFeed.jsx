@@ -90,6 +90,18 @@ const ActivityFeed = ({ activities = [] }) => {
             </svg>
           </motion.div>
         );
+      case 'low_stock':
+      case 'inventory':
+        return (
+          <motion.div
+            whileHover={{ scale: 1.1 }}
+            className="bg-amber-100 p-2 rounded-lg shadow-sm"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </motion.div>
+        );
       default:
         return (
           <motion.div
@@ -113,6 +125,8 @@ const ActivityFeed = ({ activities = [] }) => {
         return `/admin/users/${activity.data?._id}`;
       case 'product':
         return `/admin/products/${activity.data?._id}`;
+      case 'low_stock':
+        return '/admin/inventory/low';
       default:
         return '#';
     }
@@ -164,22 +178,30 @@ const ActivityFeed = ({ activities = [] }) => {
                         />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1 bg-slate-50/50 rounded-lg p-3 hover:bg-slate-100/50 transition-colors">
-                      <div>
-                        <div className="text-sm">
+                    <div className="min-w-0 flex-1">
+                      <div className="bg-white border border-slate-100 rounded-xl p-4 shadow-sm hover:shadow-md hover:border-indigo-100 transition-all group/item">
+                        <div className="flex justify-between items-start mb-1">
                           <Link
                             to={getActivityLink(activity)}
-                            className="font-medium text-slate-900 hover:text-indigo-600 transition-colors"
+                            className="text-sm font-bold text-slate-900 group-hover/item:text-indigo-600 transition-colors"
                           >
-                            {activity.message}
+                            {activity.title || activity.message}
                           </Link>
+                          <span className="text-[10px] font-bold text-slate-400 bg-slate-50 px-2 py-0.5 rounded-md uppercase tracking-wider">
+                            {activity.type}
+                          </span>
                         </div>
-                        <p className="mt-1 text-xs text-slate-500 flex items-center">
+                        {activity.description && (
+                          <p className="text-xs text-slate-500 leading-relaxed mb-2">
+                            {activity.description}
+                          </p>
+                        )}
+                        <div className="flex items-center text-[10px] font-medium text-slate-400">
                           <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
-                          {formatTime(activity.time)}
-                        </p>
+                          {formatTime(activity.time || activity.createdAt)}
+                        </div>
                       </div>
                     </div>
                   </div>

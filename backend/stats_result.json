@@ -1,0 +1,15 @@
+{
+  "connected": true,
+  "totalOrders": 9,
+  "totalProducts": 16,
+  "totalUsers": 5,
+  "orderStatuses": [
+    "Delivered",
+    "completed",
+    "pending",
+    "processing",
+    "success"
+  ],
+  "totalRevenueModel": 0,
+  "totalRevenueFixed": 165570.48
+}
