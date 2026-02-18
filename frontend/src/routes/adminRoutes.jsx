@@ -30,6 +30,8 @@ import Brands from '../pages/admin/Brands';
 import Variants from '../pages/admin/Variants';
 import BulkUpload from '../pages/admin/BulkUpload';
 import DraftProducts from '../pages/admin/DraftProducts';
+import Returns from '../pages/admin/Returns';
+import Payments from '../pages/admin/Payments';
 import PlaceholderAdminPage from '../pages/admin/PlaceholderAdminPage';
 import { Navigate } from 'react-router-dom';
 
@@ -60,10 +62,10 @@ const AdminRoutes = [
   <Route key="admin-orders-pending" path="/admin/orders/pending" element={<ProtectedRoute adminOnly={true}><Navigate to="/admin/orders?status=pending" replace /></ProtectedRoute>} />,
   <Route key="admin-orders-processing" path="/admin/orders/processing" element={<ProtectedRoute adminOnly={true}><Navigate to="/admin/orders?status=processing" replace /></ProtectedRoute>} />,
   <Route key="admin-orders-shipped" path="/admin/orders/shipped" element={<ProtectedRoute adminOnly={true}><Navigate to="/admin/orders?status=shipped" replace /></ProtectedRoute>} />,
-  <Route key="admin-orders-delivered" path="/admin/orders/delivered" element={<ProtectedRoute adminOnly={true}><Navigate to="/admin/orders?status=completed" replace /></ProtectedRoute>} />,
+  <Route key="admin-orders-delivered" path="/admin/orders/delivered" element={<ProtectedRoute adminOnly={true}><Navigate to="/admin/orders?status=delivered" replace /></ProtectedRoute>} />,
   <Route key="admin-orders-cancelled" path="/admin/orders/cancelled" element={<ProtectedRoute adminOnly={true}><Navigate to="/admin/orders?status=cancelled" replace /></ProtectedRoute>} />,
-  <Route key="admin-orders-returns" path="/admin/orders/returns" element={<ProtectedRoute adminOnly={true}><PlaceholderAdminPage /></ProtectedRoute>} />,
-  <Route key="admin-orders-payments" path="/admin/orders/payments" element={<ProtectedRoute adminOnly={true}><PlaceholderAdminPage /></ProtectedRoute>} />,
+  <Route key="admin-orders-returns" path="/admin/orders/returns" element={<ProtectedRoute adminOnly={true}><Returns /></ProtectedRoute>} />,
+  <Route key="admin-orders-payments" path="/admin/orders/payments" element={<ProtectedRoute adminOnly={true}><Payments /></ProtectedRoute>} />,
   <Route key="admin-order-detail" path="/admin/orders/:id" element={<ProtectedRoute adminOnly={true}><OrderDetail /></ProtectedRoute>} />,
 
   // Users Sections

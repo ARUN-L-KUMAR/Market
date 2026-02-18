@@ -17,6 +17,8 @@ const ADMIN_ENDPOINTS = {
   settings: '/api/admin/settings',
   brands: '/api/admin/brands',
   variants: '/api/admin/variants',
+  returns: '/api/admin/returns',
+  transactions: '/api/admin/transactions',
 };
 
 export const getStats = async (period = '30days') => {
@@ -66,6 +68,16 @@ export const getOrderById = async (id) => {
 // Update order status
 export const updateOrderStatus = async (id, status) => {
   return await apiClient.put(`${ADMIN_ENDPOINTS.orders}/${id}/status`, { status });
+};
+
+// Update payment status
+export const updatePaymentStatus = async (id, status) => {
+  return await apiClient.put(`${ADMIN_ENDPOINTS.orders}/${id}/payment-status`, { status });
+};
+
+// Delete order
+export const deleteOrder = async (id) => {
+  return await apiClient.delete(`${ADMIN_ENDPOINTS.orders}/${id}`);
 };
 
 // Get all products with pagination and filtering
@@ -169,4 +181,30 @@ export const updateVariant = async (id, variantData) => {
 
 export const deleteVariant = async (id) => {
   return await apiClient.delete(`${ADMIN_ENDPOINTS.variants}/${id}`);
+};
+
+// ========================
+// RETURNS
+// ========================
+export const getReturns = async (params = {}) => {
+  return await apiClient.get(ADMIN_ENDPOINTS.returns, { params });
+};
+
+export const updateReturnStatus = async (id, statusData) => {
+  return await apiClient.put(`${ADMIN_ENDPOINTS.returns}/${id}/status`, statusData);
+};
+
+export const createReturnRequest = async (returnData) => {
+  return await apiClient.post(ADMIN_ENDPOINTS.returns, returnData);
+};
+
+// ========================
+// TRANSACTIONS
+// ========================
+export const getTransactions = async (params = {}) => {
+  return await apiClient.get(ADMIN_ENDPOINTS.transactions, { params });
+};
+
+export const getTransactionStats = async () => {
+  return await apiClient.get(`${ADMIN_ENDPOINTS.transactions}/stats`);
 };

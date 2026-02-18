@@ -7,6 +7,8 @@ const Setting = require('../models/setting.model');
 const Visit = require('../models/visit.model');
 const Brand = require('../models/brand.model');
 const Variant = require('../models/variant.model');
+const Return = require('../models/return.model');
+const Transaction = require('../models/transaction.model');
 
 // Data administration endpoints - Only for development purposes
 // Do not use these in production without proper authentication!
@@ -378,13 +380,19 @@ exports.getOrders = async (req, res, next) => {
     const limit = parseInt(req.query.limit) || 10;
     const skip = (page - 1) * limit;
     const status = req.query.status;
+    const paymentStatus = req.query.paymentStatus;
     const search = req.query.search;
 
     let query = {};
 
-    // Filter by status if provided
+    // Filter by delivery status if provided
     if (status && status !== 'all') {
       query.status = status;
+    }
+
+    // Filter by payment status if provided
+    if (paymentStatus && paymentStatus !== 'all') {
+      query.paymentStatus = paymentStatus;
     }
 
     // Search by order ID or customer name/email
@@ -397,11 +405,38 @@ exports.getOrders = async (req, res, next) => {
     }
 
     const total = await Order.countDocuments(query);
-    const orders = await Order.find(query)
-      .sort({ createdAt: -1 })
-      .skip(skip)
-      .limit(limit)
-      .populate('user', 'name email');
+
+    // Use aggregate to join returns
+    const orders = await Order.aggregate([
+      { $match: query },
+      { $sort: { createdAt: -1 } },
+      { $skip: skip },
+      { $limit: limit },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'user',
+          foreignField: '_id',
+          as: 'user'
+        }
+      },
+      { $unwind: { path: '$user', preserveNullAndEmptyArrays: true } },
+      {
+        $lookup: {
+          from: 'returns',
+          localField: '_id',
+          foreignField: 'order',
+          as: 'returnRequest'
+        }
+      },
+      { $unwind: { path: '$returnRequest', preserveNullAndEmptyArrays: true } },
+      {
+        $project: {
+          'user.password': 0,
+          'user.__v': 0
+        }
+      }
+    ]);
 
     res.status(200).json({
       success: true,
@@ -432,9 +467,15 @@ exports.getOrderById = async (req, res, next) => {
       });
     }
 
+    // Check for return request
+    const returnRequest = await Return.findOne({ order: order._id });
+
     res.status(200).json({
       success: true,
-      data: order
+      data: {
+        ...order._doc,
+        returnRequest
+      }
     });
   } catch (err) {
     next(err);
@@ -1432,6 +1473,317 @@ exports.deleteVariant = async (req, res, next) => {
     const variant = await Variant.findByIdAndDelete(req.params.id);
     if (!variant) return res.status(404).json({ success: false, message: 'Variant not found' });
     res.json({ success: true, message: 'Variant deleted' });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Returns & Refunds
+exports.getReturns = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const skip = (page - 1) * limit;
+    const status = req.query.status;
+    const search = req.query.search;
+
+    let query = {};
+    if (status && status !== 'all') {
+      if (status.includes(',')) {
+        query.status = { $in: status.split(',') };
+      } else {
+        query.status = status;
+      }
+    }
+
+    if (search) {
+      query.$or = [
+        { returnNumber: { $regex: search, $options: 'i' } }
+      ];
+    }
+
+    const total = await Return.countDocuments(query);
+    const returns = await Return.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('user', 'name email')
+      .populate('order', 'orderNumber');
+
+    res.status(200).json({
+      success: true,
+      data: {
+        returns,
+        pagination: {
+          total,
+          page,
+          pages: Math.ceil(total / limit)
+        }
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updateReturnStatus = async (req, res, next) => {
+  try {
+    const { status, adminNotes } = req.body;
+    const returnData = await Return.findById(req.params.id);
+
+    if (!returnData) {
+      return res.status(404).json({ success: false, message: 'Return request not found' });
+    }
+
+    // REVERSAL LOGIC: If moving back from refund_processed
+    if (returnData.status === 'refund_processed' && (status === 'received' || status === 'approved' || status === 'pending')) {
+      returnData.refundStatus = 'pending';
+
+      // Reverse the transaction
+      const transaction = await Transaction.findOne({
+        order: returnData.order,
+        type: 'refund',
+        status: 'success'
+      });
+
+      if (transaction) {
+        transaction.status = 'reversed';
+        transaction.description += ' (Reversed by Admin)';
+        await transaction.save();
+      }
+
+      // Revert order status
+      await Order.findByIdAndUpdate(returnData.order, {
+        paymentStatus: 'paid'
+      });
+    }
+
+    returnData.status = status;
+    if (adminNotes) returnData.adminNotes = adminNotes;
+
+    if (status === 'approved' || status === 'rejected') {
+      returnData.processedBy = req.user._id;
+      returnData.processedAt = Date.now();
+    }
+
+    // If status is refund_processed, handle financial reconciliation
+    if (status === 'refund_processed') {
+      returnData.refundStatus = 'processed';
+
+      // 1. Create or Update Transaction record
+      let transaction = await Transaction.findOne({
+        order: returnData.order,
+        type: 'refund',
+        status: { $in: ['pending', 'reversed'] }
+      });
+
+      if (transaction) {
+        transaction.status = 'success';
+        transaction.processedAt = Date.now();
+        if (transaction.status === 'reversed') transaction.description = `Refund completed for Return #${returnData.returnNumber}`;
+        await transaction.save();
+      } else {
+        // Create new success refund transaction
+        const order = await Order.findById(returnData.order);
+        transaction = new Transaction({
+          user: returnData.user,
+          order: returnData.order,
+          type: 'refund',
+          amount: returnData.refundAmount,
+          paymentGateway: order ? (order.paymentMethod === 'cash_on_delivery' ? 'cod' : order.paymentMethod) : 'manual',
+          status: 'success',
+          description: `Refund completed for Return #${returnData.returnNumber}`,
+          processedAt: Date.now()
+        });
+        await transaction.save();
+      }
+
+      // 2. Update Order payment status
+      await Order.findByIdAndUpdate(returnData.order, {
+        paymentStatus: 'refunded'
+      });
+    }
+
+    await returnData.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Return request ${status} successfully`,
+      data: returnData
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.createReturnRequest = async (req, res, next) => {
+  try {
+    const { orderId, items, reason, reasonDetails, refundAmount } = req.body;
+
+    // Check if order exists
+    const order = await Order.findById(orderId);
+    if (!order) {
+      return res.status(404).json({ success: false, message: 'Order not found' });
+    }
+
+    // Check if order is delivered
+    if (order.status !== 'delivered') {
+      return res.status(400).json({
+        success: false,
+        message: 'Return requests can only be initiated for delivered orders'
+      });
+    }
+
+    // Check if return already exists for this order
+    const existingReturn = await Return.findOne({ order: orderId });
+    if (existingReturn) {
+      return res.status(400).json({
+        success: false,
+        message: 'A return request already exists for this order',
+        returnData: existingReturn
+      });
+    }
+
+    // Create return request
+    const newReturn = new Return({
+      order: orderId,
+      user: order.user,
+      items: items || order.items.map(item => ({
+        product: item.product,
+        quantity: item.quantity,
+        price: item.price
+      })),
+      reason,
+      reasonDetails,
+      refundAmount: refundAmount || order.total,
+      status: 'pending' // Starts as pending
+    });
+
+    await newReturn.save();
+
+    res.status(201).json({
+      success: true,
+      message: 'Return request initiated successfully',
+      data: newReturn
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Payments & Transactions
+exports.getTransactions = async (req, res, next) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 20;
+    const skip = (page - 1) * limit;
+    const type = req.query.type;
+    const status = req.query.status;
+
+    let query = {};
+    if (type && type !== 'all') query.type = type;
+    if (status && status !== 'all') query.status = status;
+
+    const total = await Transaction.countDocuments(query);
+    const transactions = await Transaction.find(query)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit)
+      .populate('user', 'name email')
+      .populate('order', 'orderNumber');
+
+    res.status(200).json({
+      success: true,
+      data: {
+        transactions,
+        pagination: {
+          total,
+          page,
+          pages: Math.ceil(total / limit)
+        }
+      }
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.getTransactionStats = async (req, res, next) => {
+  try {
+    const stats = await Transaction.aggregate([
+      {
+        $group: {
+          _id: '$type',
+          totalAmount: { $sum: '$amount' },
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+
+    const formattedStats = {
+      payment: stats.find(s => s._id === 'payment')?.totalAmount || 0,
+      refund: stats.find(s => s._id === 'refund')?.totalAmount || 0,
+      payout: stats.find(s => s._id === 'payout')?.totalAmount || 0,
+      count: stats.reduce((acc, current) => acc + current.count, 0)
+    };
+
+    res.status(200).json({
+      success: true,
+      data: formattedStats
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.updatePaymentStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+
+    if (!status) {
+      return res.status(400).json({
+        success: false,
+        message: 'Payment status is required'
+      });
+    }
+
+    const order = await Order.findByIdAndUpdate(
+      req.params.id,
+      { paymentStatus: status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      data: order
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.deleteOrder = async (req, res, next) => {
+  try {
+    const order = await Order.findByIdAndDelete(req.params.id);
+
+    if (!order) {
+      return res.status(404).json({
+        success: false,
+        message: 'Order not found'
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Order deleted successfully'
+    });
   } catch (err) {
     next(err);
   }

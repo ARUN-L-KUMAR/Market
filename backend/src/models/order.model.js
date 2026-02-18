@@ -61,7 +61,7 @@ const orderSchema = new mongoose.Schema({
   },
   paymentMethod: {
     type: String,
-    enum: ['credit_card', 'debit_card', 'paypal', 'cash_on_delivery', 'payu'],
+    enum: ['credit_card', 'debit_card', 'paypal', 'cash_on_delivery', 'payu', 'razorpay', 'stripe'],
     required: true
   },
   paymentStatus: {
@@ -76,7 +76,7 @@ const orderSchema = new mongoose.Schema({
 });
 
 // Generate order number before saving
-orderSchema.pre('save', async function(next) {
+orderSchema.pre('save', async function (next) {
   if (!this.orderNumber) {
     const count = await mongoose.model('Order').countDocuments();
     this.orderNumber = `ORD-${Date.now()}-${(count + 1).toString().padStart(4, '0')}`;

@@ -25,6 +25,17 @@ router.get('/traffic-stats', adminController.getTrafficStats);
 router.get('/orders', adminController.getOrders);
 router.get('/orders/:id', adminController.getOrderById);
 router.put('/orders/:id/status', adminController.updateOrderStatus);
+router.put('/orders/:id/payment-status', adminController.updatePaymentStatus);
+router.delete('/orders/:id', adminController.deleteOrder);
+
+// Returns & Refunds
+router.get('/returns', adminController.getReturns);
+router.post('/returns', adminController.createReturnRequest);
+router.put('/returns/:id/status', adminController.updateReturnStatus);
+
+// Payments & Transactions
+router.get('/transactions', adminController.getTransactions);
+router.get('/transactions/stats', adminController.getTransactionStats);
 
 // Products management
 router.get('/products', adminController.getProducts);
