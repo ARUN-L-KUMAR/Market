@@ -155,5 +155,25 @@ export const userAPI = {
   }
 };
 
+// Categories API methods
+export const categoriesAPI = {
+  getAll: async (params = {}) => {
+    return await apiClient.get(API_CONFIG.endpoints.categories.getAll, { params });
+  },
+  getById: async (id) => {
+    return await apiClient.get(API_CONFIG.endpoints.categories.getById(id));
+  },
+  getByParent: async (parentId) => {
+    return await apiClient.get(API_CONFIG.endpoints.categories.parent(parentId));
+  }
+};
+
+// Support API methods
+export const supportAPI = {
+  sendContactMessage: async (formData) => {
+    return await apiClient.post(API_CONFIG.endpoints.support.contact, formData);
+  }
+};
+
 // Export the base client for custom requests
 export default apiClient;

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useSearchParams } from 'react-router-dom';
+import axios from 'axios';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Filter,
@@ -33,26 +34,80 @@ import Card from '../components/ui/Card';
 const Products = () => {
   const dispatch = useDispatch();
   const { products, loading, error, filters, totalProducts } = useSelector(state => state.products);
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const initialCategory = searchParams.get('category');
   const initialSearch = searchParams.get('search');
+  const initialFilter = searchParams.get('filter');
+  const initialBrand = searchParams.get('brand');
+  const initialMinPrice = searchParams.get('minPrice');
+  const initialMaxPrice = searchParams.get('maxPrice');
+  const initialMinRating = searchParams.get('minRating');
+  const initialInStock = searchParams.get('inStock');
+  const initialDiscount = searchParams.get('discount');
 
   const [currentPage, setCurrentPage] = useState(1);
   const [viewMode, setViewMode] = useState('grid');
   const [showFilters, setShowFilters] = useState(false);
   const [searchTerm, setSearchTerm] = useState(initialSearch || '');
   const [isScrolled, setIsScrolled] = useState(false);
+  const [categoryName, setCategoryName] = useState('');
+  const [isInitialMount, setIsInitialMount] = useState(true);
   const productsPerPage = 12;
 
-  // Sync URL params with filters on mount
+  const quickFilters = [
+    { label: 'Primary Archive', id: 'primary', params: { sortBy: 'createdAt', sortOrder: 'desc', onSale: '', minRating: '' }, icon: <Archive className="w-4 h-4" /> },
+    { label: 'New Arrivals', id: 'new', params: { sortBy: 'createdAt', sortOrder: 'desc', onSale: '', minRating: '' }, icon: <TrendingUp className="w-4 h-4" /> },
+    { label: 'Global Sales', id: 'sale', params: { onSale: 'true', minRating: '' }, icon: <Zap className="w-4 h-4" /> },
+    { label: 'Verified Rating', id: 'rated', params: { minRating: 4, onSale: '' }, icon: <Star className="w-4 h-4" /> },
+  ];
+
+  // Resolve Category Name for Breadcrumbs
   useEffect(() => {
-    if (initialCategory || initialSearch) {
-      dispatch(setFilters({
-        category: initialCategory || '',
-        search: initialSearch || ''
-      }));
+    const resolveCategoryName = async () => {
+      if (initialCategory) {
+        if (/^[0-9a-fA-F]{24}$/.test(initialCategory)) {
+          try {
+            const response = await axios.get(`${import.meta.env.VITE_API_URL || 'http://localhost:3001'}/api/categories/${initialCategory}`);
+            setCategoryName(response.data.name);
+          } catch (err) {
+            setCategoryName(initialCategory);
+          }
+        } else {
+          setCategoryName(initialCategory);
+        }
+      } else {
+        setCategoryName('');
+      }
+    };
+    resolveCategoryName();
+  }, [initialCategory]);
+
+  // Sync URL params with filters on mount and when URL changes
+  useEffect(() => {
+    let appliedFilters = {
+      ...quickFilters[0].params,
+      quickFilter: 'primary',
+      category: initialCategory || '',
+      search: initialSearch || '',
+      brand: initialBrand || '',
+      minPrice: initialMinPrice || '',
+      maxPrice: initialMaxPrice || '',
+      minRating: initialMinRating || '',
+      inStock: initialInStock || '',
+      discount: initialDiscount || ''
+    };
+
+    if (initialFilter === 'new') {
+      const f = quickFilters.find(q => q.id === 'new');
+      appliedFilters = { ...appliedFilters, ...f.params, quickFilter: f.id };
+    } else if (initialFilter === 'sale') {
+      const f = quickFilters.find(q => q.id === 'sale');
+      appliedFilters = { ...appliedFilters, ...f.params, quickFilter: f.id };
     }
-  }, [initialCategory, initialSearch, dispatch]);
+
+    dispatch(setFilters(appliedFilters));
+    setCurrentPage(1);
+  }, [initialCategory, initialSearch, initialFilter, initialBrand, initialMinPrice, initialMaxPrice, initialMinRating, initialInStock, initialDiscount, dispatch]);
 
   const observer = useRef();
   const lastProductElementRef = useCallback(node => {
@@ -63,7 +118,7 @@ const Products = () => {
         setCurrentPage(prevPage => prevPage + 1);
       }
     }, {
-      rootMargin: '200px', // Trigger before hitting the actual bottom
+      rootMargin: '200px',
       threshold: 0.1
     });
     if (node) observer.current.observe(node);
@@ -87,6 +142,15 @@ const Products = () => {
   };
 
   const handleFilterChange = (newFilters) => {
+    const params = {};
+    Object.keys(newFilters).forEach(key => {
+      if (newFilters[key]) params[key] = newFilters[key];
+    });
+
+    // Convert to URLSearchParams manually because setFilters from useSearchParams is for setting ALL params
+    const searchString = new URLSearchParams(params).toString();
+    window.history.pushState({}, '', `${window.location.pathname}?${searchString}`);
+
     dispatch(setFilters(newFilters));
     setCurrentPage(1);
     window.scrollTo({ top: 700, behavior: 'smooth' });
@@ -96,13 +160,6 @@ const Products = () => {
     e.preventDefault();
     handleFilterChange({ ...filters, search: searchTerm });
   };
-
-  const quickFilters = [
-    { label: 'Primary Archive', id: 'primary', params: { sortBy: 'createdAt', sortOrder: 'desc', onSale: '', minRating: '' }, icon: <Archive className="w-4 h-4" /> },
-    { label: 'New Arrivals', id: 'new', params: { sortBy: 'createdAt', sortOrder: 'desc', onSale: '', minRating: '' }, icon: <TrendingUp className="w-4 h-4" /> },
-    { label: 'Global Sales', id: 'sale', params: { onSale: true, minRating: '' }, icon: <Zap className="w-4 h-4" /> },
-    { label: 'Verified Rating', id: 'rated', params: { minRating: 4, onSale: '' }, icon: <Star className="w-4 h-4" /> },
-  ];
 
   const getActiveFilter = () => filters.quickFilter || 'primary';
 
@@ -307,11 +364,11 @@ const Products = () => {
           </Link>
           <ChevronRight className="w-3 h-3 text-slate-300" />
           <span className="text-slate-950">Archive</span>
-          {filters.category && (
+          {categoryName && (
             <>
               <ChevronRight className="w-3 h-3 text-slate-300" />
               <Badge variant="primary" className="bg-primary-50 text-primary-600 border-primary-100 font-black text-[10px] px-4 py-1.5 rounded-full">
-                {filters.category}
+                {categoryName}
               </Badge>
             </>
           )}

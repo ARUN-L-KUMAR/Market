@@ -16,6 +16,7 @@ import {
 } from 'lucide-react';
 import Button from '../components/ui/Button';
 import { toast } from 'react-toastify';
+import { supportAPI } from '../services/api';
 
 const ContactUs = () => {
   const navigate = useNavigate();
@@ -109,13 +110,13 @@ const ContactUs = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Simulate form submission
     try {
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      toast.success('Message sent successfully! We\'ll get back to you soon.');
+      const response = await supportAPI.sendContactMessage(formData);
+      toast.success(response.data.message || 'Message sent successfully! We\'ll get back to you soon.');
       setFormData({ name: '', email: '', subject: '', message: '' });
     } catch (error) {
-      toast.error('Failed to send message. Please try again.');
+      const errorMessage = error.response?.data?.message || 'Failed to send message. Please try again.';
+      toast.error(errorMessage);
     } finally {
       setIsSubmitting(false);
     }

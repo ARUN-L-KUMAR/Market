@@ -18,6 +18,11 @@ export const fetchProducts = createAsyncThunk(
       if (params.sortOrder) queryParams.append('sortOrder', params.sortOrder);
       if (params.minRating) queryParams.append('minRating', params.minRating);
       if (params.onSale) queryParams.append('onSale', params.onSale);
+      if (params.brand) queryParams.append('brand', params.brand);
+      if (params.inStock) queryParams.append('inStock', params.inStock);
+      if (params.discount) queryParams.append('discount', params.discount);
+      if (params.size) queryParams.append('size', params.size);
+      if (params.color) queryParams.append('color', params.color);
 
       const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
       const response = await axios.get(`${apiUrl}/api/products?${queryParams.toString()}`);
@@ -40,12 +45,17 @@ const productSlice = createSlice({
     error: null,
     filters: {
       category: '',
+      brand: '',
       minPrice: '',
       maxPrice: '',
       search: '',
       sortBy: 'createdAt',
       sortOrder: 'desc',
-      quickFilter: 'primary'
+      quickFilter: 'primary',
+      minRating: '',
+      onSale: '',
+      inStock: '',
+      discount: ''
     }
   },
   reducers: {
@@ -55,12 +65,17 @@ const productSlice = createSlice({
     clearFilters: (state) => {
       state.filters = {
         category: '',
+        brand: '',
         minPrice: '',
         maxPrice: '',
         search: '',
         sortBy: 'createdAt',
         sortOrder: 'desc',
-        quickFilter: 'primary'
+        quickFilter: 'primary',
+        minRating: '',
+        onSale: '',
+        inStock: '',
+        discount: ''
       };
     }
   },

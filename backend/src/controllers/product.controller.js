@@ -28,12 +28,15 @@ exports.getProducts = async (req, res, next) => {
   try {
     const {
       category,
+      brand,
       size,
       color,
       minPrice,
       maxPrice,
       minRating,
       onSale,
+      inStock,
+      discount,
       page = 1,
       limit = 20,
       search,
@@ -43,22 +46,60 @@ exports.getProducts = async (req, res, next) => {
 
     const filter = {};
 
+    // Base active filter
+    filter.isActive = true;
+
     if (category && category !== 'all') {
       try {
+        const mongoose = require('mongoose');
         const Category = require('../models/category.model');
-        const categoryObj = await Category.findOne({
-          $or: [
-            { name: category },
-            { slug: category.toLowerCase() }
-          ]
-        });
 
-        if (categoryObj) {
-          filter.category = categoryObj._id;
+        // Check if category is a valid ObjectId
+        if (mongoose.Types.ObjectId.isValid(category)) {
+          filter.category = category;
+        } else {
+          // Fallback to name/slug search
+          const categoryObj = await Category.findOne({
+            $or: [
+              { name: category },
+              { slug: category.toLowerCase() }
+            ]
+          });
+
+          if (categoryObj) {
+            filter.category = categoryObj._id;
+          }
         }
       } catch (err) {
         console.error('Error finding category:', err.message);
       }
+    }
+
+    if (brand) {
+      filter.brand = { $regex: brand, $options: 'i' };
+    }
+
+    if (inStock === 'true') {
+      filter.stock = { $gt: 0 };
+    }
+
+    if (discount) {
+      filter.$expr = {
+        $gte: [
+          {
+            $round: [
+              {
+                $multiply: [
+                  { $divide: [{ $subtract: ["$comparePrice", "$price"] }, "$comparePrice"] },
+                  100
+                ]
+              },
+              0
+            ]
+          },
+          Number(discount)
+        ]
+      };
     }
 
     if (size) filter.sizes = { $elemMatch: { name: size } };

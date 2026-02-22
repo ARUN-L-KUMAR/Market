@@ -10,6 +10,7 @@ const reviewRoutes = require('./routes/review.routes');
 const adminRoutes = require('./routes/admin.routes');
 const wishlistRoutes = require('./routes/wishlist.routes');
 const paymentRoutes = require('./routes/payment.routes');
+const supportRoutes = require('./routes/support.routes');
 const errorMiddleware = require('./middleware/error.middleware');
 const { trackTraffic } = require('./middleware/traffic.middleware');
 
@@ -85,6 +86,7 @@ app.use('/api/reviews', reviewRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/wishlist', wishlistRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/support', supportRoutes);
 
 // Global error handler (must be after routes)
 app.use(errorMiddleware);

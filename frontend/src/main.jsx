@@ -32,6 +32,12 @@ import PayUPayment from './pages/payu-payment';
 import PaymentSuccess from './pages/payment-success';
 import PaymentFailure from './pages/payment-failure';
 import ResetPassword from './pages/ResetPassword'
+import Categories from './pages/Categories'
+import Blog from './pages/Blog'
+import Careers from './pages/Careers'
+import PrivacyPolicy from './pages/PrivacyPolicy'
+import TermsOfService from './pages/TermsOfService'
+import ReturnsRefunds from './pages/ReturnsRefunds'
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
@@ -61,6 +67,12 @@ ReactDOM.createRoot(document.getElementById('root')).render(
               <Route path="about" element={<AboutUs />} />
               <Route path="contact" element={<ContactUs />} />
               <Route path="faq" element={<FAQ />} />
+              <Route path="categories" element={<Categories />} />
+              <Route path="blog" element={<Blog />} />
+              <Route path="careers" element={<Careers />} />
+              <Route path="privacy" element={<PrivacyPolicy />} />
+              <Route path="terms" element={<TermsOfService />} />
+              <Route path="returns" element={<ReturnsRefunds />} />
               <Route path="payu-payment" element={<ProtectedRoute><PayUPayment /></ProtectedRoute>} />
               <Route path="payment-success" element={<ProtectedRoute><PaymentSuccess /></ProtectedRoute>} />
               <Route path="payment-failure" element={<ProtectedRoute><PaymentFailure /></ProtectedRoute>} />

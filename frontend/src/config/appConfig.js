@@ -55,6 +55,16 @@ export const API_CONFIG = {
       getAll: '/api/wishlist',
       add: (productId) => `/api/wishlist/${productId}`,
       remove: (productId) => `/api/wishlist/${productId}`
+    },
+    // Categories endpoints
+    categories: {
+      getAll: '/api/categories',
+      getById: (id) => `/api/categories/${id}`,
+      parent: (parentId) => `/api/categories?parent=${parentId}`
+    },
+    // Support endpoints
+    support: {
+      contact: '/api/support/contact'
     }
   },
 
