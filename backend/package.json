@@ -26,7 +26,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^7.6.3",
     "nodemailer": "^8.0.1",
-    "socket.io": "^4.7.5"
+    "socket.io": "^4.7.5",
+    "stripe": "^20.3.1"
   },
   "devDependencies": {
     "@faker-js/faker": "^10.3.0",

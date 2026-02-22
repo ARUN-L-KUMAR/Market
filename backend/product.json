@@ -1,0 +1,204 @@
+[
+  {
+    "title": "Samsung Galaxy S24 8GB 256GB",
+    "slug": "samsung-galaxy-s24-8-256",
+    "description": "Samsung Galaxy S24 powered by Exynos 2400 processor with 6.2-inch Dynamic AMOLED 2X display, 50MP triple camera and 4000mAh battery.",
+    "shortDescription": "8GB RAM | 256GB | 50MP | AMOLED",
+    "category": "69958d7d2cd735f0f3a65da2",
+    "subcategory": "69958d7e2cd735f0f3a65da4",
+    "brand": "Samsung",
+    "sku": "SAMS-S24-8-256",
+    "price": 74999,
+    "comparePrice": 79999,
+    "costPrice": 56000,
+    "stock": 45,
+    "lowStockThreshold": 8,
+    "tags": [
+      "mobile",
+      "samsung",
+      "5g",
+      "android"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 4.5,
+      "count": 12
+    },
+    "images": [
+      {
+        "url": "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s921bzkcins/gallery/in-galaxy-s24-s921-488306-sm-s921bzkcins-539573207",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s921bzkcins/gallery/in-galaxy-s24-s921-488306-sm-s921bzkcins-539573210",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://images.samsung.com/is/image/samsung/p6pim/in/sm-s921bzkcins/gallery/in-galaxy-s24-s921-488306-sm-s921bzkcins-539573213",
+        "cloudinaryPublicId": null
+      }
+    ]
+  },
+  {
+    "title": "Apple iPhone 15 128GB",
+    "slug": "iphone-15-128gb",
+    "description": "Apple iPhone 15 with A16 Bionic chip, 48MP main camera, Super Retina XDR display and USB-C connectivity.",
+    "shortDescription": "A16 Bionic | 48MP | 6.1-inch",
+    "category": "69958d7d2cd735f0f3a65da2",
+    "subcategory": "69958d7e2cd735f0f3a65da4",
+    "brand": "Apple",
+    "sku": "APL-IP15-128",
+    "price": 79900,
+    "comparePrice": 84900,
+    "costPrice": 61000,
+    "stock": 38,
+    "lowStockThreshold": 6,
+    "tags": [
+      "iphone",
+      "apple",
+      "ios",
+      "5g"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 4.7,
+      "count": 25
+    },
+    "images": [
+      {
+        "url": "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-black-select-202309",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-back-black-202309",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://store.storeimages.cdn-apple.com/4668/as-images.apple.com/is/iphone-15-camera-202309",
+        "cloudinaryPublicId": null
+      }
+    ]
+  },
+  {
+    "title": "OnePlus 12 12GB 256GB",
+    "slug": "oneplus-12-12-256",
+    "description": "OnePlus 12 featuring Snapdragon 8 Gen 3 processor, 120Hz AMOLED display and Hasselblad 50MP camera system.",
+    "shortDescription": "12GB RAM | Snapdragon 8 Gen 3 | 50MP",
+    "category": "69958d7d2cd735f0f3a65da2",
+    "subcategory": "69958d7e2cd735f0f3a65da4",
+    "brand": "OnePlus",
+    "sku": "ONEPLUS-12-12-256",
+    "price": 64999,
+    "comparePrice": 69999,
+    "costPrice": 48000,
+    "stock": 52,
+    "lowStockThreshold": 10,
+    "tags": [
+      "oneplus",
+      "5g",
+      "android"
+    ],
+    "isActive": true,
+    "isFeatured": true,
+    "rating": {
+      "average": 4.4,
+      "count": 18
+    },
+    "images": [
+      {
+        "url": "https://image01.oneplus.net/ebp/202401/12/1-m00-3e-26-rb8bwlv0g0uaf9xzaa.jpg",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://image01.oneplus.net/ebp/202401/12/1-m00-3e-27-rb8bwlv0g0uazqkjaa.jpg",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://image01.oneplus.net/ebp/202401/12/1-m00-3e-28-rb8bwlv0g0uakjqdaa.jpg",
+        "cloudinaryPublicId": null
+      }
+    ]
+  },
+  {
+    "title": "Xiaomi 14 8GB 256GB",
+    "slug": "xiaomi-14-8-256",
+    "description": "Xiaomi 14 powered by Snapdragon 8 Gen 3 with Leica 50MP camera and 120Hz AMOLED display.",
+    "shortDescription": "8GB RAM | Leica Camera | 120Hz",
+    "category": "69958d7d2cd735f0f3a65da2",
+    "subcategory": "69958d7e2cd735f0f3a65da4",
+    "brand": "Xiaomi",
+    "sku": "MI-14-8-256",
+    "price": 59999,
+    "comparePrice": 64999,
+    "costPrice": 45000,
+    "stock": 41,
+    "lowStockThreshold": 7,
+    "tags": [
+      "xiaomi",
+      "5g",
+      "android"
+    ],
+    "isActive": true,
+    "isFeatured": false,
+    "rating": {
+      "average": 4.3,
+      "count": 9
+    },
+    "images": [
+      {
+        "url": "https://i02.appmifile.com/mi-com-product/fly-birds/xiaomi-14/gallery1.jpg",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://i02.appmifile.com/mi-com-product/fly-birds/xiaomi-14/gallery2.jpg",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://i02.appmifile.com/mi-com-product/fly-birds/xiaomi-14/gallery3.jpg",
+        "cloudinaryPublicId": null
+      }
+    ]
+  },
+  {
+    "title": "Nothing Phone (2) 12GB 256GB",
+    "slug": "nothing-phone-2-12-256",
+    "description": "Nothing Phone (2) with Snapdragon 8+ Gen 1 processor, Glyph interface and dual 50MP cameras.",
+    "shortDescription": "Glyph Interface | 12GB | 50MP",
+    "category": "69958d7d2cd735f0f3a65da2",
+    "subcategory": "69958d7e2cd735f0f3a65da4",
+    "brand": "Nothing",
+    "sku": "NOTHING-P2-12-256",
+    "price": 44999,
+    "comparePrice": 49999,
+    "costPrice": 33500,
+    "stock": 33,
+    "lowStockThreshold": 6,
+    "tags": [
+      "nothing",
+      "5g",
+      "android"
+    ],
+    "isActive": true,
+    "isFeatured": false,
+    "rating": {
+      "average": 4.2,
+      "count": 11
+    },
+    "images": [
+      {
+        "url": "https://cdn.nothing.tech/media/catalog/product/p/h/phone-2-black-front.jpg",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://cdn.nothing.tech/media/catalog/product/p/h/phone-2-back.jpg",
+        "cloudinaryPublicId": null
+      },
+      {
+        "url": "https://cdn.nothing.tech/media/catalog/product/p/h/phone-2-side.jpg",
+        "cloudinaryPublicId": null
+      }
+    ]
+  }
+]

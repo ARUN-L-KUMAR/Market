@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const Order = require('../models/order.model');
 const Cart = require('../models/cart.model');
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 const PAYU_BASE_URL = process.env.PAYU_BASE_URL || 'https://test.payu.in/_payment';
 
@@ -142,7 +143,7 @@ exports.payuSuccess = async (req, res) => {
     // Format: orderId-timestamp-random
     const orderId = txnid.includes('-') ? txnid.split('-')[0] : txnid;
     const order = await Order.findById(orderId);
-    
+
     if (!order) {
       console.error('Order not found for txnid:', txnid);
       return res.redirect(`${frontendUrl}/payment-failure?reason=order_not_found`);
@@ -199,6 +200,123 @@ exports.payuFailure = async (req, res) => {
     return res.redirect(`${frontendUrl}/payment-failure?reason=payment_cancelled`);
   } catch (err) {
     console.error('PayU failure callback error:', err.message, err.stack);
+    return res.redirect(`${frontendUrl}/payment-failure?reason=server_error`);
+  }
+};
+
+// Stripe Integration
+exports.initiateStripe = async (req, res) => {
+  try {
+    const { user, items, shippingAddress, total, email, firstname, subtotal, tax, shipping } = req.body;
+
+    if (!items || !shippingAddress || !total || !email) {
+      return res.status(400).json({ error: 'Missing required fields for Stripe payment' });
+    }
+
+    // Create a pending order in our database
+    const order = new Order({
+      user,
+      items,
+      shippingAddress,
+      paymentMethod: 'stripe',
+      subtotal,
+      tax,
+      shipping,
+      total,
+      status: 'pending',
+      paymentStatus: 'pending'
+    });
+    await order.save();
+
+    // Create a Checkout Session with Stripe
+    const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+    // Create line items for Stripe
+    const line_items = items.map(item => ({
+      price_data: {
+        currency: 'inr',
+        product_data: {
+          name: item.product?.title || 'Product',
+          images: item.product?.images?.[0]?.url ? [item.product.images[0].url] : [],
+        },
+        unit_amount: Math.round(item.product.price * 100), // Stripe expects amounts in cents/paise
+      },
+      quantity: item.quantity,
+    }));
+
+    // Add tax and shipping as line items if they exist
+    if (tax > 0) {
+      line_items.push({
+        price_data: {
+          currency: 'inr',
+          product_data: { name: 'Tax' },
+          unit_amount: Math.round(tax * 100),
+        },
+        quantity: 1,
+      });
+    }
+
+    if (shipping > 0) {
+      line_items.push({
+        price_data: {
+          currency: 'inr',
+          product_data: { name: 'Shipping' },
+          unit_amount: Math.round(shipping * 100),
+        },
+        quantity: 1,
+      });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items,
+      mode: 'payment',
+      success_url: `${process.env.BACKEND_URL || 'http://localhost:3001'}/api/payment/stripe/success?session_id={CHECKOUT_SESSION_ID}&order_id=${order._id}`,
+      cancel_url: `${frontendUrl}/checkout?payment_failed=true&order_id=${order._id}`,
+      customer_email: email,
+      metadata: {
+        order_id: order._id.toString(),
+        user_id: user?.toString() || 'anonymous'
+      }
+    });
+
+    res.json({ id: session.id, url: session.url });
+  } catch (err) {
+    console.error('Stripe initiate error:', err);
+    res.status(500).json({ error: `Failed to initiate Stripe payment: ${err.message}` });
+  }
+};
+
+exports.stripeSuccess = async (req, res) => {
+  const { session_id, order_id } = req.query;
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+
+  try {
+    const session = await stripe.checkout.sessions.retrieve(session_id);
+    const order = await Order.findById(order_id);
+
+    if (!order) {
+      return res.redirect(`${frontendUrl}/payment-failure?reason=order_not_found`);
+    }
+
+    if (session.payment_status === 'paid') {
+      order.status = 'processing';
+      order.paymentStatus = 'paid';
+      order.stripeSessionId = session_id;
+      await order.save();
+
+      // Clear the user's cart
+      await Cart.findOneAndUpdate({ user: order.user }, { $set: { items: [] } });
+
+      return res.redirect(`${frontendUrl}/order-confirmation/${order._id}?status=success`);
+    } else {
+      order.status = 'cancelled';
+      order.paymentStatus = 'failed';
+      await order.save();
+      return res.redirect(`${frontendUrl}/checkout?payment_failed=true&reason=not_paid`);
+    }
+  } catch (err) {
+    console.error('Stripe success callback error:', err);
     return res.redirect(`${frontendUrl}/payment-failure?reason=server_error`);
   }
 };

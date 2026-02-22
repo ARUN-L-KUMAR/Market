@@ -7,6 +7,7 @@ const { validateCreateProduct, validateUpdateProduct } = require('../middleware/
 
 // Public routes
 router.get('/', productController.getProducts);
+router.get('/filter-options', productController.getFilterOptions);
 router.get('/version', (req, res) => res.json({ version: '2.0-direct-update', timestamp: new Date() }));
 router.get('/trending', productController.getTrendingProducts);
 router.get('/new-arrivals', productController.getNewArrivals);

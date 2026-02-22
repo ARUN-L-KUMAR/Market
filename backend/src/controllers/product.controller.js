@@ -54,20 +54,29 @@ exports.getProducts = async (req, res, next) => {
         const mongoose = require('mongoose');
         const Category = require('../models/category.model');
 
-        // Check if category is a valid ObjectId
-        if (mongoose.Types.ObjectId.isValid(category)) {
-          filter.category = category;
+        // Split by comma for multi-select support
+        const catIds = category.split(',').filter(id => mongoose.Types.ObjectId.isValid(id.trim()));
+
+        if (catIds.length > 0) {
+          // Check both category and subcategory fields for these IDs
+          filter.$or = [
+            { category: { $in: catIds } },
+            { subcategory: { $in: catIds } }
+          ];
         } else {
-          // Fallback to name/slug search
+          // Fallback to name/slug search for single string
           const categoryObj = await Category.findOne({
             $or: [
-              { name: category },
+              { name: new RegExp('^' + category + '$', 'i') },
               { slug: category.toLowerCase() }
             ]
           });
 
           if (categoryObj) {
-            filter.category = categoryObj._id;
+            filter.$or = [
+              { category: categoryObj._id },
+              { subcategory: categoryObj._id }
+            ];
           }
         }
       } catch (err) {
@@ -76,15 +85,17 @@ exports.getProducts = async (req, res, next) => {
     }
 
     if (brand) {
-      filter.brand = { $regex: brand, $options: 'i' };
+      const brands = brand.split(',').map(b => b.trim());
+      filter.brand = { $in: brands.map(b => new RegExp('^' + b + '$', 'i')) };
     }
 
     if (inStock === 'true') {
       filter.stock = { $gt: 0 };
     }
 
+    const expressions = [];
     if (discount) {
-      filter.$expr = {
+      expressions.push({
         $gte: [
           {
             $round: [
@@ -99,7 +110,19 @@ exports.getProducts = async (req, res, next) => {
           },
           Number(discount)
         ]
-      };
+      });
+    }
+
+    if (onSale === 'true') {
+      expressions.push({ $gt: ["$comparePrice", "$price"] });
+    }
+
+    if (expressions.length > 0) {
+      if (expressions.length === 1) {
+        filter.$expr = expressions[0];
+      } else {
+        filter.$expr = { $and: expressions };
+      }
     }
 
     if (size) filter.sizes = { $elemMatch: { name: size } };
@@ -109,15 +132,29 @@ exports.getProducts = async (req, res, next) => {
     if (minPrice) filter.price.$gte = Number(minPrice);
     if (maxPrice) filter.price.$lte = Number(maxPrice);
 
-    if (minRating) filter['rating.average'] = { $gte: Number(minRating) };
-
-    if (onSale === 'true') {
-      filter.$expr = { $gt: ["$comparePrice", "$price"] };
+    if (minRating) {
+      const ratings = minRating.split(',').map(Number);
+      if (ratings.length === 1) {
+        filter['rating.average'] = { $gte: ratings[0] };
+      } else {
+        filter['rating.average'] = { $in: ratings };
+      }
     }
 
     if (search) {
       const escapedSearch = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      filter.title = { $regex: escapedSearch, $options: 'i' };
+      const searchRegex = { $regex: escapedSearch, $options: 'i' };
+
+      filter.$or = [
+        { title: searchRegex },
+        { description: searchRegex },
+        { shortDescription: searchRegex }, // Added shortDescription
+        { brand: searchRegex },
+        { categoryName: searchRegex },
+        { subcategoryName: searchRegex }, // Added subcategoryName
+        { tags: searchRegex }, // Simplified tag search
+        { sku: searchRegex } // Added SKU to general search
+      ];
     }
 
     const sort = {};
@@ -137,6 +174,35 @@ exports.getProducts = async (req, res, next) => {
     const total = await Product.countDocuments(filter);
 
     res.json({ products, total });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// Get available filter options (brands, categories, price range)
+exports.getFilterOptions = async (req, res, next) => {
+  try {
+    const Category = require('../models/category.model');
+    const [brands, categories, priceRange] = await Promise.all([
+      Product.distinct('brand', { isActive: true }),
+      Category.find({ parent: null }).select('name slug'),
+      Product.aggregate([
+        { $match: { isActive: true } },
+        {
+          $group: {
+            _id: null,
+            min: { $min: '$price' },
+            max: { $max: '$price' }
+          }
+        }
+      ])
+    ]);
+
+    res.json({
+      brands: brands.filter(Boolean).sort(),
+      categories: categories,
+      priceRange: priceRange[0] || { min: 0, max: 0 }
+    });
   } catch (err) {
     next(err);
   }
