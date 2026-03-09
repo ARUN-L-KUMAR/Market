@@ -22,6 +22,7 @@ import { addToCart } from '../store/cartSlice';
 import { addToWishlistAsync, removeFromWishlistAsync } from '../store/wishlistSlice';
 import { toast } from 'react-toastify';
 import socket from '../utils/socket';
+import { getProductImageUrl } from '../utils/imageUtils';
 import Badge from './ui/Badge';
 import CurrencyPrice from './CurrencyPrice';
 import Card from './ui/Card';
@@ -155,10 +156,13 @@ const ProductCard = forwardRef(({ product, index = 0, viewMode = 'grid' }, ref) 
         {/* Product Image Section */}
         <div className={`relative bg-slate-50 overflow-hidden ${isListView ? 'w-48 sm:w-80 flex-shrink-0' : 'aspect-[4/5]'}`}>
           <img
-            src={product.images?.[0]?.url || 'https://placehold.co/600x800?text=Premium+Market'}
+            src={getProductImageUrl(product)}
             alt={product.title}
             className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-115"
-            onError={e => { e.target.src = 'https://placehold.co/600x800?text=Image+Unavailable'; }}
+            onError={e => {
+              e.target.onerror = null;
+              e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800';
+            }}
           />
           <div className="absolute inset-0 bg-gradient-to-t from-slate-950/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
@@ -228,32 +232,39 @@ const ProductCard = forwardRef(({ product, index = 0, viewMode = 'grid' }, ref) 
             </div>
           </div>
 
-          <div className="pt-5 mt-auto border-t border-slate-100 flex items-center gap-3">
-            <div className="flex items-center bg-slate-50 border border-slate-100 rounded-lg p-0.5">
-              <button
-                onClick={(e) => handleQuantityChange(e, -1)}
-                className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
-              >
-                <Minus className="w-3 h-3" />
-              </button>
-              <span className="w-6 text-center text-[11px] font-bold text-slate-700">{quantity}</span>
-              <button
-                onClick={(e) => handleQuantityChange(e, 1)}
-                className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-slate-900 transition-colors"
-              >
-                <Plus className="w-3 h-3" />
-              </button>
+          <div className="pt-6 mt-auto border-t border-slate-100 flex flex-col gap-4">
+            {/* Action Terminal: Stacked for better readability and no truncation */}
+            <div className="flex items-center justify-between">
+              <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">Protocol Qty</span>
+              <div className="flex items-center bg-slate-50 border border-slate-200/60 rounded-xl p-0.5 shadow-sm">
+                <button
+                  onClick={(e) => handleQuantityChange(e, -1)}
+                  className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary-600 transition-colors"
+                  aria-label="Decrease quantity"
+                >
+                  <Minus className="w-3.5 h-3.5" />
+                </button>
+                <span className="w-8 text-center text-xs font-black text-slate-900 tabular-nums">{quantity}</span>
+                <button
+                  onClick={(e) => handleQuantityChange(e, 1)}
+                  className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-primary-600 transition-colors"
+                  aria-label="Increase quantity"
+                >
+                  <Plus className="w-3.5 h-3.5" />
+                </button>
+              </div>
             </div>
 
             <button
               onClick={handleAddToCart}
               disabled={!product.inStock || isAddingToCart}
-              className={`flex-1 h-10 px-4 rounded-lg text-[10px] font-bold uppercase tracking-widest transition-all duration-300 ${isAddingToCart
+              className={`w-full h-12 rounded-2xl text-[10px] font-black uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-2.5 shadow-xl shadow-slate-900/5 ${isAddingToCart
                 ? 'bg-emerald-500 text-white'
-                : 'bg-slate-950 text-white hover:bg-primary-600 shadow-sm hover:shadow-lg hover:shadow-primary-600/10'
+                : 'bg-slate-950 text-white hover:bg-primary-600 hover:shadow-primary-600/20 active:scale-[0.98]'
                 }`}
             >
-              {isAddingToCart ? 'ARCHIVING...' : product.inStock ? 'Add to Cart' : 'Out of Stock'}
+              <ShoppingBag className="w-4 h-4" />
+              <span>{isAddingToCart ? 'SYNCING...' : product.inStock ? 'Add to Cart' : 'Offline'}</span>
             </button>
           </div>
 

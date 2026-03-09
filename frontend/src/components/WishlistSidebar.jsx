@@ -6,6 +6,7 @@ import { addToCart } from '../store/cartSlice';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CurrencyPrice from './CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 import {
   X,
   Heart,
@@ -174,7 +175,7 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
                           onClick={() => handleViewProduct(item._id)}
                         >
                           <img
-                            src={item.images?.[0]?.url || 'https://placehold.co/80x80?text=No+Image'}
+                            src={getProductImageUrl(item)}
                             alt={item.title || 'Product'}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                             onError={e => { e.target.src = 'https://placehold.co/80x80?text=No+Image'; }}
@@ -216,8 +217,8 @@ const WishlistSidebar = ({ isOpen, onClose }) => {
                               </div>
                             )}
                             <span className={`text-[9px] font-black uppercase tracking-widest px-2 py-0.5 rounded-full ${item.stock > 0
-                                ? 'bg-emerald-50 text-emerald-600'
-                                : 'bg-rose-50 text-rose-600'
+                              ? 'bg-emerald-50 text-emerald-600'
+                              : 'bg-rose-50 text-rose-600'
                               }`}>
                               {item.stock > 0 ? 'In Stock' : 'Out of Stock'}
                             </span>

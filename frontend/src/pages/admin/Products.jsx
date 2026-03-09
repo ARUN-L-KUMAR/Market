@@ -20,6 +20,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import { getProductImageUrl } from '../../utils/imageUtils';
 
 const Products = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -239,7 +240,7 @@ const Products = () => {
                 >
                   <option value="">All Categories</option>
                   {categories.map(c => (
-                    <option key={c._id} value={c.name}>{c.name}</option>
+                    <option key={c._id} value={c._id}>{c.name}</option>
                   ))}
                 </select>
               </div>
@@ -253,7 +254,7 @@ const Products = () => {
                 >
                   <option value="">{filters.category ? 'All Subcategories' : 'Select Category First'}</option>
                   {subcategories.map(s => (
-                    <option key={s._id} value={s.name}>{s.name}</option>
+                    <option key={s._id} value={s._id}>{s.name}</option>
                   ))}
                 </select>
               </div>
@@ -345,7 +346,7 @@ const Products = () => {
                               <div className="h-12 w-12 rounded-xl bg-slate-100 border border-slate-200 overflow-hidden flex-shrink-0 shadow-sm">
                                 <img
                                   className="h-full w-full object-cover group-hover:scale-110 transition-transform duration-500"
-                                  src={product.images?.[0]?.url || '/placeholder.png'}
+                                  src={getProductImageUrl(product)}
                                   alt={product.title}
                                 />
                               </div>

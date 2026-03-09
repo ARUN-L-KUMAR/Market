@@ -22,6 +22,7 @@ import Badge from './ui/Badge';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import CurrencyPrice from './CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const ProductSkeleton = () => (
   <div className="space-y-6">
@@ -238,7 +239,7 @@ const ProductList = ({
           {/* Visual Container */}
           <div className="relative aspect-[4/5] rounded-[2.5rem] overflow-hidden bg-slate-50 shadow-premium border border-slate-100 transition-all duration-500 group-hover:shadow-2xl group-hover:-translate-y-2">
             <img
-              src={product.images && product.images[0] ? product.images[0].url : 'https://placehold.co/400x500?text=No+Image'}
+              src={getProductImageUrl(product)}
               alt={product.title}
               className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
             />

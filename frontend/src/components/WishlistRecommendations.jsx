@@ -17,6 +17,7 @@ import { toast } from 'react-toastify';
 import CurrencyPrice from './CurrencyPrice';
 import Badge from './ui/Badge';
 import { useNavigate } from 'react-router-dom';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const WishlistRecommendations = ({ wishlistItems = [] }) => {
   const { token, user } = useSelector(state => state.user);
@@ -160,9 +161,13 @@ const WishlistRecommendations = ({ wishlistItems = [] }) => {
               >
                 <div className="relative aspect-[4/5] bg-slate-50 overflow-hidden">
                   <img
-                    src={product.images?.[0]?.url || 'https://placehold.co/600x800?text=Nexus+Asset'}
+                    src={getProductImageUrl(product)}
                     alt={product.title}
                     className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800';
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 

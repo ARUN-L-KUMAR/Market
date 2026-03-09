@@ -19,6 +19,7 @@ import {
     ArrowLeft
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import Dropdown from '../../components/ui/Dropdown';
 
 const AddProduct = () => {
     const navigate = useNavigate();
@@ -326,17 +327,14 @@ const AddProduct = () => {
                                             />
                                         </div>
                                         <div className="p-5 bg-slate-50 rounded-2xl border border-slate-100">
-                                            <label className="block text-[10px] font-black text-slate-500 uppercase tracking-widest mb-3">Manufacturer/Brand</label>
-                                            <select
+                                            <Dropdown
+                                                label="Manufacturer/Brand"
+                                                placeholder="Select Brand"
                                                 value={productData.brand}
-                                                onChange={(e) => setProductData({ ...productData, brand: e.target.value })}
-                                                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm font-bold focus:border-indigo-500 outline-none transition-all appearance-none cursor-pointer"
-                                            >
-                                                <option value="">Select Brand</option>
-                                                {brands.map(b => (
-                                                    <option key={b._id} value={b.name}>{b.name}</option>
-                                                ))}
-                                            </select>
+                                                onChange={(val) => setProductData({ ...productData, brand: val })}
+                                                options={brands.map(b => ({ label: b.name, value: b.name }))}
+                                                className="bg-white"
+                                            />
                                         </div>
                                     </div>
                                 </div>

@@ -29,6 +29,7 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import axios from 'axios';
 import CurrencyPrice from '../components/CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const Cart = () => {
   const { items } = useSelector(state => state.cart);
@@ -292,9 +293,13 @@ const Cart = () => {
                     {/* Asset Preview */}
                     <div className="relative w-full sm:w-40 aspect-square flex-shrink-0 rounded-[2rem] overflow-hidden bg-slate-50 border border-slate-100">
                       <img
-                        src={item.product?.images?.[0]?.url || 'https://placehold.co/400x400?text=Nexus+Asset'}
+                        src={getProductImageUrl(item.product)}
                         alt={item.product?.title}
                         className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
+                        onError={e => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400';
+                        }}
                       />
                       {item.product?.discount && (
                         <div className="absolute top-4 left-4">
@@ -329,7 +334,7 @@ const Cart = () => {
                       </div>
 
                       {/* Stock Warnings */}
-                      {stockWarnings[item.product?._id] && (
+                      {item.product?._id && stockWarnings[item.product._id] && (
                         <div className="p-3 bg-amber-50 rounded-xl border border-amber-100 flex items-center gap-3">
                           <AlertCircle className="w-4 h-4 text-amber-600" />
                           <span className="text-[11px] font-bold text-amber-700 uppercase tracking-wider">{stockWarnings[item.product._id]}</span>

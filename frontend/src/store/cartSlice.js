@@ -13,7 +13,7 @@ const loadState = (key, fallback) => {
 const saveState = (key, state) => {
   try {
     localStorage.setItem(key, JSON.stringify(state));
-  } catch {}
+  } catch { }
 };
 
 // Cart slice
@@ -22,7 +22,7 @@ const cartSlice = createSlice({
   initialState: loadState('cart', { items: [] }),
   reducers: {
     addToCart: (state, action) => {
-      const item = state.items.find(i => i.product._id === action.payload.product._id);
+      const item = state.items.find(i => i.product?._id === action.payload.product?._id);
       if (item) {
         item.quantity += action.payload.quantity;
       } else {
@@ -31,12 +31,12 @@ const cartSlice = createSlice({
       saveState('cart', state);
     },
     removeFromCart: (state, action) => {
-      state.items = state.items.filter(item => item.product._id !== action.payload);
+      state.items = state.items.filter(item => item.product?._id !== action.payload);
       saveState('cart', state);
     },
     updateQuantity: (state, action) => {
       const { productId, quantity } = action.payload;
-      const item = state.items.find(i => i.product._id === productId);
+      const item = state.items.find(i => i.product?._id === productId);
       if (item) {
         item.quantity = quantity;
       }

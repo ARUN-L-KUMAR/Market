@@ -23,6 +23,7 @@ export const fetchProducts = createAsyncThunk(
       if (params.discount) queryParams.append('discount', params.discount);
       if (params.size) queryParams.append('size', params.size);
       if (params.color) queryParams.append('color', params.color);
+      if (params.subcategory) queryParams.append('subcategory', params.subcategory);
 
       const apiUrl = import.meta.env.VITE_API_URL || 'https://market-backend-getv.onrender.com';
       const response = await axios.get(`${apiUrl}/api/products?${queryParams.toString()}`);
@@ -55,7 +56,8 @@ const productSlice = createSlice({
       minRating: '',
       onSale: '',
       inStock: '',
-      discount: ''
+      discount: '',
+      subcategory: ''
     }
   },
   reducers: {
@@ -75,7 +77,8 @@ const productSlice = createSlice({
         minRating: '',
         onSale: '',
         inStock: '',
-        discount: ''
+        discount: '',
+        subcategory: ''
       };
     }
   },

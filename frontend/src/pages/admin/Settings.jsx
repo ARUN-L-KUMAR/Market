@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import AdminLayout from '../../components/admin/AdminLayout';
 import { getSettings, updateSettings } from '../../services/adminService';
+import Dropdown from '../../components/ui/Dropdown';
 
 const Settings = () => {
   const [settings, setSettings] = useState({
@@ -229,23 +230,22 @@ const Settings = () => {
                         ></textarea>
                       </div>
 
-                      <div className="col-span-6 sm:col-span-3">
-                        <label htmlFor="currency" className="block text-sm font-medium text-slate-700">Currency</label>
-                        <select
-                          id="currency"
-                          name="currency"
+                      <div className="col-span-6 sm:col-span-3 space-y-2">
+                        <Dropdown
+                          label="Currency"
                           value={settings.currency}
-                          onChange={handleChange}
-                          className="mt-1 block w-full py-2 px-3 border border-slate-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                        >
-                          <option value="USD">USD - US Dollar</option>
-                          <option value="EUR">EUR - Euro</option>
-                          <option value="GBP">GBP - British Pound</option>
-                          <option value="JPY">JPY - Japanese Yen</option>
-                          <option value="CAD">CAD - Canadian Dollar</option>
-                          <option value="AUD">AUD - Australian Dollar</option>
-                          <option value="INR">INR - Indian Rupee</option>
-                        </select>
+                          onChange={(val) => setSettings(prev => ({ ...prev, currency: val }))}
+                          options={[
+                            { value: 'USD', label: 'USD - US Dollar' },
+                            { value: 'EUR', label: 'EUR - Euro' },
+                            { value: 'GBP', label: 'GBP - British Pound' },
+                            { value: 'JPY', label: 'JPY - Japanese Yen' },
+                            { value: 'CAD', label: 'CAD - Canadian Dollar' },
+                            { value: 'AUD', label: 'AUD - Australian Dollar' },
+                            { value: 'INR', label: 'INR - Indian Rupee' }
+                          ]}
+                          fullWidth={true}
+                        />
                       </div>
                     </div>
                   </div>

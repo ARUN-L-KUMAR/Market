@@ -19,6 +19,7 @@ import CurrencyPrice from '../components/CurrencyPrice';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import { useNavigate } from 'react-router-dom';
+import { getProductImageUrl } from '../utils/imageUtils';
 import WishlistRecommendations from '../components/WishlistRecommendations';
 
 const EmptyWishlist = () => {
@@ -75,8 +76,8 @@ const Wishlist = () => {
   // Sorting logic
   const sortedWishlistItems = [...wishlistItems].sort((a, b) => {
     if (sortBy === 'price') return (a.price || 0) - (b.price || 0);
-    if (sortBy === 'name') return a.title.localeCompare(b.title);
-    return b._id.localeCompare(a._id);
+    if (sortBy === 'name') return (a.title || '').localeCompare(b.title || '');
+    return (b._id || '').localeCompare(a._id || '');
   });
 
   const handleShareWishlist = () => {
@@ -193,7 +194,7 @@ const Wishlist = () => {
                   {/* Asset Preview */}
                   <div className="relative aspect-[4/5] overflow-hidden bg-slate-50">
                     <img
-                      src={product.images?.[0]?.url || 'https://placehold.co/600x800?text=Nexus+Asset'}
+                      src={getProductImageUrl(product)}
                       alt={product.title}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                     />

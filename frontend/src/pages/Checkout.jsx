@@ -8,6 +8,7 @@ import Button from '../components/ui/Button';
 import Input from '../components/ui/Input';
 import { ConfirmModal } from '../components/Modal';
 import CurrencyPrice from '../components/CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 import { ShoppingBag, MapPin, CreditCard, ArrowLeft, Lock } from 'lucide-react';
 
 const Checkout = () => {
@@ -61,7 +62,7 @@ const Checkout = () => {
       return;
     }
     // Calculate order totals
-    const newSubtotal = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+    const newSubtotal = items.reduce((sum, item) => sum + ((item.product?.price || 0) * item.quantity), 0);
     const newTax = Math.round(newSubtotal * 0.08 * 100) / 100;
     const newShipping = newSubtotal > 100 ? 0 : 10;
     setSubtotal(newSubtotal);
@@ -92,11 +93,11 @@ const Checkout = () => {
         }
       } catch (error) {
         console.error('Error fetching addresses:', error);
-        window.dispatchEvent(new CustomEvent('show-toast', { 
-          detail: { 
-            message: 'Failed to load saved addresses. Please add a new address.', 
-            type: 'error' 
-          } 
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: {
+            message: 'Failed to load saved addresses. Please add a new address.',
+            type: 'error'
+          }
         }));
         setIsAddingNewAddress(true); // Fallback to add form on error
       } finally {
@@ -146,7 +147,7 @@ const Checkout = () => {
       setSavedAddresses(updatedAddresses);
       setSelectedAddress(newAddress);
       setIsAddingNewAddress(false);
-      
+
       // Reset form
       setAddressForm({
         fullName: '',
@@ -158,15 +159,15 @@ const Checkout = () => {
         phone: '',
         isDefault: false
       });
-      
+
       window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Address saved successfully!', type: 'success' } }));
     } catch (error) {
       console.error('Error saving address:', error);
-      window.dispatchEvent(new CustomEvent('show-toast', { 
-        detail: { 
-          message: error.response?.data?.message || 'Failed to save address. Please try again.', 
-          type: 'error' 
-        } 
+      window.dispatchEvent(new CustomEvent('show-toast', {
+        detail: {
+          message: error.response?.data?.message || 'Failed to save address. Please try again.',
+          type: 'error'
+        }
       }));
     }
   };
@@ -258,20 +259,54 @@ const Checkout = () => {
         const orderId = response.data?._id || response.data?.order?._id;
         if (orderId) {
           console.log('Navigating to order confirmation:', orderId);
-          navigate(`/order-confirmation/${orderId}`);
-          setTimeout(() => dispatch(clearCart()), 500); // clear cart after navigation
+          navigate(`/order-confirmation/${orderId}?status=success`);
         } else {
           window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Order placed but could not find order ID for confirmation page.', type: 'error' } }));
         }
         return;
-      } else if (paymentMethod.startsWith('upi_')) {
+      } else if (paymentMethod === 'stripe') {
+        const orderData = {
+          user: userId,
+          items: items.map(item => ({
+            product: item.product._id,
+            quantity: item.quantity,
+            price: item.product.price,
+            color: item.color,
+            size: item.size
+          })),
+          shippingAddress: selectedAddress,
+          subtotal,
+          tax,
+          shipping,
+          total,
+          email: info.email,
+          firstname: info.name || info.fullName || 'Customer'
+        };
+        const response = await axios.post(`${apiUrl}/api/payment/stripe/initiate`, orderData);
+        if (response.data.url) {
+          window.location.href = response.data.url; // Redirect to Stripe Checkout
+        } else {
+          throw new Error('Failed to get Stripe Checkout URL');
+        }
+        return;
+      } else if (paymentMethod === 'paypal' || paymentMethod.startsWith('upi_')) {
         setIsProcessingOrder(false);
         setShowConfirmModal(false);
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'UPI payment methods are coming soon!', type: 'info' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: {
+            message: 'This payment method is not yet integrated. Only COD and PayU/Stripe are currently available.',
+            type: 'info'
+          }
+        }));
         return;
       } else {
         setIsProcessingOrder(false);
-        window.dispatchEvent(new CustomEvent('show-toast', { detail: { message: 'Selected payment method is not implemented yet.', type: 'error' } }));
+        window.dispatchEvent(new CustomEvent('show-toast', {
+          detail: {
+            message: 'Selected payment method is currently undergoing maintenance. Please use PayU or Cash on Delivery.',
+            type: 'error'
+          }
+        }));
         setShowConfirmModal(false);
         return;
       }
@@ -329,13 +364,12 @@ const Checkout = () => {
                   {!isAddingNewAddress && savedAddresses.length > 0 && (
                     <div className="space-y-4 mb-6">
                       {savedAddresses.map((address, index) => (
-                        <div 
-key={address._id || index} 
-                          className={`border rounded-lg p-4 cursor-pointer transition ${
-                            selectedAddress && selectedAddress._id === address._id 
-                              ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200' 
-                              : 'border-slate-200 hover:border-slate-300'
-                          }`} 
+                        <div
+                          key={address._id || index}
+                          className={`border rounded-lg p-4 cursor-pointer transition ${selectedAddress && selectedAddress._id === address._id
+                            ? 'border-indigo-500 bg-indigo-50 ring-2 ring-indigo-200'
+                            : 'border-slate-200 hover:border-slate-300'
+                            }`}
                           onClick={() => setSelectedAddress(address)}
                         >
                           <div className="flex items-start justify-between">
@@ -428,46 +462,88 @@ key={address._id || index}
                     </div>
                   </div>
                 </div>
-                {/* Credit Card (not implemented) */}
-                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'credit_card' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('credit_card')}>
+                {/* Stripe Integration */}
+                <div
+                  className={`relative border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'stripe' ? 'border-indigo-500 bg-indigo-50 shadow-sm' : 'border-slate-200 hover:border-slate-300'}`}
+                  onClick={() => setPaymentMethod('stripe')}
+                >
                   <div className="flex items-center">
-                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'credit_card' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
-                      {paymentMethod === 'credit_card' && <div className="w-3 h-3 rounded-full bg-indigo-500"></div>}
+                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'stripe' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
+                      {paymentMethod === 'stripe' && <div className="w-3 h-3 rounded-full bg-indigo-500"></div>}
                     </div>
                     <div className="flex-grow">
-                      <p className="font-medium">Credit Card</p>
-                      <p className="text-slate-500 text-sm">Pay securely with your credit card</p>
+                      <p className="font-medium text-slate-900">Stripe (Credit / Debit Card)</p>
+                      <p className="text-slate-500 text-sm">Global payments via Stripe secure gateway</p>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <img src="https://upload.wikimedia.org/wikipedia/commons/b/ba/Stripe_Logo%2C_revised_2016.svg" alt="Stripe" className="h-4" />
                     </div>
                   </div>
                 </div>
+
                 {/* PayPal (not implemented) */}
-                <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'paypal' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('paypal')}>
+                <div
+                  className={`relative border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'paypal' ? 'border-amber-200 bg-amber-50 shadow-inner' : 'border-slate-200 opacity-60 hover:opacity-100 hover:border-slate-300'}`}
+                  onClick={() => {
+                    setPaymentMethod('paypal');
+                    window.dispatchEvent(new CustomEvent('show-toast', {
+                      detail: {
+                        message: 'PayPal integration is coming soon. Please use PayU or Cash on Delivery.',
+                        type: 'info'
+                      }
+                    }));
+                  }}
+                >
                   <div className="flex items-center">
-                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'paypal' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
-                      {paymentMethod === 'paypal' && <div className="w-3 h-3 rounded-full bg-indigo-500"></div>}
+                    <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'paypal' ? 'border-amber-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
+                      {paymentMethod === 'paypal' && <div className="w-3 h-3 rounded-full bg-amber-500"></div>}
                     </div>
                     <div className="flex-grow">
                       <p className="font-medium">PayPal</p>
                       <p className="text-slate-500 text-sm">Pay with your PayPal account</p>
                     </div>
                   </div>
+                  {paymentMethod === 'paypal' && (
+                    <div className="mt-3 py-2 px-3 bg-amber-100/50 rounded-lg border border-amber-200 text-[10px] font-bold text-amber-700 uppercase tracking-widest flex items-center gap-2 animate-in slide-in-from-top-1">
+                      <Lock className="w-3 h-3" /> Pending Integration: Please use PayU or COD
+                    </div>
+                  )}
                 </div>
+
                 {/* UPI group */}
-                <div className="border rounded-lg p-4 cursor-pointer transition mb-2">
+                <div className={`border rounded-lg p-4 cursor-pointer transition mb-2 ${paymentMethod.startsWith('upi_') ? 'border-amber-200 bg-amber-50 shadow-inner' : 'border-slate-200 opacity-60 hover:opacity-100'}`}>
                   <div className="font-medium mb-2">UPI</div>
-                  <div className="flex gap-4">
-                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_paytm' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('upi_paytm')}>
-                      <img src="..\paytm-logo.png" alt="Paytm" className="w-6 h-6 mr-2" /> Paytm
-                    </div>
-                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_gpay' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('upi_gpay')}>
-                      <img src="..\gpay-logo.png" alt="GPay" className="w-6 h-6 mr-2" /> GPay
-                    </div>
-                    <div className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer ${paymentMethod === 'upi_phonepe' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('upi_phonepe')}>
-                      <img src="..\phonpe-logo.jpeg" alt="PhonePe" className="w-6 h-6 mr-2" /> PhonePe
-                    </div>
+                  <div className="flex flex-wrap gap-4">
+                    {[
+                      { id: 'upi_paytm', label: 'Paytm', icon: '..\\paytm-logo.png' },
+                      { id: 'upi_gpay', label: 'GPay', icon: '..\\gpay-logo.png' },
+                      { id: 'upi_phonepe', label: 'PhonePe', icon: '..\\phonpe-logo.jpeg' }
+                    ].map(upi => (
+                      <div
+                        key={upi.id}
+                        className={`border rounded-lg px-4 py-2 flex items-center cursor-pointer transition ${paymentMethod === upi.id ? 'border-amber-500 bg-white shadow-sm' : 'border-slate-200 hover:border-slate-300'}`}
+                        onClick={() => {
+                          setPaymentMethod(upi.id);
+                          window.dispatchEvent(new CustomEvent('show-toast', {
+                            detail: {
+                              message: 'Direct UPI apps are coming soon. You can use UPI via the PayU gateway.',
+                              type: 'info'
+                            }
+                          }));
+                        }}
+                      >
+                        <img src={upi.icon} alt={upi.label} className="w-5 h-5 mr-2" /> {upi.label}
+                      </div>
+                    ))}
                   </div>
+                  {paymentMethod.startsWith('upi_') && (
+                    <div className="mt-4 py-2 px-3 bg-amber-100/50 rounded-lg border border-amber-200 text-[10px] font-bold text-amber-700 uppercase tracking-widest flex items-center gap-2 animate-in slide-in-from-top-1">
+                      <Lock className="w-3 h-3" /> App Relay Pending: Please use PayU UPI or COD
+                    </div>
+                  )}
                 </div>
-                {/* Cash on Delivery (not implemented) */}
+
+                {/* Cash on Delivery (Implemented) */}
                 <div className={`border rounded-lg p-4 cursor-pointer transition ${paymentMethod === 'cash_on_delivery' ? 'border-indigo-500 bg-indigo-50' : 'border-slate-200 hover:border-slate-300'}`} onClick={() => setPaymentMethod('cash_on_delivery')}>
                   <div className="flex items-center">
                     <div className={`w-5 h-5 rounded-full border ${paymentMethod === 'cash_on_delivery' ? 'border-indigo-500' : 'border-slate-300'} flex items-center justify-center mr-3`}>
@@ -498,14 +574,22 @@ key={address._id || index}
                 {items.map((item) => (
                   <div key={`${item.product._id}-${item.color}-${item.size}`} className="flex items-center">
                     <div className="h-16 w-16 flex-shrink-0 rounded-lg overflow-hidden bg-slate-100 border border-slate-200">
-                      <img src={item.product.images && item.product.images.length > 0 ? item.product.images[0].url : "https://via.placeholder.com/80"} alt={item.product.title} className="h-full w-full object-cover" />
+                      <img
+                        src={getProductImageUrl(item.product)}
+                        alt={item.product?.title || 'Product'}
+                        className="h-full w-full object-cover"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800';
+                        }}
+                      />
                     </div>
                     <div className="ml-4 flex-1">
-                      <h3 className="text-sm font-medium text-slate-800">{item.product.title}</h3>
+                      <h3 className="text-sm font-medium text-slate-800">{item.product?.title || 'Unknown Product'}</h3>
                       <p className="text-xs text-slate-500">{item.color && `Color: ${item.color}`}{item.color && item.size && ' | '}{item.size && `Size: ${item.size}`}</p>
                       <div className="flex justify-between mt-1">
                         <p className="text-xs text-slate-500">Qty: {item.quantity}</p>
-                        <div className="text-sm font-bold text-slate-900"><CurrencyPrice price={item.product.price * item.quantity} variant="nexus" showDecimals={false} /></div>
+                        <div className="text-sm font-bold text-slate-900"><CurrencyPrice price={(item.product?.price || 0) * item.quantity} variant="nexus" showDecimals={false} /></div>
                       </div>
                     </div>
                   </div>
@@ -539,7 +623,21 @@ key={address._id || index}
                   />
                 </div>
                 <div className="mt-6">
-                  <Button variant="primary" size="lg" className="w-full" onClick={() => setShowConfirmModal(true)} loading={isProcessingOrder} disabled={isProcessingOrder || !paymentMethod}>Place Order</Button>
+                  {paymentMethod && !['payu', 'cash_on_delivery', 'stripe'].includes(paymentMethod) && (
+                    <p className="mb-4 text-xs font-bold text-amber-600 bg-amber-50 p-3 rounded-xl border border-amber-100 text-center uppercase tracking-widest">
+                      Please select an available payment method to proceed
+                    </p>
+                  )}
+                  <Button
+                    variant="primary"
+                    size="lg"
+                    className="w-full"
+                    onClick={() => setShowConfirmModal(true)}
+                    loading={isProcessingOrder}
+                    disabled={isProcessingOrder || !paymentMethod || !['payu', 'cash_on_delivery', 'stripe'].includes(paymentMethod)}
+                  >
+                    Place Order
+                  </Button>
                   <p className="mt-4 text-xs text-slate-500 text-center">By placing your order, you agree to our <a href="#" className="text-indigo-600 hover:underline">Terms of Service</a> and <a href="#" className="text-indigo-600 hover:underline">Privacy Policy</a>.</p>
                 </div>
               </div>

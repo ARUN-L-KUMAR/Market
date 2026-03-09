@@ -113,6 +113,9 @@ export const productsAPI = {
   },
   getByCategory: async (categoryId, params = {}) => {
     return await apiClient.get(API_CONFIG.endpoints.products.byCategory(categoryId), { params });
+  },
+  getFilterOptions: async () => {
+    return await apiClient.get(API_CONFIG.endpoints.products.filterOptions);
   }
 };
 

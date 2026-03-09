@@ -30,6 +30,7 @@ import {
     ExternalLink
 } from 'lucide-react';
 import { toast } from 'react-toastify';
+import Dropdown from '../../components/ui/Dropdown';
 
 const Categories = () => {
     const [categories, setCategories] = useState([]);
@@ -309,8 +310,8 @@ const Categories = () => {
                                         <div key={subcategory._id}
                                             onClick={() => toggleCategoryProducts(subcategory._id, subcategory.name)}
                                             className={`p-6 border rounded-[2rem] transition-all duration-500 group/item cursor-pointer ${expandedCategory === subcategory._id
-                                                    ? 'bg-indigo-50 border-indigo-200 shadow-lg shadow-indigo-500/10'
-                                                    : 'bg-slate-50 border-slate-100 hover:border-indigo-200 hover:bg-white hover:shadow-xl hover:shadow-indigo-500/5'
+                                                ? 'bg-indigo-50 border-indigo-200 shadow-lg shadow-indigo-500/10'
+                                                : 'bg-slate-50 border-slate-100 hover:border-indigo-200 hover:bg-white hover:shadow-xl hover:shadow-indigo-500/5'
                                                 }`}>
                                             <div className="flex justify-between items-start mb-4">
                                                 <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center border border-slate-100 text-indigo-500 group-hover/item:scale-110 transition-transform">
@@ -665,18 +666,19 @@ const Categories = () => {
                                 />
                             </div>
                             {!isEditing && (
-                                <div>
-                                    <label className="block text-[10px] font-black text-slate-400 uppercase tracking-widest mb-2 px-1">Parent Nexus (Optional)</label>
-                                    <select
-                                        value={currentCategory.parentCategory || ''}
-                                        onChange={(e) => setCurrentCategory({ ...currentCategory, parentCategory: e.target.value || null })}
-                                        className="w-full px-5 py-3.5 bg-slate-50 border border-slate-200 rounded-2xl text-sm font-bold focus:ring-4 focus:ring-indigo-500/5 focus:border-indigo-500 outline-none transition-all"
-                                    >
-                                        <option value="">Standalone Cluster (Top Level)</option>
-                                        {categories.filter(c => !c.parentCategory && c._id !== currentCategory._id).map(parent => (
-                                            <option key={parent._id} value={parent._id}>{parent.name}</option>
-                                        ))}
-                                    </select>
+                                <div className="space-y-2">
+                                    <Dropdown
+                                        label="Parent Nexus"
+                                        placeholder="Standalone Cluster (Top Level)"
+                                        value={currentCategory.parentCategory}
+                                        onChange={(val) => setCurrentCategory({ ...currentCategory, parentCategory: val })}
+                                        options={[
+                                            { label: 'Standalone Cluster (Top Level)', value: null },
+                                            ...categories
+                                                .filter(c => !c.parentCategory && c._id !== currentCategory._id)
+                                                .map(parent => ({ label: parent.name, value: parent._id }))
+                                        ]}
+                                    />
                                 </div>
                             )}
                             <div className="pt-4 flex gap-4">

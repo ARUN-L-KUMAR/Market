@@ -22,6 +22,7 @@ import {
 import ProductCard from '../components/ProductCard';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import CurrencyPrice from '../components/CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 // Animated counter hook
 const useCounter = (target, duration = 1500, inView = true) => {
@@ -279,7 +280,7 @@ const TrendingProducts = () => {
                     {/* Background image */}
                     <div className="absolute inset-0">
                       <img
-                        src={topProduct.images?.[0]?.url || 'https://placehold.co/800x600?text=Top+Trend'}
+                        src={getProductImageUrl(topProduct)}
                         alt={topProduct.title}
                         className="w-full h-full object-cover opacity-40 group-hover:opacity-50 group-hover:scale-105 transition-all duration-1000"
                       />
@@ -355,7 +356,7 @@ const TrendingProducts = () => {
                         <RankBadge rank={idx + 1} />
                         <div className="w-14 h-14 rounded-xl overflow-hidden bg-slate-50 shrink-0">
                           <img
-                            src={product.images?.[0]?.url || 'https://placehold.co/60x60'}
+                            src={getProductImageUrl(product)}
                             alt={product.title}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                           />
@@ -411,7 +412,7 @@ const TrendingProducts = () => {
                       {/* Image */}
                       <div className="relative aspect-[4/3] overflow-hidden bg-slate-50">
                         <img
-                          src={product.images?.[0]?.url || 'https://placehold.co/400x300?text=Trending'}
+                          src={getProductImageUrl(product)}
                           alt={product.title}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                         />
@@ -483,7 +484,7 @@ const TrendingProducts = () => {
                 <div className="absolute inset-0 grid grid-cols-4 gap-0 opacity-20">
                   {newArrivals.slice(0, 8).map((p, i) => (
                     <div key={i} className="overflow-hidden">
-                      <img src={p.images?.[0]?.url} alt="" className="w-full h-full object-cover" />
+                      <img src={getProductImageUrl(p)} alt="" className="w-full h-full object-cover" />
                     </div>
                   ))}
                 </div>

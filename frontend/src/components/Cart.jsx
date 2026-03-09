@@ -21,6 +21,7 @@ import {
 import { removeFromCart, updateQuantity, clearCart } from '../store/cartSlice';
 import socket from '../utils/socket';
 import { toast } from 'react-toastify';
+import { getProductImageUrl } from '../utils/imageUtils';
 import Button from './ui/Button';
 import Badge from './ui/Badge';
 import CurrencyPrice from './CurrencyPrice';
@@ -238,9 +239,13 @@ const Cart = () => {
                         className="relative w-full sm:w-32 h-32 flex-shrink-0"
                       >
                         <img
-                          src={item.product.images[0]?.url || 'https://placehold.co/400x300?text=No+Image'}
+                          src={getProductImageUrl(item.product)}
                           alt={item.product.title}
                           className="w-full h-full object-cover rounded-lg"
+                          onError={e => {
+                            e.target.onerror = null;
+                            e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=400';
+                          }}
                         />
                         {item.product.discount && (
                           <div className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-semibold px-2 py-1 rounded-full">

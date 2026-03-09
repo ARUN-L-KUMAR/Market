@@ -318,12 +318,14 @@ const OrderDetail = () => {
                           <p className="text-sm text-slate-500">
                             ₹{(item.price || 0).toLocaleString()} x {item.quantity || 0}
                           </p>
-                          <Link
-                            to={`/admin/products/${item.product._id}`}
-                            className="text-xs text-indigo-600 hover:text-indigo-700"
-                          >
-                            View Product
-                          </Link>
+                          {item.product?._id && (
+                            <Link
+                              to={`/admin/products/${item.product._id}`}
+                              className="text-xs text-indigo-600 hover:text-indigo-700"
+                            >
+                              View Product
+                            </Link>
+                          )}
                         </div>
                       </div>
                     </div>

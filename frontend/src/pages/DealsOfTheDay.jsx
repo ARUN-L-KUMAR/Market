@@ -21,6 +21,7 @@ import Badge from '../components/ui/Badge';
 import ProductCard from '../components/ProductCard';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import CurrencyPrice from '../components/CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const DealsOfTheDay = () => {
   const navigate = useNavigate();
@@ -274,7 +275,7 @@ const DealsOfTheDay = () => {
                     initial={{ scale: 1.1, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ duration: 1.2 }}
-                    src={featuredDeal.images?.[0]?.url || 'https://placehold.co/800x800?text=Premium+Deal'}
+                    src={getProductImageUrl(featuredDeal)}
                     alt={featuredDeal.title}
                     className="absolute inset-0 w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                   />
@@ -324,7 +325,7 @@ const DealsOfTheDay = () => {
                     >
                       <div className="relative aspect-square overflow-hidden bg-slate-50">
                         <img
-                          src={deal.images?.[0]?.url || 'https://placehold.co/400x400?text=Deal'}
+                          src={getProductImageUrl(deal)}
                           alt={deal.title}
                           className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-1000"
                         />
@@ -421,7 +422,7 @@ const DealsOfTheDay = () => {
                       className="group bg-white p-4 rounded-3xl border border-slate-100 hover:shadow-premium transition-all cursor-pointer flex gap-6 items-center"
                     >
                       <div className="w-20 h-20 rounded-2xl overflow-hidden bg-slate-50 shrink-0">
-                        <img src={deal.images?.[0]?.url} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                        <img src={getProductImageUrl(deal)} alt="" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                       </div>
                       <div className="flex-1 space-y-2">
                         <h3 className="font-bold text-slate-800 group-hover:text-primary-600 transition-colors line-clamp-1">{deal.title}</h3>

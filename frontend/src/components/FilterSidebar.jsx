@@ -1,277 +1,442 @@
-import { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useState, useEffect, useMemo } from 'react';
+import { useSelector } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  Filter,
-  Tag,
-  DollarSign,
-  Palette,
-  Ruler,
-  RotateCcw,
-  TrendingUp,
-  Star,
+  Search,
   ChevronDown,
+  Star,
+  Check,
   X,
-  Target,
-  ShieldCheck,
-  Zap,
-  Layers,
-  Box,
-  Percent,
-  CheckCircle2,
-  Circle
+  RotateCcw,
+  ArrowRight,
+  Filter
 } from 'lucide-react';
-import Badge from './ui/Badge';
-import Button from './ui/Button';
-import { categoriesAPI } from '../services/api';
+import { categoriesAPI, productsAPI } from '../services/api';
 
-const FilterSidebar = ({ filters, onFilterChange, mode = 'horizontal' }) => {
-  const [localFilters, setLocalFilters] = useState(filters);
+const FilterSidebar = ({ filters, onFilterChange, mode = 'vertical' }) => {
   const [apiCategories, setApiCategories] = useState([]);
-  const [priceRange, setPriceRange] = useState({
+  const [allAvailableBrands, setAllAvailableBrands] = useState([]);
+  const [brandSearch, setBrandSearch] = useState('');
+  const [collapsedSections, setCollapsedSections] = useState({
+    categories: false,
+    subcategories: false,
+    price: true,
+    brands: true,
+    rating: true,
+    discount: true
+  });
+  const [priceInputs, setPriceInputs] = useState({
     min: filters.minPrice || '',
     max: filters.maxPrice || ''
   });
 
-  const { products: currentProducts } = useSelector(state => state.products);
   const { currentCurrency, supportedCurrencies } = useSelector(state => state.currency);
   const currencySymbol = supportedCurrencies[currentCurrency]?.symbol || '₹';
 
   const isVertical = mode === 'vertical';
 
   useEffect(() => {
-    const fetchAllCategories = async () => {
+    const fetchMetadata = async () => {
       try {
-        const response = await categoriesAPI.getAll();
-        setApiCategories(response.data);
+        const [catRes, optRes] = await Promise.all([
+          categoriesAPI.getAll(),
+          productsAPI.getFilterOptions()
+        ]);
+
+        const categories = catRes.data;
+        const mainCats = categories.filter(c => !c.parentCategory);
+        const subCatsMap = {};
+
+        categories.forEach(c => {
+          if (c.parentCategory) {
+            const parentId = typeof c.parentCategory === 'object' ? c.parentCategory._id : c.parentCategory;
+            if (!subCatsMap[parentId]) subCatsMap[parentId] = [];
+            subCatsMap[parentId].push(c);
+          }
+        });
+
+        const structured = mainCats.map(cat => ({
+          ...cat,
+          subcategories: subCatsMap[cat._id] || []
+        }));
+
+        setApiCategories(structured);
+        setAllAvailableBrands(optRes.data.brands || []);
       } catch (err) {
-        console.error('Error fetching categories for filter:', err);
+        console.error('Error fetching filter metadata:', err);
       }
     };
-    fetchAllCategories();
+    fetchMetadata();
   }, []);
 
-  // Derived brands from current view products
-  const brands = [...new Set((currentProducts || []).map(p => p.brand).filter(Boolean))];
-
   useEffect(() => {
-    setLocalFilters(filters);
-    setPriceRange({
+    setPriceInputs({
       min: filters.minPrice || '',
       max: filters.maxPrice || ''
     });
-  }, [filters]);
+  }, [filters.minPrice, filters.maxPrice]);
 
-  const handleCategoryChange = (id) => onFilterChange({ ...localFilters, category: id === localFilters.category ? '' : id });
-  const handleBrandChange = (brand) => onFilterChange({ ...localFilters, brand: brand === localFilters.brand ? '' : brand });
-  const handleRatingChange = (val) => onFilterChange({ ...localFilters, minRating: val === localFilters.minRating ? '' : val });
-  const handleAvailabilityChange = () => onFilterChange({ ...localFilters, inStock: localFilters.inStock === 'true' ? '' : 'true' });
-  const handleDiscountChange = (val) => onFilterChange({ ...localFilters, discount: val === localFilters.discount ? '' : val });
-
-  const handleSortChange = (e) => {
-    const [sortBy, sortOrder] = e.target.value.split('-');
-    onFilterChange({ ...localFilters, sortBy, sortOrder });
+  const toggleSection = (section) => {
+    setCollapsedSections(prev => ({ ...prev, [section]: !prev[section] }));
   };
 
-  const applyPriceFilter = () => onFilterChange({ ...localFilters, minPrice: priceRange.min, maxPrice: priceRange.max });
+  const activeCategoryIds = filters.category ? filters.category.split(',') : [];
 
-  const clearAllFilters = () => onFilterChange({
-    category: '', brand: '', color: '', size: '', minPrice: '', maxPrice: '', minRating: '',
-    onSale: '', inStock: '', discount: '',
-    sortBy: 'createdAt', sortOrder: 'desc', quickFilter: 'primary'
-  });
-
-  const activeCount = () => {
-    let count = 0;
-    if (localFilters.category) count++;
-    if (localFilters.brand) count++;
-    if (localFilters.minPrice || localFilters.maxPrice) count++;
-    if (localFilters.minRating) count++;
-    if (localFilters.inStock) count++;
-    if (localFilters.discount) count++;
-    return count;
+  const handleMainCategoryClick = (id) => {
+    // If clicking the already active main category, clear it
+    // Otherwise, set it as the sole category
+    if (filters.category === id) {
+      onFilterChange({ ...filters, category: '' });
+    } else {
+      onFilterChange({ ...filters, category: id });
+    }
   };
 
-  const item = {
-    hidden: { opacity: 0, y: 10 },
-    show: { opacity: 1, y: 0 }
+  const handleSubcategoryToggle = (id) => {
+    // Get all category IDs currently in filter
+    let newIds = [...activeCategoryIds];
+
+    // Toggle the clicked subcategory
+    if (newIds.includes(id)) {
+      newIds = newIds.filter(cid => cid !== id);
+    } else {
+      newIds.push(id);
+    }
+
+    // Determine the current main category
+    const mainCat = apiCategories.find(cat =>
+      cat._id === id || cat.subcategories.some(sub => sub._id === id)
+    );
+
+    if (mainCat) {
+      // If we have subcategories selected for this main category, 
+      // remove the main category ID itself from the filter list
+      const selectedSubsInThisMain = mainCat.subcategories.filter(sub => newIds.includes(sub._id));
+
+      if (selectedSubsInThisMain.length > 0) {
+        newIds = newIds.filter(cid => cid !== mainCat._id);
+      } else {
+        // If no subcategories left for this main category, add the main category back
+        // but ONLY if the user was already in this category context
+        if (activeMainCat?._id === mainCat._id) {
+          if (!newIds.includes(mainCat._id)) newIds.push(mainCat._id);
+        }
+      }
+    }
+
+    onFilterChange({ ...filters, category: newIds.join(',') });
   };
 
-  const SectionLabel = ({ icon: Icon, label }) => (
-    <label className="text-[10px] font-black text-slate-400 uppercase tracking-[0.2em] flex items-center gap-2 mb-4">
-      <Icon className="w-3.5 h-3.5 text-primary-600" /> {label}
+  const handleBrandToggle = (brand) => {
+    const currentBrands = filters.brand ? filters.brand.split(',') : [];
+    const newBrands = currentBrands.includes(brand)
+      ? currentBrands.filter(b => b !== brand)
+      : [...currentBrands, brand];
+    onFilterChange({ ...filters, brand: newBrands.join(',') });
+  };
+
+  const handlePriceApply = (e) => {
+    if (e) e.preventDefault();
+    onFilterChange({ ...filters, minPrice: priceInputs.min, maxPrice: priceInputs.max });
+  };
+
+  const handleRatingToggle = (val) => {
+    onFilterChange({ ...filters, minRating: filters.minRating === val.toString() ? '' : val.toString() });
+  };
+
+  const handleDiscountToggle = (val) => {
+    onFilterChange({ ...filters, discount: filters.discount === val.toString() ? '' : val.toString() });
+  };
+
+  const handleAvailabilityToggle = () => {
+    onFilterChange({ ...filters, inStock: filters.inStock === 'true' ? '' : 'true' });
+  };
+
+  const filteredBrands = useMemo(() => {
+    return allAvailableBrands.filter(b => b.toLowerCase().includes(brandSearch.toLowerCase()));
+  }, [allAvailableBrands, brandSearch]);
+
+  const SectionHeader = ({ title, section, count }) => (
+    <button
+      onClick={() => toggleSection(section)}
+      className="flex items-center justify-between w-full py-4 text-left group"
+    >
+      <div className="flex items-center gap-2">
+        <span className="text-sm font-black text-slate-900 uppercase tracking-tight">{title}</span>
+        {count > 0 && (
+          <span className="inline-flex items-center justify-center bg-primary-600 text-white text-[9px] font-black min-w-4 h-4 rounded-full px-1">
+            {count}
+          </span>
+        )}
+      </div>
+      <ChevronDown
+        className={`w-4 h-4 text-slate-400 transition-transform duration-300 ${collapsedSections[section] ? '-rotate-90' : ''}`}
+      />
+    </button>
+  );
+
+  const CheckboxItem = ({ label, checked, onChange, count, isSub }) => (
+    <label className="flex items-center gap-3 py-2 cursor-pointer group select-none">
+      <div className={`
+        w-4.5 h-4.5 rounded flex items-center justify-center transition-all border
+        ${checked
+          ? 'bg-primary-600 border-primary-600 shadow-sm'
+          : 'border-slate-300 bg-white group-hover:border-primary-400'}
+      `}>
+        {checked && <Check className="w-3 h-3 text-white stroke-[3px]" />}
+      </div>
+      <input type="checkbox" className="hidden" checked={checked} onChange={onChange} />
+      <span className={`text-[13px] transition-colors ${checked ? 'text-slate-900 font-bold' : 'text-slate-600 group-hover:text-slate-900'}`}>
+        {label}
+      </span>
+      {count !== undefined && <span className="text-[11px] text-slate-400 ml-auto">{count}</span>}
     </label>
   );
 
-  const FilterSection = ({ children, className = "" }) => (
-    <motion.div variants={item} className={`space-y-4 ${className}`}>
-      {children}
-    </motion.div>
-  );
+  const activeMainCat = useMemo(() => {
+    return apiCategories.find(cat =>
+      activeCategoryIds.includes(cat._id) || cat.subcategories.some(sub => activeCategoryIds.includes(sub._id))
+    );
+  }, [apiCategories, activeCategoryIds]);
 
   return (
-    <motion.div
-      initial="hidden"
-      animate="show"
-      className={`grid gap-12 ${isVertical ? 'grid-cols-1' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}`}
-    >
-      {/* Category Section */}
-      <FilterSection>
-        <SectionLabel icon={Layers} label="Asset Verticals" />
-        <div className="relative group/select">
-          <select
-            value={localFilters.category}
-            onChange={(e) => handleCategoryChange(e.target.value)}
-            className="w-full appearance-none pl-5 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-900 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 outline-none transition-all cursor-pointer shadow-sm hover:shadow-md font-outfit"
-          >
-            <option value="">Global Inventory</option>
-            {apiCategories.map(c => <option key={c._id} value={c._id}>{c.name}</option>)}
-          </select>
-          <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover/select:text-primary-500 transition-colors">
-            <ChevronDown className="w-4 h-4" />
-          </div>
-        </div>
-      </FilterSection>
+    <div className={`flex flex-col gap-2 ${isVertical ? 'w-full' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8'}`}>
 
-      {/* Procurement Budget */}
-      <FilterSection>
-        <SectionLabel icon={DollarSign} label="Procurement Range" />
-        <div className={`flex items-center gap-3 ${isVertical ? 'flex-col items-stretch' : ''}`}>
-          <div className="relative flex-1">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400 font-outfit">{currencySymbol}</span>
-            <input
-              type="number"
-              value={priceRange.min}
-              onChange={(e) => setPriceRange(p => ({ ...p, min: e.target.value }))}
-              onBlur={applyPriceFilter}
-              placeholder="MIN"
-              className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black text-slate-900 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 outline-none transition-all font-outfit placeholder:text-slate-300 shadow-sm"
-            />
-          </div>
-          {!isVertical && <div className="h-px w-4 bg-slate-200" />}
-          <div className="relative flex-1">
-            <span className="absolute left-4 top-1/2 -translate-y-1/2 text-xs font-black text-slate-400 font-outfit">{currencySymbol}</span>
-            <input
-              type="number"
-              value={priceRange.max}
-              onChange={(e) => setPriceRange(p => ({ ...p, max: e.target.value }))}
-              onBlur={applyPriceFilter}
-              placeholder="MAX"
-              className="w-full pl-8 pr-4 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black text-slate-900 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 outline-none transition-all font-outfit placeholder:text-slate-300 shadow-sm"
-            />
-          </div>
-        </div>
-      </FilterSection>
-
-      {/* Brand Selection */}
-      {brands.length > 0 && (
-        <FilterSection>
-          <SectionLabel icon={ShieldCheck} label="Origin Nodes" />
-          <div className="relative group/select">
-            <select
-              value={localFilters.brand}
-              onChange={(e) => handleBrandChange(e.target.value)}
-              className="w-full appearance-none pl-5 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-900 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 outline-none transition-all cursor-pointer shadow-sm hover:shadow-md font-outfit"
+      {/* Categories - Different UI: Buttons/Pills */}
+      <div className="border-b border-slate-100 pb-2">
+        <SectionHeader title="Categories" section="categories" />
+        <AnimatePresence initial={false}>
+          {!collapsedSections.categories && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden space-y-2 mb-4"
             >
-              <option value="">All Origins</option>
-              {brands.map(b => <option key={b} value={b}>{b}</option>)}
-            </select>
-            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover/select:text-primary-500 transition-colors">
-              <ChevronDown className="w-4 h-4" />
-            </div>
-          </div>
-        </FilterSection>
-      )}
+              {apiCategories.map(cat => {
+                const isActive = activeCategoryIds.includes(cat._id) || (activeMainCat?._id === cat._id);
+                return (
+                  <button
+                    key={cat._id}
+                    onClick={() => handleMainCategoryClick(cat._id)}
+                    className={`flex items-center gap-3 w-full py-2.5 px-4 rounded-xl text-[13px] transition-all relative overflow-hidden group border
+                      ${isActive
+                        ? 'bg-slate-900 text-white border-slate-900 shadow-lg shadow-slate-200'
+                        : 'bg-white text-slate-600 border-slate-100 hover:border-primary-200 hover:bg-slate-50'
+                      }`}
+                  >
+                    <span className={`w-1.5 h-1.5 rounded-full transition-colors ${isActive ? 'bg-primary-400' : 'bg-slate-200 group-hover:bg-primary-300'}`} />
+                    <span className="font-bold tracking-tight">{cat.name}</span>
+                    {activeCategoryIds.includes(cat._id) && <Check className="w-3.5 h-3.5 ml-auto text-primary-400" />}
+                  </button>
+                );
+              })}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
 
-      {/* Asset Rating */}
-      <FilterSection>
-        <SectionLabel icon={Star} label="Quality Index" />
-        <div className="flex gap-2">
-          {[4, 3, 2].map(r => (
-            <button
-              key={r}
-              onClick={() => handleRatingChange(r)}
-              className={`flex-1 py-3.5 rounded-xl border text-[10px] font-black transition-all duration-300 flex items-center justify-center gap-1.5 font-outfit ${localFilters.minRating === r
-                ? 'bg-slate-950 border-slate-950 text-white shadow-lg'
-                : 'bg-slate-50 border-slate-100 text-slate-500 hover:border-slate-300'}`}
-            >
-              {r}+ <Star className={`w-3 h-3 ${localFilters.minRating === r ? 'text-amber-400 fill-amber-400' : 'text-slate-300'}`} />
-            </button>
-          ))}
-        </div>
-      </FilterSection>
-
-      {/* Value Propositions */}
-      <FilterSection className={isVertical ? "space-y-6" : ""}>
-        <SectionLabel icon={Percent} label="Value Propositions" />
-        <div className="flex flex-col gap-3">
-          <button
-            onClick={handleAvailabilityChange}
-            className={`flex items-center justify-between px-5 py-3.5 rounded-2xl border transition-all duration-300 ${localFilters.inStock === 'true'
-              ? 'bg-primary-50 border-primary-200 text-primary-700 shadow-sm'
-              : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
-          >
-            <span className="text-[10px] font-black uppercase tracking-widest">In Stock Only</span>
-            {localFilters.inStock === 'true' ? <CheckCircle2 className="w-4 h-4" /> : <Circle className="w-4 h-4 opacity-20" />}
-          </button>
-
-          <div className="grid grid-cols-2 gap-2">
-            {[25, 50].map(d => (
-              <button
-                key={d}
-                onClick={() => handleDiscountChange(d)}
-                className={`py-3 rounded-xl border text-[9px] font-black uppercase tracking-tighter transition-all ${localFilters.discount === d
-                  ? 'bg-indigo-600 border-indigo-700 text-white shadow-md'
-                  : 'bg-slate-50 border-slate-100 text-slate-500 hover:bg-slate-100'}`}
+      {/* Subcategories - Different UI: Checkboxes */}
+      {activeMainCat && activeMainCat.subcategories.length > 0 && (
+        <div className="border-b border-slate-100 pb-2">
+          <SectionHeader
+            title="Subcategories"
+            section="subcategories"
+            count={activeMainCat.subcategories.filter(sub => activeCategoryIds.includes(sub._id)).length}
+          />
+          <AnimatePresence initial={false}>
+            {!collapsedSections.subcategories && (
+              <motion.div
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                className="overflow-hidden space-y-1 mb-4 pl-1"
               >
-                {d}%+ OFF
-              </button>
-            ))}
-          </div>
+                {activeMainCat.subcategories.map(sub => (
+                  <CheckboxItem
+                    key={sub._id}
+                    label={sub.name}
+                    isSub={true}
+                    checked={activeCategoryIds.includes(sub._id)}
+                    onChange={() => handleSubcategoryToggle(sub._id)}
+                  />
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-      </FilterSection>
-
-      {/* Priority Sorting - Pre-applied in Horizontal mode from Products.jsx, but useful in Vertical drawer */}
-      {isVertical && (
-        <FilterSection>
-          <SectionLabel icon={Zap} label="Priority Feed" />
-          <div className="relative group/select">
-            <select
-              value={`${localFilters.sortBy}-${localFilters.sortOrder}`}
-              onChange={handleSortChange}
-              className="w-full appearance-none pl-5 pr-12 py-4 bg-slate-50 border border-slate-100 rounded-2xl text-[11px] font-black uppercase tracking-widest text-slate-900 focus:bg-white focus:border-primary-500 focus:ring-4 focus:ring-primary-500/5 outline-none transition-all cursor-pointer shadow-sm hover:shadow-md font-outfit"
-            >
-              <option value="createdAt-desc">Newest Arrivals</option>
-              <option value="price-asc">Price Index: Low-High</option>
-              <option value="price-desc">Price Index: High-Low</option>
-              <option value="title-asc">Alpha Sort: A-Z</option>
-            </select>
-            <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400 group-hover/select:text-primary-500 transition-colors">
-              <ChevronDown className="w-4 h-4" />
-            </div>
-          </div>
-        </FilterSection>
       )}
 
-      {/* Reset Controls */}
-      <AnimatePresence>
-        {activeCount() > 0 && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className={`${isVertical ? 'col-span-1' : 'col-span-full'} flex justify-center pt-8`}
-          >
-            <Button
-              onClick={clearAllFilters}
-              className="h-12 px-10 rounded-2xl bg-slate-950 text-white shadow-xl shadow-slate-950/20 font-black uppercase tracking-[0.2em] text-[10px] font-outfit gap-3 transition-all hover:scale-105 active:scale-95"
+      {/* Price Range */}
+      <div className="border-b border-slate-100 pb-2">
+        <SectionHeader title="Price Range" section="price" />
+        <AnimatePresence initial={false}>
+          {!collapsedSections.price && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden pb-4 px-1"
             >
-              <RotateCcw className="w-3.5 h-3.5" /> Purge Filter Protocols
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
-    </motion.div>
+              <div className="flex items-center gap-2 mt-2">
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">{currencySymbol}</span>
+                  <input
+                    type="number"
+                    placeholder="Min"
+                    value={priceInputs.min}
+                    onChange={(e) => setPriceInputs(p => ({ ...p, min: e.target.value }))}
+                    className="w-full pl-7 pr-3 py-2.5 text-[12px] font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all"
+                  />
+                </div>
+                <span className="text-slate-300 font-bold text-[10px] uppercase">to</span>
+                <div className="relative flex-1">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-[10px] font-bold">{currencySymbol}</span>
+                  <input
+                    type="number"
+                    placeholder="Max"
+                    value={priceInputs.max}
+                    onChange={(e) => setPriceInputs(p => ({ ...p, max: e.target.value }))}
+                    className="w-full pl-7 pr-3 py-2.5 text-[12px] font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:ring-2 focus:ring-primary-500/10 focus:border-primary-500 outline-none transition-all"
+                  />
+                </div>
+                <button
+                  onClick={handlePriceApply}
+                  className="p-2.5 bg-slate-900 text-white rounded-xl hover:bg-slate-800 transition-all shadow-lg shadow-slate-200 active:scale-90"
+                >
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Brands */}
+      <div className="border-b border-slate-100 pb-2">
+        <SectionHeader
+          title="Brands"
+          section="brands"
+          count={filters.brand ? filters.brand.split(',').filter(Boolean).length : 0}
+        />
+        <AnimatePresence initial={false}>
+          {!collapsedSections.brands && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden pb-4 space-y-3 px-1"
+            >
+              <div className="relative group">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-slate-400 group-focus-within:text-primary-500 transition-colors" />
+                <input
+                  type="text"
+                  placeholder="Find Brand..."
+                  value={brandSearch}
+                  onChange={(e) => setBrandSearch(e.target.value)}
+                  className="w-full pl-9 pr-3 py-2.5 text-[11px] font-bold bg-slate-50 border border-slate-100 rounded-xl focus:bg-white focus:ring-4 focus:ring-primary-500/5 focus:border-primary-500 outline-none transition-all"
+                />
+              </div>
+              <div className="max-h-56 overflow-y-auto pr-2 custom-scrollbar space-y-1">
+                {filteredBrands.length > 0 ? (
+                  filteredBrands.map(brand => (
+                    <CheckboxItem
+                      key={brand}
+                      label={brand}
+                      checked={filters.brand?.split(',').includes(brand)}
+                      onChange={() => handleBrandToggle(brand)}
+                    />
+                  ))
+                ) : (
+                  <p className="text-[11px] text-slate-400 text-center py-4 italic font-bold uppercase tracking-widest">No matching brands</p>
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Customer Ratings */}
+      <div className="border-b border-slate-100 pb-2">
+        <SectionHeader title="Customer Ratings" section="rating" />
+        <AnimatePresence initial={false}>
+          {!collapsedSections.rating && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden pb-4 space-y-1 px-1"
+            >
+              {[4, 3, 2, 1].map(r => (
+                <button
+                  key={r}
+                  onClick={() => handleRatingToggle(r)}
+                  className={`flex items-center gap-3 w-full py-2.5 px-3 rounded-xl text-[13px] transition-all group border
+                    ${filters.minRating === r.toString()
+                      ? 'bg-amber-50 text-amber-900 border-amber-200'
+                      : 'bg-white text-slate-600 border-transparent hover:bg-slate-50 hover:text-slate-900'
+                    }`}
+                >
+                  <div className="flex items-center gap-1 font-black">
+                    {r} <Star className={`w-3.5 h-3.5 ${filters.minRating === r.toString() ? 'fill-amber-500 text-amber-500' : 'text-slate-300 group-hover:text-amber-500'} transition-colors`} />
+                    <span className="font-bold text-slate-400 ml-1">& Up</span>
+                  </div>
+                  {filters.minRating === r.toString() && <Check className="w-3.5 h-3.5 ml-auto text-amber-600" />}
+                </button>
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Discount */}
+      <div className="border-b border-slate-100 pb-2">
+        <SectionHeader title="Discount" section="discount" />
+        <AnimatePresence initial={false}>
+          {!collapsedSections.discount && (
+            <motion.div
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: 'auto', opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              className="overflow-hidden pb-4 space-y-1 px-1"
+            >
+              {[10, 25, 40, 50, 70].map(d => (
+                <CheckboxItem
+                  key={d}
+                  label={`${d}% or more`}
+                  checked={filters.discount === d.toString()}
+                  onChange={() => {
+                    onFilterChange({ ...filters, discount: filters.discount === d.toString() ? '' : d.toString() });
+                  }}
+                />
+              ))}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </div>
+
+      {/* Availability */}
+      <div className="pt-4 px-1">
+        <CheckboxItem
+          label="In Stock Only"
+          checked={filters.inStock === 'true'}
+          onChange={handleAvailabilityToggle}
+        />
+      </div>
+
+      {/* Reset All */}
+      {isVertical && (
+        <div className="mt-8 pt-6 border-t border-slate-100">
+          <button
+            onClick={() => onFilterChange({})}
+            className="flex items-center justify-center gap-2 w-full py-4 px-4 bg-slate-900 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-2xl hover:bg-slate-800 transition-all shadow-xl shadow-slate-200 active:scale-[0.98]"
+          >
+            <RotateCcw className="w-4 h-4" /> Reset All Metrics
+          </button>
+        </div>
+      )}
+
+    </div>
   );
 };
 

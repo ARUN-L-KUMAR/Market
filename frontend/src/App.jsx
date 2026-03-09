@@ -3,6 +3,7 @@ import { Outlet, useLocation } from 'react-router-dom'
 import { useSelector, useDispatch } from 'react-redux'
 import { fetchWishlist } from './store/wishlistSlice'
 import { initializeCurrency } from './store/currencySlice'
+import { clearCart } from './store/cartSlice'
 import './App.css'
 import Navbar from './components/Navbar'
 import socket from './utils/socket'
@@ -46,6 +47,28 @@ function App() {
     };
   }, []);
 
+  // Cross-tab synchronization for Cart
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'cart' && e.newValue) {
+        try {
+          const newCart = JSON.parse(e.newValue);
+          if (newCart.items && newCart.items.length === 0) {
+            dispatch(clearCart());
+            console.log('🛒 Cart cleared via cross-tab sync');
+          }
+          // For now we only handle clearing. 
+          // Full sync would require a 'syncCart' action.
+        } catch (err) {
+          console.error('Error syncing cart across tabs:', err);
+        }
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [dispatch]);
+
   // Also monitor test socket connection
   useEffect(() => {
     const onTestConnect = () => {
@@ -59,6 +82,11 @@ function App() {
       testSocket.off('connect', onTestConnect);
     };
   }, []);
+
+  // Scroll to top on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans">

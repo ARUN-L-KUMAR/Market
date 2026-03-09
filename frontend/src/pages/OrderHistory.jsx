@@ -23,6 +23,7 @@ import {
 import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import CurrencyPrice from '../components/CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 
 const OrderHistory = () => {
@@ -269,9 +270,13 @@ const OrderHistory = () => {
                             <div key={i} className="relative group/item">
                               <div className="w-16 h-20 rounded-xl overflow-hidden bg-slate-50 border border-slate-100 shadow-sm group-hover/item:shadow-lg transition-all duration-500">
                                 <img
-                                  src={item.product?.images?.[0]?.url || 'https://via.placeholder.com/200'}
+                                  src={getProductImageUrl(item.product)}
                                   alt={item.product?.title}
                                   className="w-full h-full object-cover group-hover/item:scale-105 transition-transform duration-700"
+                                  onError={(e) => {
+                                    e.target.onerror = null;
+                                    e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800';
+                                  }}
                                 />
                               </div>
                               <div className="absolute -top-2 -right-2 w-6 h-6 bg-slate-900 text-white text-[9px] font-bold rounded-full flex items-center justify-center border-2 border-white shadow-md">

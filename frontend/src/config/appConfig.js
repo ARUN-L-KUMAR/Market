@@ -30,7 +30,8 @@ export const API_CONFIG = {
       search: (query) => `/api/products/search?q=${encodeURIComponent(query)}`,
       byCategory: (categoryId) => `/api/products/category/${categoryId}`,
       featured: '/api/products/featured',
-      trending: '/api/products/trending'
+      trending: '/api/products/trending',
+      filterOptions: '/api/products/filter-options'
     },
 
     // User endpoints

@@ -6,6 +6,7 @@ import Button from '../components/ui/Button';
 import Badge from '../components/ui/Badge';
 import LoadingSpinner from '../components/ui/LoadingSpinner';
 import CurrencyPrice from '../components/CurrencyPrice';
+import { getProductImageUrl } from '../utils/imageUtils';
 
 const OrderDetails = () => {
   const { id } = useParams();
@@ -168,10 +169,10 @@ const OrderDetails = () => {
                 {trackingSteps.map((step, index) => (
                   <div key={step.key} className="flex items-center">
                     <div className={`flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium ${step.completed
-                        ? 'bg-emerald-100 text-emerald-700'
-                        : step.active
-                          ? 'bg-indigo-100 text-indigo-700'
-                          : 'bg-slate-100 text-slate-400'
+                      ? 'bg-emerald-100 text-emerald-700'
+                      : step.active
+                        ? 'bg-indigo-100 text-indigo-700'
+                        : 'bg-slate-100 text-slate-400'
                       }`}>
                       {step.completed ? '✓' : step.icon}
                     </div>
@@ -201,9 +202,13 @@ const OrderDetails = () => {
               {order.items?.map((item, index) => (
                 <div key={index} className="flex items-center gap-4 p-4 border border-slate-200 rounded-lg">
                   <img
-                    src={item.product?.images?.[0]?.url || '/placeholder-image.jpg'}
+                    src={getProductImageUrl(item.product)}
                     alt={item.product?.title || 'Product'}
                     className="w-20 h-20 object-cover rounded-lg"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?auto=format&fit=crop&q=80&w=800';
+                    }}
                   />
                   <div className="flex-1">
                     <h3 className="font-medium text-slate-800">
