@@ -1,7 +1,7 @@
 # Dependencies
 node_modules/
 package-lock.json
-
+market-data
 # Environment variables
 .env
 .env.local
