@@ -1,7 +1,11 @@
 const crypto = require('crypto');
 const Order = require('../models/order.model');
 const Cart = require('../models/cart.model');
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+
+// Initialize Stripe conditionally to prevent app crash if STRIPE_SECRET_KEY is not defined
+const stripe = process.env.STRIPE_SECRET_KEY 
+  ? require('stripe')(process.env.STRIPE_SECRET_KEY) 
+  : null;
 
 const PAYU_BASE_URL = process.env.PAYU_BASE_URL || 'https://test.payu.in/_payment';
 
@@ -207,6 +211,11 @@ exports.payuFailure = async (req, res) => {
 // Stripe Integration
 exports.initiateStripe = async (req, res) => {
   try {
+    if (!stripe) {
+      console.error('Stripe initialization failed: STRIPE_SECRET_KEY is missing');
+      return res.status(500).json({ error: 'Stripe payment gateway is not configured on the server. Please set the STRIPE_SECRET_KEY environment variable.' });
+    }
+
     const { user, items, shippingAddress, total, email, firstname, subtotal, tax, shipping } = req.body;
 
     if (!items || !shippingAddress || !total || !email) {
@@ -292,6 +301,11 @@ exports.stripeSuccess = async (req, res) => {
   const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
 
   try {
+    if (!stripe) {
+      console.error('Stripe success callback error: STRIPE_SECRET_KEY is missing');
+      return res.redirect(`${frontendUrl}/payment-failure?reason=stripe_not_configured`);
+    }
+
     const session = await stripe.checkout.sessions.retrieve(session_id);
     const order = await Order.findById(order_id);
 
